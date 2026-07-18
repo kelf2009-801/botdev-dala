@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Елена — Nail Portfolio | Vogue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ========== RESET & BASE ========== */
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #fff;
+    color: #111;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width:100%; height:auto; display:block; }
+  a { text-decoration:none; color:inherit; }
+  ::selection { background:#111; color:#fff; }
+
+  /* ========== TYPOGRAPHY ========== */
+  .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+  .font-sans  { font-family: 'Inter', -apple-system, sans-serif; }
+
+  h1, h2, h3, h4, .heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* ========== NAV ========== */
+  .nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background: rgba(255,255,255,0.95);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-inner {
+    max-width:1200px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 32px;
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size:22px; font-weight:700; letter-spacing:-0.5px;
+  }
+  .nav-logo em { font-style:italic; font-weight:400; }
+  .nav-links { display:flex; gap:32px; align-items:center; }
+  .nav-links a {
+    font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:2px;
+    color:#555; transition:color 0.2s;
+  }
+  .nav-links a:hover { color:#000; }
+  .nav-cta {
+    display:inline-block;
+    padding:10px 28px;
+    background:#111;
+    color:#fff;
+    font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:2px;
+    border:none; cursor:pointer;
+    transition:all 0.3s;
+  }
+  .nav-cta:hover { background:#333; }
+
+  /* ========== HERO (SPREAD) ========== */
+  .hero {
+    min-height:100vh;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top:72px;
+  }
+  .hero-left {
+    display:flex; flex-direction:column; justify-content:center;
+    padding:80px 64px;
+    background:#fff;
+    position:relative;
+  }
+  .hero-left::after {
+    content:''; position:absolute; right:0; top:10%; bottom:10%;
+    width:1px; background:rgba(0,0,0,0.08);
+  }
+  .hero-label {
+    font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:3px;
+    color:#999; margin-bottom:24px;
+  }
+  .hero-title {
+    font-size:clamp(48px, 6vw, 96px);
+    font-weight:900;
+    line-height:0.95;
+    letter-spacing:-0.04em;
+    margin-bottom:8px;
+  }
+  .hero-title em {
+    font-style:italic;
+    font-weight:400;
+    display:block;
+    font-size:clamp(32px, 4vw, 64px);
+    color:#888;
+    margin-top:4px;
+  }
+  .hero-sub {
+    font-size:14px; color:#666; line-height:1.7;
+    max-width:400px; margin:24px 0 40px;
+  }
+  .hero-city {
+    font-size:11px; text-transform:uppercase; letter-spacing:3px;
+    color:#bbb; margin-bottom:32px;
+  }
+  .hero-btn {
+    display:inline-flex; align-items:center; gap:12px;
+    padding:14px 36px;
+    background:#111;
+    color:#fff;
+    font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:2px;
+    border:none; cursor:pointer;
+    transition:all 0.3s;
+    width:fit-content;
+  }
+  .hero-btn:hover { background:#333; gap:16px; }
+  .hero-btn svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; }
+
+  .hero-right {
+    position:relative;
+    overflow:hidden;
+    background:#f5f5f5;
+  }
+  .hero-right img {
+    width:100%; height:100%;
+    object-fit:cover;
+  }
+  .hero-badge {
+    position:absolute; bottom:40px; left:40px;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(8px);
+    padding:20px 28px;
+    max-width:240px;
+  }
+  .hero-badge-num {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:36px; font-weight:700; line-height:1;
+  }
+  .hero-badge-label {
+    font-size:10px; text-transform:uppercase; letter-spacing:2px;
+    color:#888; margin-top:4px;
+  }
+
+  /* ========== SECTION COMMON ========== */
+  .section {
+    padding:120px 32px;
+    max-width:1200px; margin:0 auto;
+  }
+  .section-label {
+    font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:3px;
+    color:#bbb; margin-bottom:16px;
+  }
+  .section-title {
+    font-size:clamp(36px, 4vw, 64px);
+    font-weight:700;
+    line-height:1.1;
+    margin-bottom:16px;
+  }
+  .section-title em {
+    font-style:italic;
+    font-weight:400;
+    color:#aaa;
+  }
+  .section-desc {
+    font-size:14px; color:#666; line-height:1.8;
+    max-width:560px; margin-bottom:48px;
+  }
+
+  /* ========== SERVICES ========== */
+  .services-grid {
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:2px;
+    background:rgba(0,0,0,0.06);
+  }
+  .service-card {
+    background:#fff;
+    padding:48px 40px;
+    position:relative;
+    transition:all 0.4s;
+    cursor:default;
+  }
+  .service-card:hover {
+    background:#fafafa;
+  }
+  .service-num {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:48px; font-weight:900; line-height:1;
+    color:#eee; margin-bottom:24px;
+    transition:color 0.3s;
+  }
+  .service-card:hover .service-num { color:#ddd; }
+  .service-icon { font-size:32px; margin-bottom:20px; }
+  .service-name {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:24px; font-weight:600; margin-bottom:12px;
+  }
+  .service-desc {
+    font-size:13px; color:#888; line-height:1.7;
+  }
+  .service-price {
+    display:inline-block;
+    margin-top:20px;
+    font-size:13px; font-weight:600;
+    border-bottom:1px solid #111;
+    padding-bottom:2px;
+  }
+
+  /* ========== GALLERY (EDITORIAL SPREAD) ========== */
+  .gallery {
+    background:#fafafa;
+    padding:120px 0;
+  }
+  .gallery-inner {
+    max-width:1200px; margin:0 auto; padding:0 32px;
+  }
+  .gallery-grid {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:24px;
+    margin-top:48px;
+  }
+  .gallery-item {
+    position:relative;
+    overflow:hidden;
+    background:#f0f0f0;
+  }
+  .gallery-item img {
+    width:100%; height:100%;
+    object-fit:cover;
+    transition:transform 0.6s;
+  }
+  .gallery-item:hover img { transform:scale(1.03); }
+  .gallery-item.tall { grid-row:span 2; }
+  .gallery-item.wide { grid-column:span 2; }
+  .gallery-item .overlay {
+    position:absolute; bottom:0; left:0; right:0;
+    padding:24px;
+    background:linear-gradient(transparent, rgba(0,0,0,0.6));
+    color:#fff;
+    opacity:0;
+    transition:opacity 0.4s;
+  }
+  .gallery-item:hover .overlay { opacity:1; }
+  .gallery-item .overlay span {
+    font-size:11px; text-transform:uppercase; letter-spacing:2px;
+  }
+
+  /* ========== ABOUT ========== */
+  .about-grid {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:80px;
+    align-items:center;
+  }
+  .about-image {
+    position:relative;
+    background:#f5f5f5;
+    overflow:hidden;
+  }
+  .about-image img {
+    width:100%; height:600px;
+    object-fit:cover;
+  }
+  .about-image::before {
+    content:''; position:absolute; inset:0;
+    border:1px solid rgba(0,0,0,0.04);
+    pointer-events:none;
+  }
+  .about-stats {
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:24px;
+    margin-top:40px;
+  }
+  .about-stat-num {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:36px; font-weight:700;
+  }
+  .about-stat-label {
+    font-size:10px; text-transform:uppercase; letter-spacing:2px;
+    color:#999; margin-top:4px;
+  }
+  .about-text { font-size:14px; color:#666; line-height:1.9; }
+
+  /* ========== PRICE ========== */
+  .price-table {
+    border-top:1px solid #111;
+    margin-top:48px;
+  }
+  .price-row {
+    display:grid;
+    grid-template-columns: 1fr auto;
+    padding:20px 0;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+    align-items:center;
+  }
+  .price-row-info h4 {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:20px; font-weight:600;
+  }
+  .price-row-info p {
+    font-size:13px; color:#888; margin-top:4px;
+  }
+  .price-row-val {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:22px; font-weight:700;
+  }
+
+  /* ========== TESTIMONIALS ========== */
+  .testimonials-grid {
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:2px;
+    background:rgba(0,0,0,0.06);
+  }
+  .testimonial-card {
+    background:#fff;
+    padding:48px 40px;
+  }
+  .testimonial-stars {
+    font-size:18px; letter-spacing:3px; color:#111;
+    margin-bottom:20px;
+  }
+  .testimonial-text {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:18px; font-style:italic; line-height:1.6;
+    color:#444;
+    margin-bottom:24px;
+  }
+  .testimonial-author {
+    display:flex; align-items:center; gap:12px;
+  }
+  .testimonial-avatar {
+    width:40px; height:40px; border-radius:50%;
+    background:#111; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:600;
+  }
+  .testimonial-name { font-size:13px; font-weight:600; }
+  .testimonial-service { font-size:11px; color:#999; }
+
+  /* ========== CONTACT / CTA ========== */
+  .contact-section {
+    background:#111;
+    color:#fff;
+    padding:120px 32px;
+  }
+  .contact-inner {
+    max-width:1200px; margin:0 auto;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:80px;
+  }
+  .contact-left .section-title { color:#fff; }
+  .contact-left .section-title em { color:#666; }
+  .contact-left .section-desc { color:#999; }
+  .contact-info { margin-top:32px; display:flex; flex-direction:column; gap:20px; }
+  .contact-info-item {
+    display:flex; align-items:center; gap:16px;
+    font-size:14px;
+  }
+  .contact-info-item svg { flex-shrink:0; opacity:0.5; }
+  .contact-info-item strong { display:block; font-weight:600; }
+  .contact-info-item span { display:block; font-size:12px; color:#888; }
+
+  .contact-form {
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    padding:48px;
+  }
+  .contact-form h4 {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:28px; font-weight:600; margin-bottom:8px;
+  }
+  .contact-form p { font-size:13px; color:#888; margin-bottom:24px; }
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea {
+    width:100%;
+    padding:14px 16px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    color:#fff;
+    font-size:13px;
+    font-family:'Inter',sans-serif;
+    margin-bottom:12px;
+    outline:none;
+    transition:border-color 0.2s;
+  }
+  .contact-form input:focus,
+  .contact-form select:focus,
+  .contact-form textarea:focus {
+    border-color:rgba(255,255,255,0.3);
+  }
+  .contact-form select option { color:#111; }
+  .contact-form textarea { height:100px; resize:vertical; }
+  .contact-form button {
+    width:100%;
+    padding:16px;
+    background:#fff;
+    color:#111;
+    border:none;
+    font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:2px;
+    cursor:pointer;
+    transition:all 0.3s;
+  }
+  .contact-form button:hover { background:#ddd; }
+
+  /* ========== FOOTER ========== */
+  .footer {
+    background:#000;
+    color:#fff;
+    padding:48px 32px;
+    text-align:center;
+  }
+  .footer-inner {
+    max-width:1200px; margin:0 auto;
+  }
+  .footer-logo {
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:28px; font-weight:700; letter-spacing:-0.5px;
+  }
+  .footer-logo em { font-style:italic; font-weight:400; color:#666; }
+  .footer-social {
+    display:flex; justify-content:center; gap:24px;
+    margin:24px 0;
+  }
+  .footer-social a {
+    width:40px; height:40px; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.15);
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.3s;
+  }
+  .footer-social a:hover {
+    border-color:#fff; background:rgba(255,255,255,0.05);
+  }
+  .footer-social a svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.5; }
+  .footer-copy {
+    font-size:11px; color:#555; text-transform:uppercase; letter-spacing:1px;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns:1fr; }
+    .hero-left { padding:60px 32px; }
+    .hero-left::after { display:none; }
+    .hero-right { min-height:400px; }
+    .hero-badge { bottom:24px; left:24px; }
+
+    .section { padding:80px 24px; }
+    .services-grid { grid-template-columns:1fr; }
+    .gallery-grid { grid-template-columns:1fr; }
+    .gallery-item.tall { grid-row:span 1; }
+    .gallery-item.wide { grid-column:span 1; }
+
+    .about-grid { grid-template-columns:1fr; gap:40px; }
+    .about-stats { grid-template-columns:repeat(3,1fr); }
+    .about-image img { height:400px; }
+
+    .testimonials-grid { grid-template-columns:1fr; }
+    .contact-inner { grid-template-columns:1fr; gap:48px; }
+    .contact-section { padding:80px 24px; }
+    .contact-form { padding:32px; }
+  }
+  @media (max-width: 600px) {
+    .nav-links a:not(.nav-cta) { display:none; }
+    .nav-inner { padding:14px 20px; }
+    .hero-left { padding:40px 24px; }
+    .hero-right { min-height:300px; }
+    .hero-badge { padding:16px 20px; }
+    .about-stats { grid-template-columns:1fr; gap:16px; }
+
+    .service-card { padding:36px 28px; }
+    .testimonial-card { padding:36px 28px; }
+    .price-row { grid-template-columns:1fr; gap:8px; }
+    .price-row-val { text-align:left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">Елена<em> / Nail</em></div>
+    <div class="nav-links">
+      <a href="#services">Услуги</a>
+      <a href="#gallery">Работы</a>
+      <a href="#about">Обо мне</a>
+      <a href="#price">Цены</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contact" class="nav-cta">Записаться</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-label">Nail Artist</div>
+    <h1 class="hero-title">
+      Елена
+      <em>Санкт-Петербург</em>
+    </h1>
+    <div class="hero-city">Saint Petersburg</div>
+    <p class="hero-sub">
+      Глянцевый маникюр, безупречный педикюр и авторский дизайн.
+      Работаю с формой, цветом и текстурой — создаю ногти, которые
+      выглядят как обложка журнала.
+    </p>
+    <a href="#contact" class="hero-btn">
+      Записаться
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80&auto=format&fit=crop"
+         alt="Nail art by Elena"
+         loading="eager">
+    <div class="hero-badge">
+      <div class="hero-badge-num">8+</div>
+      <div class="hero-badge-label">Лет опыта</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="section" id="services">
+  <div class="section-label">Услуги</div>
+  <h2 class="section-title">
+    Премиальный<br><em>нейл-сервис</em>
+  </h2>
+  <p class="section-desc">
+    Каждая процедура — от классики до сложного дизайна — выполняется
+    с вниманием к деталям и использованием профессиональных материалов.
+  </p>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-icon">💅</div>
+      <h3 class="service-name">Маникюр</h3>
+      <p class="service-desc">
+        Классический, комбинированный, аппаратный. Укрепление,
+        покрытие гель-лаком, френч, градиент — любой дизайн.
+      </p>
+      <div class="service-price">от 2 500 ₽</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-icon">🦶</div>
+      <h3 class="service-name">Педикюр</h3>
+      <p class="service-desc">
+        Комплексный уход за стопами. Аппаратная и классическая
+        обработка, покрытие, увлажнение и SPA-ритуалы.
+      </p>
+      <div class="service-price">от 3 000 ₽</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-icon">🎨</div>
+      <h3 class="service-name">Дизайн</h3>
+      <p class="service-desc">
+        Авторская роспись, слайдеры, стразы, втирка, мрамор,
+        омбре, абстракция — любой сложности и стиля.
+      </p>
+      <div class="service-price">от 1 500 ₽</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section class="gallery" id="gallery">
+  <div class="gallery-inner">
+    <div class="section-label">Портфолио</div>
+    <h2 class="section-title">
+      Editorial<br><em>работы</em>
+    </h2>
+    <p class="section-desc">
+      Избранные проекты. Каждый кадр — про форму, цвет и настроение.
+    </p>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item tall">
+      <img src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=600&q=80&auto=format&fit=crop"
+           alt="Red nail art design"
+           loading="lazy">
+      <div class="overlay"><span>Red Edition</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&auto=format&fit=crop"
+           alt="Nail care"
+           loading="lazy">
+      <div class="overlay"><span>Classic Care</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&auto=format&fit=crop"
+           alt="Nail design"
+           loading="lazy">
+      <div class="overlay"><span>Minimal</span></div>
+    </div>
+    <div class="gallery-item wide">
+      <img src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=1200&q=80&auto=format&fit=crop"
+           alt="Elegant nail set"
+           loading="lazy">
+      <div class="overlay"><span>Autumn Collection 2025</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="about-grid">
+    <div class="about-image">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&auto=format&fit=crop"
+           alt="Elena — nail artist"
+           loading="lazy">
+    </div>
+    <div>
+      <div class="section-label">Обо мне</div>
+      <h2 class="section-title">
+        Мастер<br><em>с видением</em>
+      </h2>
+      <p class="about-text">
+        Меня зовут Елена. Я нейл-мастер из Санкт-Петербурга с 8-летним
+        опытом. Моя философия — ногти как часть образа, акцент, который
+        завершает look. Я работаю в технике, сочетающей эстетику Vogue
+        и индивидуальность каждой клиентки.
+      </p>
+      <p class="about-text" style="margin-top:16px;">
+        Постоянно повышаю квалификацию, изучаю новые техники и работаю
+        только с премиальными материалами. В приоритете — здоровье ногтей,
+        стойкость покрытия и безупречный результат.
+      </p>
+      <div class="about-stats">
+        <div>
+          <div class="about-stat-num">8+</div>
+          <div class="about-stat-label">Лет опыта</div>
+        </div>
+        <div>
+          <div class="about-stat-num">500+</div>
+          <div class="about-stat-label">Клиентов</div>
+        </div>
+        <div>
+          <div class="about-stat-num">50+</div>
+          <div class="about-stat-label">Курсов</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICE ============ -->
+<section class="section" id="price">
+  <div class="section-label">Прайс</div>
+  <h2 class="section-title">
+    Стоимость<br><em>услуг</em>
+  </h2>
+  <div class="price-table">
+    <div class="price-row">
+      <div class="price-row-info">
+        <h4>Классический маникюр</h4>
+        <p>Обработка кутикулы, придание формы, покрытие гель-лаком</p>
+      </div>
+      <div class="price-row-val">2 500 ₽</div>
+    </div>
+    <div class="price-row">
+      <div class="price-row-info">
+        <h4>Комбинированный маникюр</h4>
+        <p>Сочетание аппаратной и классической техники</p>
+      </div>
+      <div class="price-row-val">2 800 ₽</div>
+    </div>
+    <div class="price-row">
+      <div class="price-row-info">
+        <h4>Аппаратный маникюр</h4>
+        <p>Безобрезная техника для тонкой и чувствительной кутикулы</p>
+      </div>
+      <div class="price-row-val">3 000 ₽</div>
+    </div>
+    <div class="price-row">
+      <div class="price-row-info">
+        <h4>Педикюр комплексный</h4>
+        <p>Обработка стоп, кутикулы, ногтей + покрытие</p>
+      </div>
+      <div class="price-row-val">3 500 ₽</div>
+    </div>
+    <div class="price-row">
+      <div class="price-row-info">
+        <h4>Авторский дизайн</h4>
+        <p>Роспись, стразы, слайдеры, абстракция — 1 ноготь</p>
+      </div>
+      <div class="price-row-val">от 500 ₽</div>
+    </div>
+    <div class="price-row">
+      <div class="price-row-info">
+        <h4>Снятие покрытия</h4>
+        <p>Аккуратное снятие гель-лака без повреждения ногтя</p>
+      </div>
+      <div class="price-row-val">500 ₽</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section" id="reviews">
+  <div class="section-label">Отзывы</div>
+  <h2 class="section-title">
+    Что говорят<br><em>клиенты</em>
+  </h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        «Елена — настоящий художник! Маникюр держится три недели
+        без сколов. Дизайн — всегда индивидуальный, под мой стиль.»
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">А</div>
+        <div>
+          <div class="testimonial-name">Анна</div>
+          <div class="testimonial-service">Маникюр + дизайн</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        «Хожу только к Елене. Педикюр — космический уровень,
+        кожа после процедуры как у младенца. Очень рекомендую!»
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">М</div>
+        <div>
+          <div class="testimonial-name">Мария</div>
+          <div class="testimonial-service">Педикюр</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        «Обожаю её авторский дизайн! Каждый раз что-то новое
+        и невероятное. Ногти выглядят как с обложки Vogue.»
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">Е</div>
+        <div>
+          <div class="testimonial-name">Екатерина</div>
+          <div class="testimonial-service">Дизайн + маникюр</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <div class="section-label" style="color:#666;">Контакты</div>
+      <h2 class="section-title">
+        Запись<br><em>на приём</em>
+      </h2>
+      <p class="section-desc">
+        Оставьте заявку — я свяжусь с вами в течение часа.
+        Работаю в центре Санкт-Петербурга.
+      </p>
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div><strong>Санкт-Петербург</strong><span>Центр города, м. Невский проспект</span></div>
+        </div>
+        <div class="contact-info-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div><strong>+7 (999) 123-45-67</strong><span>Звонок / WhatsApp / Telegram</span></div>
+        </div>
+        <div class="contact-info-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div><strong>10:00 — 20:00</strong><span>Ежедневно, по записи</span></div>
+        </div>
+      </div>
+    </div>
+    <form class="contact-form" onsubmit="event.preventDefault(); alert('Спасибо! Я свяжусь с вами ❤️');">
+      <h4>Оставить заявку</h4>
+      <p>Заполните форму — я перезвоню в ближайшее время</p>
+      <input type="text" placeholder="Ваше имя" required>
+      <input type="tel" placeholder="Номер телефона" required>
+      <select>
+        <option>Выберите услугу</option>
+        <option>Маникюр</option>
+        <option>Педикюр</option>
+        <option>Дизайн</option>
+        <option>Маникюр + педикюр</option>
+      </select>
+      <textarea placeholder="Удобное время и дата..."></textarea>
+      <button type="submit">Отправить заявку</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Елена<em> / Nail</em></div>
+    <div class="footer-social">
+      <a href="#" aria-label="Telegram">
+        <svg viewBox="0 0 24 24"><path d="M21.198 2.433a2.242 2.242 0 0 0-1.022-.215 2.492 2.492 0 0 0-1.02.242L2.06 10.92a1.735 1.735 0 0 0-.992 1.529 1.706 1.706 0 0 0 1.017 1.514l4.85 2.063 2.392 5.716a1.728 1.728 0 0 0 1.573 1.068h.016a1.73 1.73 0 0 0 1.189-.49l2.386-2.366 4.34 3.174a1.72 1.72 0 0 0 1.03.34 1.7 1.7 0 0 0 .84-.22 1.73 1.73 0 0 0 .94-1.698l-2.5-14.57a1.755 1.755 0 0 0-.72-1.125z" fill="currentColor"/></svg>
+      </a>
+      <a href="#" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" fill="currentColor"/></svg>
+      </a>
+      <a href="#" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+      </a>
+    </div>
+    <p class="footer-copy">
+      &copy; 2025 Елена · Nail Artist · Санкт-Петербург
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

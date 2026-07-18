@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nail Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --void:#000000;
+  --bone:#ffffff;
+  --ash:#9a9a9a;
+  --silver:#bdbdbd;
+  --iris:#8052ff;
+  --saffron:#ffb829;
+  --verdant:#15846e;
+  --font:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+}
+body{font-family:var(--font);background:var(--void);color:var(--bone);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+/* particles canvas */
+#particles-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:10;padding:18px 32px;background:transparent;max-width:1280px;margin:0 auto}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:14px;font-weight:600;color:var(--bone);text-transform:uppercase;letter-spacing:0.35px;display:flex;align-items:center;gap:8px}
+.nav-logo .mark{width:18px;height:18px;background:var(--iris);clip-path:polygon(50% 0%,0% 100%,100% 100%);display:inline-block}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{text-decoration:none;color:var(--ash);font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.35px;transition:color 0.3s}
+.nav-links a:hover{color:var(--bone)}
+.nav-cta{background:var(--iris);color:var(--bone);padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.35px;text-decoration:none;transition:opacity 0.3s}
+.nav-cta:hover{opacity:0.85}
+/* hero */
+.hero{min-height:100vh;padding:140px 32px 80px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;z-index:1;max-width:1280px;margin:0 auto}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;width:100%;position:relative;z-index:2}
+.hero-left{text-align:left}
+.badge{font-size:14px;font-weight:600;color:var(--saffron);text-transform:uppercase;letter-spacing:0.35px;margin-bottom:24px}
+.hero h1{font-size:clamp(48px,8vw,78px);font-weight:400;line-height:1.1;letter-spacing:-3.12px;color:var(--bone);margin-bottom:24px;max-width:600px}
+.hero p{font-size:18px;font-weight:200;line-height:1.5;color:var(--bone);max-width:480px;margin-bottom:36px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--iris);color:var(--bone);padding:14px 28px;border-radius:24px;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.35px;text-decoration:none;transition:opacity 0.3s}
+.hero-cta:hover{opacity:0.85}
+.hero-right{display:flex;align-items:center;justify-content:center;position:relative}
+.constellation-wrap{width:100%;max-width:400px;aspect-ratio:1;position:relative}
+.constellation-wrap canvas{width:100%;height:100%}
+/* features */
+.features{padding:120px 32px;max-width:1280px;margin:0 auto;position:relative;z-index:1}
+.features h2{font-size:48px;font-weight:400;line-height:1.1;letter-spacing:-1.68px;color:var(--bone);margin-bottom:60px;max-width:600px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:60px}
+.feature{text-align:left}
+.feature-icon{font-size:24px;color:var(--iris);margin-bottom:18px;font-weight:200}
+.feature h3{font-size:24px;font-weight:400;line-height:1.25;letter-spacing:-0.48px;color:var(--bone);margin-bottom:12px}
+.feature p{font-size:18px;font-weight:200;line-height:1.5;color:var(--silver)}
+/* steps */
+.steps{padding:120px 32px;position:relative;z-index:1;max-width:1280px;margin:0 auto}
+.steps h2{font-size:48px;font-weight:400;line-height:1.1;letter-spacing:-1.68px;color:var(--bone);margin-bottom:60px;max-width:600px}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:60px}
+.step{text-align:left}
+.step-num{font-size:14px;font-weight:600;color:var(--iris);text-transform:uppercase;letter-spacing:0.35px;margin-bottom:12px}
+.step h3{font-size:24px;font-weight:400;line-height:1.25;letter-spacing:-0.48px;color:var(--bone);margin-bottom:12px}
+.step p{font-size:18px;font-weight:200;line-height:1.5;color:var(--silver)}
+/* testimonial */
+.testimonial{padding:120px 32px;text-align:center;position:relative;z-index:1}
+.testimonial blockquote{font-size:36px;font-weight:200;line-height:1.2;color:var(--bone);max-width:700px;margin:0 auto 24px;letter-spacing:-0.48px}
+.testimonial cite{font-size:14px;font-weight:600;color:var(--iris);text-transform:uppercase;letter-spacing:0.35px;font-style:normal}
+/* cta */
+.cta-section{padding:120px 32px;text-align:center;position:relative;z-index:1}
+.cta-section h2{font-size:48px;font-weight:400;line-height:1.1;letter-spacing:-1.68px;color:var(--bone);margin-bottom:18px}
+.cta-section p{font-size:18px;font-weight:200;line-height:1.5;color:var(--silver);margin-bottom:36px}
+.cta-section .hero-cta{background:var(--iris)}
+footer{padding:60px 32px;text-align:center;font-size:14px;font-weight:200;color:var(--ash);position:relative;z-index:1}
+.footer-links{display:flex;gap:32px;justify-content:center;margin-bottom:18px}
+.footer-links a{color:var(--ash);text-decoration:none;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.35px;transition:color 0.3s}
+.footer-links a:hover{color:var(--bone)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+@media(max-width:768px){
+  .hero-grid,.features-grid,.steps-grid{grid-template-columns:1fr;gap:36px}
+  .hero h1{font-size:42px;letter-spacing:-1.68px}
+  .features h2,.steps h2,.cta-section h2{font-size:36px}
+  .nav-links{display:none}
+  .testimonial blockquote{font-size:24px}
+}
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo"><span class="mark"></span> Nail Studio</div>
+    <div class="nav-links">
+      <a href="#">Возможности</a>
+      <a href="#">Дизайны</a>
+      <a href="#">Отзывы</a>
+      <a href="#" class="nav-cta">Запустить</a>
+    </div>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="badge">💅 Салон в кармане</div>
+      <h1>Подбери дизайн ногтей за 10 секунд</h1>
+      <p>AI-подбор маникюра, 500+ дизайнов и запись в студию в одном боте</p>
+      <a href="#" class="hero-cta">Запустить бота</a>
+    </div>
+    <div class="hero-right">
+      <div class="constellation-wrap" id="constellation"></div>
+    </div>
+  </div>
+</section>
+<section class="features">
+  <h2>Всё что нужно для красоты</h2>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">&#x2726;</div>
+      <h3>500+ дизайнов</h3>
+      <p>Огромная коллекция на любой вкус — от классики до авангарда</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#x2726;</div>
+      <h3>AI-подбор</h3>
+      <p>Нейросеть подберёт дизайн под твою форму ногтей и образ</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">&#x2726;</div>
+      <h3>Запись в 1 клик</h3>
+      <p>Забронируй время в студии прямо из чата за 30 секунд</p>
+    </div>
+  </div>
+</section>
+<section class="steps">
+  <h2>Как это работает</h2>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Выбери дизайн</h3>
+      <p>Загрузи фото или выбери из каталога — AI покажет как будет выглядеть</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Примерь онлайн</h3>
+      <p>Нейросеть примерит дизайн на твои ногти в реальном времени</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Запишись</h3>
+      <p>Выбери удобное время и мастера — всё в одном чате</p>
+    </div>
+  </div>
+</section>
+<section class="testimonial">
+  <blockquote>Nail Studio изменил моё отношение к маникюру. AI подбирает дизайн точнее любого мастера.</blockquote>
+  <cite>— Анна, 28 лет</cite>
+</section>
+<section class="cta-section">
+  <h2>Готова к переменам?</h2>
+  <p>Первый дизайн — бесплатно</p>
+  <a href="#" class="hero-cta">Запустить бота</a>
+</section>
+<footer>
+  <div class="footer-links">
+    <a href="#">Возможности</a>
+    <a href="#">Дизайны</a>
+    <a href="#">Отзывы</a>
+  </div>
+  &copy; 2026 Nail Studio
+</footer>
+<script>
+// Background particles - triangles forming constellation
+const canvas=document.getElementById('particles-canvas');
+const ctx=canvas.getContext('2d');
+let particles=[],mouseX=-1e3,mouseY=-1e3;
+
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+
+const colors=['#8052ff','#ffb829','#15846e','#a855f7','#3b82f6','#ffffff'];
+
+class Particle{
+  constructor(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.size=Math.random()*2+0.5;
+    this.speedX=(Math.random()-0.5)*0.15;
+    this.speedY=(Math.random()-0.5)*0.15;
+    this.opacity=Math.random()*0.4+0.05;
+    this.color=colors[Math.floor(Math.random()*colors.length)];
+    this.angle=Math.random()*Math.PI*2;
+  }
+  update(){
+    this.x+=this.speedX;this.y+=this.speedY;
+    this.angle+=0.01;
+    const dx=mouseX-this.x,dy=mouseY-this.y,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<150){const f=(150-dist)/150*0.4;this.x-=dx/dist*f;this.y-=dy/dist*f}
+    if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height){
+      this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height
+    }
+  }
+  draw(){
+    const s=this.size*3;
+    ctx.save();
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.angle);
+    ctx.beginPath();
+    ctx.moveTo(0,-s);
+    ctx.lineTo(-s*0.866,s*0.5);
+    ctx.lineTo(s*0.866,s*0.5);
+    ctx.closePath();
+    ctx.strokeStyle=this.color;
+    ctx.lineWidth=1;
+    ctx.globalAlpha=this.opacity;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+const count=Math.min(Math.floor(canvas.width*canvas.height/20000),80);
+for(let i=0;i<count;i++)particles.push(new Particle());
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw()});
+  // Connection lines between nearby particles
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x;
+      const dy=particles[i].y-particles[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<180){
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x,particles[i].y);
+        ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle=`rgba(128,82,255,${(1-dist/180)*0.08})`;
+        ctx.lineWidth=0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animate)
+}
+animate();
+
+document.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY});
+</script>
+</body>
+</html>

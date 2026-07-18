@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BotForge — Telegram Bot Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0B0F14;--panel:#131A22;--panel2:#171F29;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--text:#E4E7EB;--text2:#9CA3AF;--text3:#6B7280;--cyan:#00D9FF;--teal:#14B8A6;--emerald:#10B981;--amber:#F59E0B;--red:#EF4444;--radius:8px;--sidebar:240px;--topbar:56px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow-x:hidden;min-height:100vh}
+input,button,select,textarea{font-family:inherit;outline:none}
+button{cursor:pointer;border:none;background:none;color:inherit}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--bg);border-right:1px solid var(--border);position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.content{flex:1;padding:24px;max-width:1400px}
+
+/* SIDEBAR */
+.sidebar-header{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sidebar-logo{width:28px;height:28px;background:linear-gradient(135deg,var(--cyan),var(--teal));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--bg);font-size:14px}
+.sidebar-title{font-weight:700;font-size:15px;letter-spacing:-0.3px}
+.sidebar-ver{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
+.nav-section{padding:8px 0}
+.nav-label{padding:6px 20px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;border-left:2px solid transparent;transition:all 0.12s}
+.nav-item:hover{background:rgba(255,255,255,0.03);color:var(--text)}
+.nav-item.active{background:rgba(0,217,255,0.05);color:var(--cyan);border-left-color:var(--cyan)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,0.08);color:var(--text2);font-weight:600}
+.nav-badge.err{background:rgba(239,68,68,0.15);color:var(--red)}
+.sidebar-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
+.sidebar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--bg)}
+
+/* TOPBAR */
+.topbar{height:var(--topbar);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:50}
+.topbar-search{flex:1;max-width:400px;position:relative}
+.topbar-search input{width:100%;height:34px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:0 12px 0 36px;color:var(--text);font-size:13px;transition:border-color 0.15s}
+.topbar-search input:focus{border-color:var(--cyan)}
+.topbar-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text3);pointer-events:none}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.topbar-btn{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text2);position:relative}
+.topbar-btn:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.topbar-btn svg{width:18px;height:18px}
+.notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%}
+.topbar-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--bg)}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-0.4px}
+.page-sub{font-size:13px;color:var(--text3);margin-top:2px}
+.page-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;transition:all 0.12s;white-space:nowrap}
+.btn svg{width:14px;height:14px}
+.btn-primary{background:var(--cyan);color:var(--bg)}
+.btn-primary:hover{background:#33DEFF}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{background:rgba(255,255,255,0.03)}
+.btn-danger{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.btn-danger:hover{background:rgba(239,68,68,0.15)}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.metric{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--cyan))}
+.metric-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:8px}
+.metric-val{font-size:28px;font-weight:700;letter-spacing:-0.5px}
+.metric-delta{font-size:11px;margin-top:4px;font-weight:500}
+.metric-delta.up{color:var(--emerald)}
+.metric-delta.down{color:var(--red)}
+.metric-icon{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--bg-icon,rgba(0,217,255,0.08));color:var(--accent,var(--cyan))}
+.metric-icon svg{width:18px;height:18px}
+
+/* CARD */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-hdr-title{font-size:15px;font-weight:600}
+
+/* TABLE */
+.tbl-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.tbl-hdr{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px}
+.tbl-hdr-title{font-size:14px;font-weight:600}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--panel2)}
+th{text-align:left;padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-on{background:rgba(16,185,129,0.12);color:var(--emerald)}
+.badge-off{background:rgba(107,114,128,0.12);color:var(--text3)}
+.badge-wh{background:rgba(0,217,255,0.1);color:var(--cyan)}
+.badge-pl{background:rgba(20,184,166,0.1);color:var(--teal)}
+.badge-i{background:rgba(0,217,255,0.1);color:var(--cyan)}
+.badge-w{background:rgba(245,158,11,0.1);color:var(--amber)}
+.badge-e{background:rgba(239,68,68,0.1);color:var(--red)}
+.badge-owner{background:rgba(245,158,11,0.12);color:var(--amber)}
+.badge-admin{background:rgba(0,217,255,0.12);color:var(--cyan)}
+.badge-editor{background:rgba(20,184,166,0.12);color:var(--teal)}
+.badge-viewer{background:rgba(156,163,175,0.12);color:var(--text2)}
+.badge-dot{width:6px;height:6px;border-radius:50%}
+
+/* BOT CELL */
+.bot-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--bg);flex-shrink:0}
+.bot-cell{display:flex;align-items:center;gap:10px}
+.bot-name{font-weight:600;font-size:13px}
+.bot-un{font-size:11px;color:var(--text3)}
+.token{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:12px;width:480px;max-width:90vw;max-height:90vh;overflow-y:auto}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.modal-close:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.modal-body{padding:24px}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+/* FORM */
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.fi{width:100%;height:38px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:0 12px;color:var(--text);font-size:13px;transition:border-color 0.15s}
+.fi:focus{border-color:var(--cyan)}
+.fh{font-size:11px;color:var(--text3);margin-top:4px}
+.fs{width:100%;height:38px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:0 12px;color:var(--text);font-size:13px;cursor:pointer}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;gap:0}
+.tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.12s}
+.tab:hover{color:var(--text)}
+.tab.act{color:var(--cyan);border-bottom-color:var(--cyan)}
+.tab-cnt{font-size:10px;padding:1px 5px;border-radius:8px;background:rgba(255,255,255,0.08);margin-left:4px}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 24px}
+.empty-icon{width:64px;height:64px;margin:0 auto 16px;border-radius:16px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:var(--text3)}
+.empty-icon svg{width:32px;height:32px}
+.empty-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.empty-text{font-size:13px;color:var(--text3);max-width:360px;margin:0 auto 20px}
+
+/* TOAST */
+.toast-box{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3);min-width:300px;animation:slideIn 0.2s}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.s{border-left:3px solid var(--emerald)}
+.toast.e{border-left:3px solid var(--red)}
+.toast.i{border-left:3px solid var(--cyan)}
+.toast-icon{width:20px;height:20px;flex-shrink:0}
+.toast-txt{font-size:12px;flex:1}
+
+/* TOGGLE */
+.toggle{width:36px;height:20px;background:rgba(255,255,255,0.1);border-radius:10px;position:relative;cursor:pointer;transition:background 0.2s;display:inline-block}
+.toggle.on{background:var(--emerald)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.2s}
+.toggle.on::after{transform:translateX(16px)}
+
+/* CHART */
+.chart-box{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:160px;margin-top:16px}
+.chart-bar{flex:1;border-radius:3px 3px 0 0;position:relative;min-height:4px;cursor:pointer}
+.chart-bar:hover{opacity:0.8}
+.chart-lbl{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text3);white-space:nowrap}
+.chart-legend{display:flex;gap:16px;margin-top:24px}
+.chart-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.chart-dot{width:8px;height:8px;border-radius:2px}
+
+/* FILTER PILLS */
+.pills{display:flex;gap:6px}
+.pill{padding:4px 12px;border-radius:16px;font-size:11px;font-weight:600;color:var(--text2);background:rgba(255,255,255,0.04);cursor:pointer;transition:all 0.12s;border:1px solid transparent}
+.pill:hover{background:rgba(255,255,255,0.08)}
+.pill.act{background:rgba(0,217,255,0.1);color:var(--cyan);border-color:rgba(0,217,255,0.2)}
+.pill.act-red{background:rgba(239,68,68,0.1);color:var(--red);border-color:rgba(239,68,68,0.2)}
+
+/* PROGRESS */
+.progress{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.3s}
+
+/* CHECKBOX */
+.cbx{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.12s}
+.cbx.on{background:var(--cyan);border-color:var(--cyan)}
+.cbx svg{display:none;width:12px;height:12px;color:var(--bg)}
+.cbx.on svg{display:block}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;gap:24px}
+.donut{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--cyan) 0% 35%,var(--teal) 35% 65%,var(--emerald) 65% 85%,var(--amber) 85% 100%);position:relative}
+.donut::after{content:'';position:absolute;top:20%;left:20%;width:60%;height:60%;background:var(--panel);border-radius:50%}
+.donut-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:1}
+.donut-inner-val{font-size:20px;font-weight:700}
+.donut-inner-lbl{font-size:10px;color:var(--text3);text-transform:uppercase}
+.donut-legend{display:flex;flex-direction:column;gap:8px}
+.donut-legend-item{display:flex;align-items:center;gap:8px;font-size:12px}
+.donut-legend-dot{width:8px;height:8px;border-radius:2px}
+.donut-legend-val{margin-left:auto;font-weight:600;color:var(--text2)}
+
+/* PAGE HIDE */
+.page{display:none}
+.page.act{display:block}
+
+@media(max-width:1024px){.metrics{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
+@media(max-width:768px){
+.sidebar{transform:translateX(-100%);position:fixed;z-index:100}.sidebar.open{transform:translateX(0)}
+.main{margin-left:0}.metrics{grid-template-columns:1fr}.topbar-search{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="sidebar-logo">B</div>
+<div><div class="sidebar-title">BotForge</div><div class="sidebar-ver">v2.4.0</div></div>
+</div>
+<nav class="nav-section">
+<div class="nav-label">Управление</div>
+<div class="nav-item active" data-page="dashboard"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</div>
+<div class="nav-item" data-page="bots"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>Мои боты<span class="nav-badge" id="botCount">0</span></div>
+<div class="nav-item" data-page="broadcasts"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.594l-2.147-6.15M18 13a3 3 0 01-3 3h-2.382m0 0a3 3 0 01-2.598-1.528M12 2.76L7.5 12h9L12 2.76z"/></svg>Рассылки</div>
+<div class="nav-item" data-page="logs"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4V9m4-4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>Логи<span class="nav-badge err" id="errCount">3</span></div>
+<div class="nav-item" data-page="analytics"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 12l3-3 3 3 4-4M3 3v18h18"/></svg>Аналитика</div>
+</nav>
+<nav class="nav-section">
+<div class="nav-label">Настройки</div>
+<div class="nav-item" data-page="integrations"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>Интеграции</div>
+<div class="nav-item" data-page="team"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a4 4 0 00-5-3.47M9 20H4v-2a4 4 0 015-3.47m6.363-2.363a4 4 0 10-5.656-5.656 4 4 0 005.656 5.656z"/></svg>Команда</div>
+<div class="nav-item" data-page="settings"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Настройки</div>
+<div class="nav-item" data-page="billing"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>Биллинг</div>
+<div class="nav-item" data-page="audit"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Аудит</div>
+</nav>
+<div class="sidebar-footer">
+<div class="sidebar-avatar">А</div>
+<div>Андрей <span style="color:var(--text3);font-weight:400;font-size:11px">· Owner</span></div>
+</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+<header class="topbar">
+<div class="topbar-search">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+<input type="text" id="searchInput" placeholder="Поиск ботов, логов..." oninput="doSearch(this.value)">
+</div>
+<div class="topbar-actions">
+<button class="topbar-btn" onclick="showToast('i','Новых уведомлений нет')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg><div class="notif-dot"></div></button>
+<button class="topbar-btn" onclick="showToast('i','Настройки профиля')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
+<div class="topbar-avatar">А</div>
+</div>
+</header>
+
+<div class="content" id="content">
+
+<!-- DASHBOARD -->
+<div class="page act" id="p-dashboard">
+<div class="page-header">
+<div><div class="page-title">Dashboard</div><div class="page-sub">Обзор твоих Telegram ботов</div></div>
+<div class="page-actions">
+<button class="btn btn-secondary" onclick="goPage('logs')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4V9m4-4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>Логи</button>
+<button class="btn btn-primary" onclick="openModal()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Добавить бота</button>
+</div>
+</div>
+<div class="metrics" id="dashMetrics"></div>
+<div class="chart-box">
+<div class="card-hdr"><div class="card-hdr-title">Активность за 24ч</div><div class="pills"><div class="pill act">24H</div><div class="pill" onclick="showToast('i','Статистика за 7 дней')">7D</div><div class="pill" onclick="showToast('i','Статистика за 30 дней')">30D</div></div></div>
+<div class="chart-bars" id="dashChart"></div>
+<div class="chart-legend">
+<div class="chart-legend-item"><div class="chart-dot" style="background:var(--cyan)"></div>Сообщения</div>
+<div class="chart-legend-item"><div class="chart-dot" style="background:var(--teal)"></div>Команды</div>
+<div class="chart-legend-item"><div class="chart-dot" style="background:var(--amber)"></div>Ошибки</div>
+</div>
+</div>
+<div class="g2">
+<div class="card">
+<div class="card-hdr"><div class="card-hdr-title">Последние события</div><button class="btn btn-sm btn-secondary" onclick="goPage('logs')">Все</button></div>
+<div id="recentEvents"></div>
+</div>
+<div class="card">
+<div class="card-hdr"><div class="card-hdr-title">Топ ботов</div></div>
+<div id="topBots"></div>
+</div>
+</div>
+</div>
+
+<!-- BOTS -->
+<div class="page" id="p-bots">
+<div class="page-header">
+<div><div class="page-title">Мои боты</div><div class="page-sub">Управление подключёнными ботами</div></div>
+<div class="page-actions"><button class="btn btn-primary" onclick="openModal()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Добавить бота</button></div>
+</div>
+<div class="tbl-wrap">
+<div class="tbl-hdr"><div class="tbl-hdr-title">Все боты</div><span style="font-size:12px;color:var(--text3)" id="botCountLabel">0</span></div>
+<div class="tbl-scroll">
+<table><thead><tr><th>Бот</th><th>Статус</th><th>Режим</th><th>Пользователи</th><th>Команды</th><th>Токен</th><th>Действия</th></tr></thead>
+<tbody id="botTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- BROADCASTS -->
+<div class="page" id="p-broadcasts">
+<div class="page-header"><div><div class="page-title">Рассылки</div><div class="page-sub">Массовые сообщения пользователям</div></div><div class="page-actions"><button class="btn btn-primary" onclick="showToast('s','Режим создания рассылки')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Новая рассылка</button></div></div>
+<div class="empty"><div class="empty-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.594l-2.147-6.15M18 13a3 3 0 01-3 3h-2.382m0 0a3 3 0 01-2.598-1.528M12 2.76L7.5 12h9L12 2.76z"/></svg></div><div class="empty-title">Рассылок пока нет</div><div class="empty-text">Создайте первую рассылку для отправки сообщений всем пользователям бота.</div><button class="btn btn-primary">Создать</button></div>
+</div>
+
+<!-- LOGS -->
+<div class="page" id="p-logs">
+<div class="page-header">
+<div><div class="page-title">Логи и события</div><div class="page-sub">Поток событий в реальном времени</div></div>
+<div class="page-actions"><div class="pills" id="logFilter"><div class="pill act" data-filter="all">Все</div><div class="pill" data-filter="ERROR">Ошибки</div><div class="pill" data-filter="WARN">Предупреждения</div><div class="pill" data-filter="INFO">Инфо</div></div></div>
+</div>
+<div class="tbl-wrap">
+<div class="tbl-hdr"><div class="tbl-hdr-title">Журнал событий</div><button class="btn btn-sm btn-secondary" onclick="showToast('s','Логи экспортированы')">Экспорт CSV</button></div>
+<div class="tbl-scroll">
+<table><thead><tr><th>Время</th><th>Бот</th><th>Уровень</th><th>Сообщение</th></tr></thead>
+<tbody id="logTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="page" id="p-analytics">
+<div class="page-header"><div><div class="page-title">Аналитика</div><div class="page-sub">Метрики производительности</div></div><div class="page-actions"><div class="pills"><div class="pill" onclick="showToast('i','За 7 дней')">7D</div><div class="pill act">30D</div><div class="pill" onclick="showToast('i','За 90 дней')">90D</div></div></div></div>
+<div class="metrics" id="analyticsMetrics"></div>
+<div class="g2">
+<div class="card">
+<div class="card-hdr"><div class="card-hdr-title">Распределение сообщений</div></div>
+<div class="donut-wrap"><div class="donut"><div class="donut-inner"><div class="donut-inner-val">1.24M</div><div class="donut-inner-lbl">Всего</div></div></div><div class="donut-legend" id="donutLegend"></div></div>
+</div>
+<div class="card">
+<div class="card-hdr"><div class="card-hdr-title">Активность по дням</div></div>
+<div class="chart-bars" id="analyticsChart" style="height:140px"></div>
+</div>
+</div>
+</div>
+
+<!-- INTEGRATIONS -->
+<div class="page" id="p-integrations">
+<div class="page-header"><div><div class="page-title">Интеграции</div><div class="page-sub">Подключение внешних сервисов</div></div></div>
+<div class="g3" id="integrationsGrid"></div>
+</div>
+
+<!-- TEAM -->
+<div class="page" id="p-team">
+<div class="page-header"><div><div class="page-title">Команда и роли</div><div class="page-sub">Управление доступом</div></div><div class="page-actions"><button class="btn btn-primary" onclick="showToast('s','Приглашение отправлено')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Пригласить</button></div></div>
+<div class="tbl-wrap">
+<div class="tbl-hdr"><div class="tbl-hdr-title">Участники (3)</div></div>
+<table><thead><tr><th>Участник</th><th>Email</th><th>Роль</th><th>Активность</th></tr></thead>
+<tbody id="teamTableBody"></tbody>
+</table>
+</div>
+<div class="card" style="margin-top:24px">
+<div class="card-hdr"><div class="card-hdr-title">Матрица прав</div></div>
+<table><thead><tr><th>Действие</th><th>Owner</th><th>Admin</th><th>Editor</th><th>Viewer</th></tr></thead>
+<tbody id="permMatrix"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="p-settings">
+<div class="page-header"><div><div class="page-title">Настройки</div><div class="page-sub">Конфигурация платформы</div></div></div>
+<div class="card" style="max-width:600px">
+<div class="card-hdr"><div class="card-hdr-title">Общие</div></div>
+<div class="fg"><label class="fl">Название рабочего пространства</label><input class="fi" value="BotForge HQ" id="wsName"></div>
+<div class="fg"><label class="fl">Режим по умолчанию</label><select class="fs"><option selected>Polling</option><option>Webhook</option></select></div>
+<div class="fg" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0"><span style="font-size:13px">Авто-переподключение</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="fg" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0"><span style="font-size:13px">Уведомления об ошибках</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<button class="btn btn-primary" onclick="showToast('s','Настройки сохранены')">Сохранить</button>
+</div>
+</div>
+
+<!-- BILLING -->
+<div class="page" id="p-billing">
+<div class="page-header"><div><div class="page-title">Биллинг</div><div class="page-sub">Подписка и использование</div></div></div>
+<div class="metrics" id="billingMetrics"></div>
+</div>
+
+<!-- AUDIT -->
+<div class="page" id="p-audit">
+<div class="page-header"><div><div class="page-title">Аудит</div><div class="page-sub">Журнал безопасности</div></div></div>
+<div class="tbl-wrap">
+<table><thead><tr><th>Время</th><th>Пользователь</th><th>Действие</th><th>Ресурс</th><th>IP</th></tr></thead>
+<tbody id="auditTableBody"></tbody>
+</table>
+</div>
+</div>
+
+</div><!-- content -->
+</div><!-- main -->
+</div><!-- app -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+<div class="modal">
+<div class="modal-hdr"><div class="modal-title">Добавить бота</div><button class="modal-close" onclick="closeModal()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button></div>
+<div class="modal-body">
+<div class="fg"><label class="fl">Токен бота *</label><input class="fi" id="tokenInput" placeholder="123456789:ABCdefGHIjklMNOp" style="font-family:'JetBrains Mono',monospace"></div>
+<div class="fh">Получить токен можно у <a href="https://t.me/BotFather" style="color:var(--cyan)" target="_blank">@BotFather</a> в Telegram</div>
+<div class="fg" style="margin-top:16px"><label class="fl">Название</label><input class="fi" id="nameInput" placeholder="Мой бот"></div>
+<div class="fg"><label class="fl">Режим подключения</label><select class="fs" id="modeInput"><option value="Polling">Polling (рекомендуется)</option><option value="Webhook">Webhook</option></select></div>
+<div style="display:flex;align-items:center;gap:8px;padding:12px;background:rgba(0,217,255,0.05);border-radius:6px;margin-top:8px"><svg width="16" height="16" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-size:12px;color:var(--text2)">Токен шифруется и хранится безопасно</span></div>
+</div>
+<div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal()">Отмена</button><button class="btn btn-primary" onclick="addBot()">Добавить</button></div>
+</div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-box" id="toastBox"></div>
+
+<script>
+// DATA
+let bots = [
+{id:'d1',name:'DealBot63',un:'@DealBot63_bot',color:'#00D9FF',status:'online',mode:'Polling',users:8432,cmds:12,token:'8585••••••••F5Wk',clr2:'#14B8A6'},
+{id:'h1',name:'HermesStudy',un:'@HermesStudy_bot',color:'#14B8A6',status:'online',mode:'Webhook',users:3847,cmds:8,token:'8585••••••••E2x9',clr2:'#10B981'},
+{id:'n1',name:'NailBot',un:'@NailBot_bot',color:'#F59E0B',status:'online',mode:'Polling',users:1204,cmds:6,token:'7291••••••••K3mZ',clr2:'#EF4444'},
+{id:'x1',name:'DebiHackBot',un:'@DebiHackBot',color:'#EF4444',status:'offline',mode:'Webhook',users:164,cmds:5,token:'8942••••••••ImH8',clr2:'#F59E0B'}
+];
+let logs = [
+{ts:'2026-07-11 19:42:15',bot:'@DealBot63_bot',lvl:'INFO',msg:'Бот запущен в режиме polling'},
+{ts:'2026-07-11 19:28:03',bot:'@HermesStudy_bot',lvl:'WARN',msg:'Лимит запросов 80% (28/30 в мин)'},
+{ts:'2026-07-11 18:45:22',bot:'@DebiHackBot',lvl:'ERROR',msg:'Ошибка webhook: соединение отклонено'},
+{ts:'2026-07-11 17:12:08',bot:'@NailBot_bot',lvl:'INFO',msg:'Новая команда /booking зарегистрирована'},
+{ts:'2026-07-11 16:33:41',bot:'@DealBot63_bot',lvl:'INFO',msg:'Рассылка отправлена 8432 пользователям'},
+{ts:'2026-07-11 15:08:17',bot:'@HermesStudy_bot',lvl:'WARN',msg:'Использование памяти 78%'},
+{ts:'2026-07-11 14:22:55',bot:'@DebiHackBot',lvl:'ERROR',msg:'Таймаут API: DashScope 503'},
+{ts:'2026-07-11 13:45:02',bot:'@DealBot63_bot',lvl:'INFO',msg:'Пользователь выполнил /start'},
+{ts:'2026-07-11 12:30:00',bot:'@HermesStudy_bot',lvl:'INFO',msg:'Обновление конфигурации применено'},
+{ts:'2026-07-11 11:15:44',bot:'@NailBot_bot',lvl:'WARN',msg:'Высокая загрузка CPU: 85%'}
+];
+let team = [
+{name:'Андрей',email:'andrey@botforge.io',role:'Owner',color:'#F59E0B',active:'Сейчас',clr2:'#EF4444'},
+{name:'Debi',email:'debi@hackbot.io',role:'Admin',color:'#00D9FF',active:'1ч назад',clr2:'#14B8A6'},
+{name:'CJ',email:'cj@grove.fm',role:'Editor',color:'#14B8A6',active:'3ч назад',clr2:'#10B981'}
+];
+let audit = [
+{ts:'2026-07-11 19:42',user:'Андрей',action:'Вход',res:'Dashboard',ip:'83.143.12.1'},
+{ts:'2026-07-11 18:30',user:'Андрей',action:'Бот добавлен',res:'@DebiHackBot',ip:'83.143.12.1'},
+{ts:'2026-07-11 17:15',user:'CJ',action:'Рассылка',res:'@DealBot63_bot',ip:'83.143.12.1'},
+{ts:'2026-07-11 16:00',user:'Debi',action:'Роль изменена',res:'CJ → Editor',ip:'83.143.12.1'}
+];
+let integrations = [
+{name:'DashScope AI',desc:'Qwen, DeepSeek',icon:'cyan',status:'connected'},
+{name:'Groq API',desc:'Llama, Qwen',icon:'teal',status:'connected'},
+{name:'OmniRoute',desc:'Мульти-провайдер',icon:'emerald',status:'connected'},
+{name:'Mistral AI',desc:'Mistral модели',icon:'amber',status:'disconnected'},
+{name:'OpenRouter',desc:'100+ моделей',icon:'cyan',status:'disconnected'},
+{name:'Cerebras',desc:'Llama 3.3 70B',icon:'teal',status:'disconnected'}
+];
+
+// PAGES
+function goPage(name){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));
+document.getElementById('p-'+name).classList.add('act');
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+document.querySelector(`.nav-item[data-page="${name}"]`).classList.add('active');
+}
+document.querySelectorAll('.nav-item').forEach(el=>{
+el.addEventListener('click',function(){goPage(this.dataset.page)});
+});
+
+// MODAL
+function openModal(){document.getElementById('modal').classList.add('show');document.getElementById('tokenInput').focus()}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
+
+// ADD BOT
+function addBot(){
+let t=document.getElementById('tokenInput').value.trim();
+let n=document.getElementById('nameInput').value.trim()||'New Bot';
+let m=document.getElementById('modeInput').value;
+if(!t){showToast('e','Введите токен бота');return}
+let id='b'+Date.now();
+let colors=['#00D9FF','#14B8A6','#10B981','#F59E0B','#EF4444'];
+let c=colors[bots.length%colors.length];
+let clr2=colors[(bots.length+1)%colors.length];
+bots.push({id,name:n,un:'@'+n.toLowerCase().replace(/[^a-z0-9]/g,'_'),color:c,status:'online',mode:m,users:0,cmds:0,token:t.substring(0,4)+'••••••••'+t.slice(-4),clr2});
+renderAll();
+closeModal();
+document.getElementById('tokenInput').value='';
+document.getElementById('nameInput').value='';
+showToast('s','Бот '+n+' успешно добавлен');
+}
+
+// DELETE BOT
+function deleteBot(id){
+if(!confirm('Удалить бота?'))return;
+bots=bots.filter(b=>b.id!==id);
+renderAll();
+showToast('i','Бот удалён');
+}
+
+// RENDER ALL
+function renderAll(){
+renderBots();
+renderDashboard();
+renderLogs();
+renderAnalytics();
+renderTeam();
+renderAudit();
+renderIntegrations();
+renderBilling();
+document.getElementById('botCount').textContent=bots.length;
+document.getElementById('botCountLabel').textContent=bots.length+' ботов';
+let errs=logs.filter(l=>l.lvl==='ERROR').length;
+document.getElementById('errCount').textContent=errs;
+}
+
+function renderBots(){
+let t=document.getElementById('botTableBody');
+t.innerHTML=bots.map(b=>`<tr><td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,${b.color},${b.clr2})">${b.name[0]}</div><div><div class="bot-name">${b.name}</div><div class="bot-un">${b.un}</div></div></div></td><td><div class="badge ${b.status==='online'?'badge-on':'badge-off'}"><div class="badge-dot" style="background:${b.status==='online'?'var(--emerald)':'var(--text3)'}"></div>${b.status==='online'?'Online':'Offline'}</div></td><td><div class="badge ${b.mode==='Webhook'?'badge-wh':'badge-pl'}">${b.mode}</div></td><td>${b.users.toLocaleString()}</td><td>${b.cmds}</td><td><span class="token">${b.token}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-secondary" onclick="showToast('s','Тест ${b.un} пройден')">Test</button><button class="btn btn-sm btn-secondary" onclick="showToast('i','Редактирование ${b.name}')">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteBot('${b.id}')">Delete</button></div></td></tr>`).join('');
+}
+
+function renderDashboard(){
+let totalUsers=bots.reduce((s,b)=>s+b.users,0);
+let totalMsgs=89200;
+let errors=logs.filter(l=>l.lvl==='ERROR').length;
+document.getElementById('dashMetrics').innerHTML=`
+<div class="metric" style="--accent:var(--cyan)"><div class="metric-icon" style="--accent:var(--cyan);--bg-icon:rgba(0,217,255,0.08)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><div class="metric-label">Активные боты</div><div class="metric-val">${bots.filter(b=>b.status==='online').length}</div><div class="metric-delta up">▲ +1 на этой неделе</div></div>
+<div class="metric" style="--accent:var(--teal)"><div class="metric-icon" style="--accent:var(--teal);--bg-icon:rgba(20,184,166,0.08)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a4 4 0 00-5-3.47M9 20H4v-2a4 4 0 015-3.47m6.363-2.363a4 4 0 10-5.656-5.656 4 4 0 005.656 5.656z"/></svg></div><div class="metric-label">Всего пользователей</div><div class="metric-val">${totalUsers.toLocaleString()}</div><div class="metric-delta up">▲ +832 (+6.9%)</div></div>
+<div class="metric" style="--accent:var(--emerald)"><div class="metric-icon" style="--accent:var(--emerald);--bg-icon:rgba(16,185,129,0.08)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 14.762 3 13.318 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><div class="metric-label">Сообщений сегодня</div><div class="metric-val">${totalMsgs.toLocaleString()}</div><div class="metric-delta up">▲ +12.4%</div></div>
+<div class="metric" style="--accent:var(--amber)"><div class="metric-icon" style="--accent:var(--amber);--bg-icon:rgba(245,158,11,0.08)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-2.99l-6.93-12a2 2 0 00-3.48 0l-6.93 12A2 2 0 005.07 19z"/></svg></div><div class="metric-label">Ошибки</div><div class="metric-val">${errors}</div><div class="metric-delta down">▼ -2</div></div>`;
+// Recent events
+let ev=document.getElementById('recentEvents');
+ev.innerHTML=logs.slice(0,4).map(l=>{
+let cls=l.lvl==='ERROR'?'badge-e':l.lvl==='WARN'?'badge-w':'badge-i';
+return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div class="badge ${cls}">${l.lvl}</div><span style="font-size:12px;flex:1">${l.msg}</span><span style="font-size:11px;color:var(--text3)">${l.ts.split(' ')[1]}</span></div>`;
+}).join('');
+// Top bots
+let tb=document.getElementById('topBots');
+let sorted=[...bots].sort((a,b)=>b.users-a.users);
+let maxU=Math.max(...sorted.map(b=>b.users));
+tb.innerHTML=sorted.map(b=>{
+let pct=Math.round(b.users/maxU*100);
+return `<div style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,${b.color},${b.clr2});width:24px;height:24px;font-size:10px">${b.name[0]}</div><span style="font-size:13px;font-weight:600">${b.un}</span></div><span style="font-size:12px;color:var(--text2)">${b.users.toLocaleString()} users</span></div><div class="progress"><div class="progress-fill" style="width:${pct}%;background:${b.color}"></div></div></div>`;
+}).join('');
+// Chart
+let c=document.getElementById('dashChart');c.innerHTML='';
+for(let i=0;i<24;i++){
+let bar=document.createElement('div');bar.className='chart-bar';
+let h=Math.random()*120+40;
+bar.style.height=h+'px';
+bar.style.background='linear-gradient(180deg,var(--cyan),rgba(0,217,255,0.1))';
+c.appendChild(bar);
+}
+}
+
+function renderLogs(){
+let filter='all';
+document.querySelectorAll('#logFilter .pill').forEach(p=>{
+p.addEventListener('click',function(){
+document.querySelectorAll('#logFilter .pill').forEach(x=>x.classList.remove('act'));
+this.classList.add('act');
+renderLogsTable();
+});
+});
+renderLogsTable();
+}
+function renderLogsTable(){
+let filter=document.querySelector('#logFilter .pill.act')?.dataset?.filter||'all';
+let filtered=filter==='all'?logs:logs.filter(l=>l.lvl===filter);
+document.getElementById('logTableBody').innerHTML=filtered.map(l=>{
+let cls=l.lvl==='ERROR'?'badge-e':l.lvl==='WARN'?'badge-w':'badge-i';
+return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">${l.ts}</td><td>${l.bot}</td><td><div class="badge ${cls}">${l.lvl}</div></td><td>${l.msg}</td></tr>`;
+}).join('');
+}
+
+function renderAnalytics(){
+document.getElementById('analyticsMetrics').innerHTML=`
+<div class="metric" style="--accent:var(--cyan)"><div class="metric-label">Отправлено сообщений</div><div class="metric-val">1.24M</div><div class="metric-delta up">▲ +18.2%</div></div>
+<div class="metric" style="--accent:var(--teal)"><div class="metric-label">Активные пользователи</div><div class="metric-val">8,432</div><div class="metric-delta up">▲ +6.9%</div></div>
+<div class="metric" style="--accent:var(--emerald)"><div class="metric-label">Выполнено команд</div><div class="metric-val">456K</div><div class="metric-delta up">▲ +12.1%</div></div>
+<div class="metric" style="--accent:var(--amber)"><div class="metric-label">Процент ошибок</div><div class="metric-val">0.3%</div><div class="metric-delta down">▼ -0.1%</div></div>`;
+let dl=document.getElementById('donutLegend');
+let total=bots.reduce((s,b)=>s+b.users,0);
+let donutColors=['var(--cyan)','var(--teal)','var(--emerald)','var(--amber)'];
+dl.innerHTML=bots.map((b,i)=>{
+let pct=Math.round(b.users/total*100);
+return `<div class="donut-legend-item"><div class="donut-legend-dot" style="background:${donutColors[i%4]}"></div>${b.name}<span class="donut-legend-val">${b.users.toLocaleString()} (${pct}%)</span></div>`;
+}).join('');
+let ac=document.getElementById('analyticsChart');ac.innerHTML='';
+for(let i=0;i<30;i++){
+let bar=document.createElement('div');bar.className='chart-bar';
+let h=Math.random()*100+20;
+bar.style.height=h+'px';
+bar.style.background='linear-gradient(180deg,var(--teal),rgba(20,184,166,0.1))';
+ac.appendChild(bar);
+}
+}
+
+function renderTeam(){
+document.getElementById('teamTableBody').innerHTML=team.map(t=>{
+let cls=t.role==='Owner'?'badge-owner':t.role==='Admin'?'badge-admin':t.role==='Editor'?'badge-editor':'badge-viewer';
+return `<tr><td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,${t.color},${t.clr2})">${t.name[0]}</div><div><div class="bot-name">${t.name}</div><div class="bot-un">${t.email}</div></div></div></td><td>${t.email}</td><td><div class="badge ${cls}">${t.role}</div></td><td style="color:var(--text3)">${t.active}</td></tr>`;
+}).join('');
+// Perm matrix
+let perms=[
+['Просмотр ботов',1,1,1,1],
+['Добавление/редактирование',1,1,1,0],
+['Удаление ботов',1,1,0,0],
+['Рассылки',1,1,1,0],
+['Управление командой',1,1,0,0],
+['Биллинг',1,0,0,0]
+];
+document.getElementById('permMatrix').innerHTML=perms.map(p=>{
+return `<tr><td style="font-size:13px">${p[0]}</td>${[1,2,3,4].map(i=>`<td><div class="cbx ${p[i]?'on':''}"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td>`).join('')}</tr>`;
+}).join('');
+document.querySelectorAll('.cbx').forEach(c=>{c.addEventListener('click',function(){this.classList.toggle('on')})});
+}
+
+function renderAudit(){
+document.getElementById('auditTableBody').innerHTML=audit.map(a=>{
+return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">${a.ts}</td><td>${a.user}</td><td>${a.action}</td><td>${a.res}</td><td>${a.ip}</td></tr>`;
+}).join('');
+}
+
+function renderIntegrations(){
+document.getElementById('integrationsGrid').innerHTML=integrations.map(i=>{
+let iconsvg='<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>';
+let online=i.status==='connected';
+return `<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:40px;height:40px;border-radius:8px;background:rgba(${i.icon==='cyan'?'0,217,255':i.icon==='teal'?'20,184,166':i.icon==='emerald'?'16,185,129':'245,158,11'},0.08);display:flex;align-items:center;justify-content:center;color:var(--${i.icon})">${iconsvg}</div><div><div style="font-weight:600;font-size:14px">${i.name}</div><div style="font-size:11px;color:var(--text3)">${i.desc}</div></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="badge ${online?'badge-on':'badge-off'}">${online?'Подключено':'Не подключено'}</div><button class="btn btn-sm ${online?'btn-secondary':'btn-primary'}" onclick="showToast('${online?'i':'s'}','${online?'Настройки '+i.name:'Подключение '+i.name}')">${online?'Настроить':'Подключить'}</button></div></div>`;
+}).join('');
+}
+
+function renderBilling(){
+document.getElementById('billingMetrics').innerHTML=`
+<div class="metric" style="--accent:var(--emerald)"><div class="metric-label">Тариф</div><div class="metric-val" style="font-size:20px">Pro</div><div class="metric-delta">$29/мес</div></div>
+<div class="metric" style="--accent:var(--cyan)"><div class="metric-label">Ботов используется</div><div class="metric-val">${bots.length} / 10</div><div class="progress" style="margin-top:8px"><div class="progress-fill" style="width:${(bots.length/10*100)}%;background:var(--cyan)"></div></div></div>
+<div class="metric" style="--accent:var(--teal)"><div class="metric-label">Сообщений в этом месяце</div><div class="metric-val">1.24M</div><div class="metric-delta">Лимит: 5M</div></div>
+<div class="metric" style="--accent:var(--amber)"><div class="metric-label">Следующий платёж</div><div class="metric-val" style="font-size:20px">1 авг</div><div class="metric-delta">$29.00</div></div>`;
+}
+
+// TOAST
+function showToast(type,msg){
+let box=document.getElementById('toastBox');
+let t=document.createElement('div');t.className='toast '+type;
+let icons={'s':'<svg class="toast-icon" fill="none" stroke="var(--emerald)" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>','e':'<svg class="toast-icon" fill="none" stroke="var(--red)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-2.99l-6.93-12a2 2 0 00-3.48 0l-6.93 12A2 2 0 005.07 19z"/></svg>','i':'<svg class="toast-icon" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'};
+t.innerHTML=(icons[type]||icons.i)+'<span class="toast-txt">'+msg+'</span>';
+box.appendChild(t);
+setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100%)';setTimeout(()=>t.remove(),200)},3000);
+}
+
+// SEARCH
+function doSearch(q){
+q=q.toLowerCase();
+let filtered=bots.filter(b=>b.name.toLowerCase().includes(q)||b.un.toLowerCase().includes(q));
+let t=document.getElementById('botTableBody');
+t.innerHTML=filtered.map(b=>`<tr><td>...</td></tr>`).join('');
+if(q.length>0&&filtered.length===0) t.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Ничего не найдено</td></tr>';
+else renderBots();
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded',renderAll);
+renderAll();
+</script>
+</body>
+</html>

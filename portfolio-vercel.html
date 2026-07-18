@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Андрей — Разработчик ботов и AI | Сызрань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --text: #171717;
+      --text-secondary: #4d4d4d;
+      --text-tertiary: #666666;
+      --gray-100: #ebebeb;
+      --gray-50: #fafafa;
+      --accent: #0072f5;
+      --badge-bg: #ebf5ff;
+      --badge-text: #0068d6;
+      --develop: #0a72ef;
+      --preview: #de1d8d;
+      --ship: #ff5b4f;
+      --shadow-border: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+      --shadow-card: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
+      --shadow-ring: rgb(235,235,235) 0px 0px 0px 1px;
+      --font: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-pill: 9999px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      font-feature-settings: "liga" 1;
+    }
+
+    /* ===== CURSOR GLOW ===== */
+    #cursor-glow {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,114,245,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      transition: left 0.2s ease-out, top 0.2s ease-out;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: navSlideIn 0.8s ease-out;
+      box-shadow: var(--shadow-border);
+    }
+
+    @keyframes navSlideIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.32px;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--text);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      background: var(--text);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .nav-cta:hover {
+      opacity: 0.85;
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 140px 24px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      animation: floatUp 4s ease-in-out infinite;
+    }
+
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -2.4px;
+      color: var(--text);
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--develop), var(--preview), var(--ship));
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 4s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero p {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 32px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--text);
+      color: #ffffff;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary.shimmer::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      animation: shine 3s ease-in-out infinite;
+    }
+
+    @keyframes shine {
+      0%, 100% { left: -100%; }
+      50% { left: 100%; }
+    }
+
+    .btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #ffffff;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: var(--shadow-ring);
+      transition: box-shadow 0.2s, background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-50);
+      box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px;
+    }
+
+    /* ===== TRUST BAR ===== */
+    .trust-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .trust-bar-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .trust-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .trust-item {
+      height: 32px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      letter-spacing: -0.32px;
+    }
+
+    .trust-item .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.python { background: #3776AB; }
+    .dot.docker { background: #2496ED; }
+    .dot.flask { background: #000000; }
+    .dot.omni { background: var(--preview); }
+    .dot.hermes { background: var(--accent); }
+
+    /* ===== SECTION ===== */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+
+    .section-label {
+      display: inline-block;
+      padding: 2px 10px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      font-size: 40px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -2.4px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.56;
+      color: var(--text-secondary);
+      max-width: 560px;
+    }
+
+    .section-divider {
+      border: none;
+      height: 1px;
+      background: var(--gray-100);
+      margin: 0;
+    }
+
+    /* ===== ABOUT ===== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .stat-card {
+      padding: 24px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 600;
+      letter-spacing: -1.28px;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-number .counter {
+      display: inline;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    /* ===== SKILLS ===== */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .skill-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-border);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: default;
+    }
+
+    .skill-chip:hover {
+      box-shadow: var(--shadow-card);
+      transform: translateY(-1px);
+    }
+
+    .skill-chip .icon {
+      font-size: 16px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ===== BOT CARDS ===== */
+    .bots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .bot-card {
+      padding: 24px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      transition: box-shadow 0.3s, transform 0.3s;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .bot-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(0,114,245,0.04), transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .bot-card:hover::after {
+      opacity: 1;
+    }
+
+    .bot-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bot-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: var(--shadow-border);
+      flex-shrink: 0;
+    }
+
+    .bot-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.96px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .bot-tag {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-tertiary);
+    }
+
+    .bot-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-bot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--text);
+      color: #ffffff;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .btn-bot.shimmer::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation: shine 3s ease-in-out infinite;
+    }
+
+    .btn-bot:hover {
+      opacity: 0.85;
+    }
+
+    .btn-bot.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .bot-card-private {
+      position: relative;
+      z-index: 1;
+    }
+
+    .bot-card-private .private-label {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #fef2f2;
+      color: #dc2626;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 500;
+      font-family: var(--mono);
+      margin-top: 8px;
+    }
+
+    /* ===== CONTACT ===== */
+    .contact-box {
+      padding: 48px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .contact-box h3 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.96px;
+      margin-bottom: 12px;
+    }
+
+    .contact-box p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid var(--gray-100);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== REVEAL ANIMATIONS ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.85);
+      transition: opacity 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: rgba(255,255,255,0.98);
+        backdrop-filter: blur(12px);
+        flex-direction: column;
+        padding: 24px;
+        gap: 20px;
+        box-shadow: var(--shadow-border);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-toggle {
+        display: flex;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+        letter-spacing: -1.6px;
+      }
+
+      .hero p {
+        font-size: 17px;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .about-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .bots-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section h2 {
+        font-size: 28px;
+        letter-spacing: -1.28px;
+      }
+
+      .contact-box {
+        padding: 32px 24px;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero {
+        padding: 120px 16px 60px;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+        letter-spacing: -1.2px;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .hero-cta .btn-primary,
+      .hero-cta .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .section {
+        padding: 60px 16px;
+      }
+
+      .about-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 16px;
+      }
+
+      .stat-number {
+        font-size: 28px;
+      }
+
+      .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .contact-box {
+        padding: 24px 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal, .reveal-scale {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor Glow -->
+  <div id="cursor-glow"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Андрей<span>.</span>dev</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">Обо мне</a></li>
+        <li><a href="#skills">Навыки</a></li>
+        <li><a href="#bots">Боты</a></li>
+        <li><a href="#contact" class="nav-cta">Связаться</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge reveal">📍 Сызрань, Россия</div>
+    <h1 class="reveal" style="transition-delay:0.1s">
+      Разработчик<br>
+      <span class="highlight">Telegram-ботов</span> и AI<br>
+      решений
+    </h1>
+    <p class="reveal" style="transition-delay:0.2s">
+      Пишу ботов на Python, aiogram и Flask. Разворачиваю в Docker,
+      управляю через OmniRoute и Hermes. Превращаю идеи в рабочие Telegram-сервисы.
+    </p>
+    <div class="hero-cta reveal" style="transition-delay:0.3s">
+      <a href="tg://resolve?domain=Vandrey63" class="btn-primary shimmer" target="_blank">
+        Написать в Telegram →
+      </a>
+      <a href="#bots" class="btn-secondary">
+        Посмотреть проекты
+      </a>
+    </div>
+  </section>
+
+  <!-- Trust Bar -->
+  <div class="trust-bar reveal">
+    <div class="trust-bar-label">Стек технологий</div>
+    <div class="trust-grid">
+      <div class="trust-item"><span class="dot python"></span> Python</div>
+      <div class="trust-item"><span class="dot docker"></span> Docker</div>
+      <div class="trust-item"><span class="dot flask"></span> Flask</div>
+      <div class="trust-item"><span class="dot omni"></span> OmniRoute</div>
+      <div class="trust-item"><span class="dot hermes"></span> Hermes Agent</div>
+      <div class="trust-item">aiogram</div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- About -->
+  <section class="section" id="about">
+    <div class="section-header reveal">
+      <span class="section-label">Обо мне</span>
+      <h2>Разработчик из&nbsp;Сызрани</h2>
+      <p class="section-subtitle">Создаю Telegram-ботов и AI-решения для бизнеса и автоматизации</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          Меня зовут Андрей. Живу в Сызрани и разрабатываю Telegram-ботов на Python.
+          Специализируюсь на aiogram, Flask, Docker, OmniRoute и Hermes Agent.
+        </p>
+        <p>
+          Мои проекты — это не просто боты, а полноценные сервисы: от мониторинга цен
+          на Ozon до автоматизации салонов красоты и финансовых ассистентов.
+          Каждый бот — это продакшн-решение, развёрнутое в Docker и готовое к нагрузке.
+        </p>
+        <p>
+          Всегда открыт к новым проектам и идеям. Пишите в Telegram — обсудим!
+        </p>
+      </div>
+      <div class="about-stats reveal">
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="5">0</span></div>
+          <div class="stat-label">Telegram-ботов</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="100">0</span>%</div>
+          <div class="stat-label">Продакшн-готовых</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="3">0</span>+</div>
+          <div class="stat-label">Года в разработке</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="24">0</span>/7</div>
+          <div class="stat-label">Доступен онлайн</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- Skills -->
+  <section class="section" id="skills">
+    <div class="section-header reveal">
+      <span class="section-label">Навыки</span>
+      <h2>Что я использую</h2>
+      <p class="section-subtitle">Технологии и инструменты, с которыми работаю каждый день</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-chip reveal" style="transition-delay:0.0s"><span class="icon">🐍</span> Python</div>
+      <div class="skill-chip reveal" style="transition-delay:0.05s"><span class="icon">🤖</span> aiogram</div>
+      <div class="skill-chip reveal" style="transition-delay:0.1s"><span class="icon">🌶️</span> Flask</div>
+      <div class="skill-chip reveal" style="transition-delay:0.15s"><span class="icon">🐳</span> Docker</div>
+      <div class="skill-chip reveal" style="transition-delay:0.2s"><span class="icon">🔄</span> OmniRoute</div>
+      <div class="skill-chip reveal" style="transition-delay:0.25s"><span class="icon">⚡</span> Hermes</div>
+      <div class="skill-chip reveal" style="transition-delay:0.3s"><span class="icon">🗄️</span> PostgreSQL</div>
+      <div class="skill-chip reveal" style="transition-delay:0.35s"><span class="icon">🌐</span> HTML/CSS</div>
+      <div class="skill-chip reveal" style="transition-delay:0.4s"><span class="icon">🔧</span> Git</div>
+      <div class="skill-chip reveal" style="transition-delay:0.45s"><span class="icon">☁️</span> VPS</div>
+      <div class="skill-chip reveal" style="transition-delay:0.5s"><span class="icon">📡</span> API</div>
+      <div class="skill-chip reveal" style="transition-delay:0.55s"><span class="icon">🧠</span> AI / LLM</div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- Bots -->
+  <section class="section" id="bots">
+    <div class="section-header reveal">
+      <span class="section-label">Проекты</span>
+      <h2>Telegram-боты</h2>
+      <p class="section-subtitle">Мои работающие сервисы — открой в Telegram и попробуй</p>
+    </div>
+    <div class="bots-grid">
+
+      <!-- DealBot63 -->
+      <div class="bot-card reveal" style="transition-delay:0.0s">
+        <div class="bot-card-header">
+          <div class="bot-icon">🏷️</div>
+          <div>
+            <h3>DealBot63</h3>
+            <span class="bot-tag">@DealBot63_bot</span>
+          </div>
+        </div>
+        <p>Мониторинг и отслеживание цен на Ozon. Автоматический поиск лучших предложений и скидок.</p>
+        <a href="tg://resolve?domain=DealBot63_bot" class="btn-bot shimmer" target="_blank">Запустить →</a>
+      </div>
+
+      <!-- GlamBot -->
+      <div class="bot-card reveal" style="transition-delay:0.1s">
+        <div class="bot-card-header">
+          <div class="bot-icon">💅</div>
+          <div>
+            <h3>GlamBot (Nail)</h3>
+            <span class="bot-tag">@nail163_bot</span>
+          </div>
+        </div>
+        <p>Запись на ногтевой сервис. Онлайн-бронирование, каталог услуг, напоминания о записи.</p>
+        <a href="tg://resolve?domain=nail163_bot" class="btn-bot shimmer" target="_blank">Запустить →</a>
+      </div>
+
+      <!-- BeautyBot -->
+      <div class="bot-card reveal" style="transition-delay:0.2s">
+        <div class="bot-card-header">
+          <div class="bot-icon">💄</div>
+          <div>
+            <h3>BeautyBot</h3>
+            <span class="bot-tag">@Nailselegantstudio_bot</span>
+          </div>
+        </div>
+        <p>Автоматизация салона красоты: запись, управление расписанием, уведомления клиентов.</p>
+        <a href="tg://resolve?domain=Nailselegantstudio_bot" class="btn-bot shimmer" target="_blank">Запустить →</a>
+      </div>
+
+      <!-- FinBot -->
+      <div class="bot-card reveal" style="transition-delay:0.3s">
+        <div class="bot-card-header">
+          <div class="bot-icon">💰</div>
+          <div>
+            <h3>FinBot</h3>
+            <span class="bot-tag">@finpro63_bot</span>
+          </div>
+        </div>
+        <p>Финансовый ассистент. Учёт расходов, бюджетирование, аналитика и отчёты.</p>
+        <a href="tg://resolve?domain=finpro63_bot" class="btn-bot shimmer" target="_blank">Запустить →</a>
+      </div>
+
+      <!-- DebiHackBot -->
+      <div class="bot-card reveal" style="transition-delay:0.4s">
+        <div class="bot-card-header">
+          <div class="bot-icon">🤖</div>
+          <div>
+            <h3>DebiHackBot</h3>
+            <span class="bot-tag">@Vandrey63</span>
+          </div>
+        </div>
+        <p>Многофункциональный AI-ассистент. Интеллектуальные задачи, обработка данных, автоматизация.</p>
+        <div class="bot-card-private">
+          <span class="private-label">🔒 по запросу</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- Contact -->
+  <section class="section" id="contact">
+    <div class="contact-box reveal">
+      <h3>Свяжитесь со мной</h3>
+      <p>Готов обсудить ваш проект, идею или сотрудничество. Пишите в Telegram — отвечаю быстро.</p>
+      <div class="contact-links">
+        <a href="tg://resolve?domain=Vandrey63" class="btn-primary shimmer" target="_blank">
+          📩 Telegram: @Vandrey63
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Андрей · Сызрань</p>
+    <p>Сделано с ❤️ для Telegram</p>
+  </footer>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // ===== CURSOR GLOW =====
+      const glow = document.getElementById('cursor-glow');
+      document.addEventListener('mousemove', (e) => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+      });
+
+      // ===== NAV TOGGLE =====
+      const toggle = document.getElementById('navToggle');
+      const navLinks = document.getElementById('navLinks');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          navLinks.classList.toggle('open');
+        });
+        // Close nav on link click
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => navLinks.classList.remove('open'));
+        });
+      }
+
+      // ===== SCROLL REVEAL =====
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal, .reveal-scale').forEach(el => observer.observe(el));
+
+      // ===== BOT CARD LIGHT TRACKING =====
+      document.querySelectorAll('.bot-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+          card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+        });
+      });
+
+      // ===== COUNTER ANIMATION =====
+      function animateCounters() {
+        document.querySelectorAll('.counter').forEach(counter => {
+          const raw = counter.textContent;
+          const target = parseInt(counter.dataset.target);
+          if (isNaN(target)) return;
+          const duration = 1500;
+          const startTime = performance.now();
+          function update(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            counter.textContent = Math.floor(eased * target);
+            if (progress < 1) requestAnimationFrame(update);
+          }
+          requestAnimationFrame(update);
+        });
+      }
+
+      // Trigger counters on scroll
+      const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCounters();
+            counterObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      const statSection = document.querySelector('.about-stats');
+      if (statSection) counterObserver.observe(statSection);
+
+      // ===== 3D TILT ON BOT CARDS =====
+      document.querySelectorAll('.bot-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          card.style.transform = `perspective(800px) rotateX(${y * -4}deg) rotateY(${x * 4}deg) translateY(-2px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = '';
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

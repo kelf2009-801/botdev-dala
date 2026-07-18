@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CJ Command Center v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    color: #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(74,222,128,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(249,115,22,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 0%, rgba(74,222,128,0.03) 0%, transparent 40%);
+  }
+
+  /* Decorative grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(74,222,128,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,222,128,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    animation: float 20s ease-in-out infinite;
+  }
+  .orb-1 {
+    width: 400px; height: 400px;
+    background: rgba(74,222,128,0.08);
+    top: -100px; left: -100px;
+  }
+  .orb-2 {
+    width: 350px; height: 350px;
+    background: rgba(249,115,22,0.08);
+    bottom: -100px; right: -100px;
+    animation-delay: -7s;
+  }
+  .orb-3 {
+    width: 250px; height: 250px;
+    background: rgba(74,222,128,0.05);
+    top: 50%; left: 50%;
+    animation-delay: -14s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.05); }
+    66% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+
+  /* === WEATHER ANIMATIONS (CSS only, no images) === */
+  .weather-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 20px 20px 0 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .weather-bg .rain-drop {
+    position: absolute;
+    width: 1.5px;
+    background: linear-gradient(transparent, rgba(74,222,128,0.35));
+    animation: rainFall linear infinite;
+  }
+  @keyframes rainFall {
+    0% { transform: translateY(-20px); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(320px); opacity: 0; }
+  }
+  .weather-bg .lightning-flash {
+    position: absolute;
+    inset: 0;
+    background: rgba(200,220,255,0.06);
+    opacity: 0;
+    animation: flashBang 7s ease-in-out infinite;
+  }
+  @keyframes flashBang {
+    0%, 90%, 100% { opacity: 0; }
+    91% { opacity: 0.9; }
+    92% { opacity: 0; }
+    94% { opacity: 0.5; }
+    95% { opacity: 0; }
+  }
+  .weather-bg .sun-pulse {
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249,115,22,0.25) 0%, rgba(251,191,36,0.1) 30%, transparent 70%);
+    animation: sunGlow 4s ease-in-out infinite;
+  }
+  @keyframes sunGlow {
+    0%, 100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+  }
+  .weather-bg .fog-drift {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(74,222,128,0.05), rgba(249,115,22,0.03), transparent);
+    animation: fogMove 8s ease-in-out infinite;
+  }
+  @keyframes fogMove {
+    0%, 100% { transform: translateX(-15%); opacity: 0.2; }
+    50% { transform: translateX(15%); opacity: 0.5; }
+  }
+  .weather-bg .cloud-drift {
+    position: absolute;
+    color: rgba(255,255,255,0.04);
+    font-size: 70px;
+    animation: cloudFloat 20s linear infinite;
+  }
+  @keyframes cloudFloat {
+    0% { transform: translateX(-120px); }
+    100% { transform: translateX(420px); }
+  }
+  .card .card-title, .card .weather-main,
+  .card .weather-details, .card .weather-city {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a0f; }
+  ::-webkit-scrollbar-thumb { background: #1a1a2e; border-radius: 3px; }
+
+  .dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.2s forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(30px); }
+  }
+
+  .header .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.15);
+    color: #4ade80;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: 0.3px;
+    margin-bottom: 20px;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0px rgba(74,222,128,0); }
+    50% { box-shadow: 0 0 25px rgba(74,222,128,0.1); }
+  }
+
+  .header h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .header h1 .gradient {
+    background: linear-gradient(135deg, #4ade80, #22d3ee, #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    font-size: 18px;
+    font-weight: 400;
+    color: #888;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .header p strong {
+    color: #f97316;
+    font-weight: 600;
+  }
+
+  /* GLASS CARD */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .card.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(74,222,128,0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .card:hover {
+    border-color: rgba(74,222,128,0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(74,222,128,0.05);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4ade80;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .card-title .icon { font-size: 16px; }
+  .card-title .badge {
+    margin-left: auto;
+    background: rgba(74,222,128,0.1);
+    color: #4ade80;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+  }
+
+  /* WEATHER */
+  .weather-main {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 18px;
+  }
+
+  .weather-emoji { font-size: 52px; line-height: 1; }
+
+  .weather-temp {
+    font-size: 48px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f97316, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .weather-desc {
+    font-size: 14px;
+    color: #888;
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  .weather-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .weather-stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 14px 10px;
+    text-align: center;
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+
+  .weather-stat:hover {
+    background: rgba(74,222,128,0.03);
+    border-color: rgba(74,222,128,0.1);
+  }
+
+  .weather-stat .label {
+    font-size: 9px;
+    font-weight: 600;
+    color: #666;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .weather-stat .value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e0e0e0;
+  }
+
+  .weather-loading {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+    animation: pulseText 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulseText {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .weather-city {
+    font-size: 11px;
+    color: #555;
+    margin-top: 14px;
+    text-align: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* CREW */
+  .crew-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .crew-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 10px 14px;
+    border-radius: 12px;
+    transition: all 0.25s ease;
+    cursor: default;
+  }
+
+  .crew-item:hover {
+    background: rgba(74,222,128,0.03);
+    border-color: rgba(74,222,128,0.08);
+  }
+
+  .crew-item.cj { border-color: rgba(74,222,128,0.15); background: rgba(74,222,128,0.04); }
+
+  .crew-item .avatar {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .crew-item .info { flex: 1; min-width: 0; }
+  .crew-item .name {
+    font-size: 13px; font-weight: 600; color: #e0e0e0;
+  }
+  .crew-item .role { font-size: 11px; color: #666; margin-top: 2px; }
+
+  .crew-item .status-dot {
+    width: 8px; height: 8px; border-radius: 8px; flex-shrink: 0;
+  }
+  .status-online { background: #4ade80; box-shadow: 0 0 8px rgba(74,222,128,0.4); }
+  .status-away { background: #f97316; box-shadow: 0 0 8px rgba(249,115,22,0.4); }
+  .status-offline { background: #374151; }
+
+  /* BOTS */
+  .bots-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .bot-card {
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 16px;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .bot-card:hover {
+    border-color: rgba(74,222,128,0.1);
+    background: rgba(74,222,128,0.02);
+  }
+
+  .bot-icon { font-size: 28px; }
+  .bot-info { flex: 1; }
+  .bot-name { font-size: 14px; font-weight: 600; color: #e0e0e0; }
+  .bot-meta { font-size: 11px; color: #666; margin-top: 3px; }
+
+  .bot-status {
+    font-size: 10px; font-weight: 700;
+    padding: 6px 14px; border-radius: 100px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .bot-status.online {
+    color: #0a0a0f; background: #4ade80;
+    box-shadow: 0 0 15px rgba(74,222,128,0.2);
+  }
+
+  /* ACTIONS */
+  .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .action-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 20px 14px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .action-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(74,222,128,0.06) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .action-btn:hover {
+    border-color: rgba(74,222,128,0.15);
+    color: #4ade80;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(74,222,128,0.05);
+  }
+
+  .action-btn:hover::after { opacity: 1; }
+
+  .action-btn .action-icon { font-size: 24px; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+    letter-spacing: 0.3px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding-top: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 1.2s forwards;
+  }
+
+  .footer .hl { color: #4ade80; }
+  .footer .hl2 { color: #f97316; }
+
+  /* RESPONSIVE */
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; gap: 20px; }
+    .weather-details { grid-template-columns: 1fr 1fr; }
+    .card { padding: 22px; }
+  }
+
+  @media (max-width: 500px) {
+    .dashboard { padding: 24px 16px 40px; }
+    .actions-grid { grid-template-columns: 1fr; }
+    .weather-main { flex-direction: column; text-align: center; }
+    .weather-details { grid-template-columns: 1fr; }
+    .header h1 { font-size: 28px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="dashboard">
+
+  <div class="header">
+    <div class="tag">◉ SYSTEM ONLINE</div>
+    <h1>▼ <span class="gradient">CJ COMMAND CENTER</span></h1>
+    <p>GroveMind Intelligence — <strong>Grove Street</strong> Home</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- WEATHER -->
+    <div class="card" data-delay="0.2">
+      <div class="card-title"><span class="icon">☁</span> Погода / Weather</div>
+      <div class="weather-main" id="weather-main">
+        <div class="weather-loading">⟳ Получаем данные...</div>
+      </div>
+      <div class="weather-details" id="weather-details">
+        <div class="weather-stat"><div class="weather-loading">...</div></div>
+        <div class="weather-stat"><div class="weather-loading">...</div></div>
+        <div class="weather-stat"><div class="weather-loading">...</div></div>
+        <div class="weather-stat"><div class="weather-loading">...</div></div>
+      </div>
+      <div class="weather-city">📍 Сызрань / Syzran</div>
+    </div>
+
+    <!-- CREW -->
+    <div class="card" data-delay="0.35">
+      <div class="card-title"><span class="icon">★</span> Crew Status <span class="badge">1+7</span></div>
+      <div class="crew-list">
+        <div class="crew-item cj">
+          <div class="avatar">👑</div>
+          <div class="info"><div class="name">CJ (Carl Johnson)</div><div class="role">Лидер • Grove Street Families</div></div>
+          <div class="status-dot status-online"></div>
+        </div>
+        <div class="crew-item">
+          <div class="avatar">💛</div>
+          <div class="info"><div class="name">Denise</div><div class="role">Дениз • Улица, drive-by</div></div>
+          <div class="status-dot status-online"></div>
+        </div>
+        <div class="crew-item">
+          <div class="avatar">💜</div>
+          <div class="info"><div class="name">Millie</div><div class="role">Милли • Бизнес, казино</div></div>
+          <div class="status-dot status-away"></div>
+        </div>
+        <div class="crew-item">
+          <div class="avatar">❤</div>
+          <div class="info"><div class="name">Barbara</div><div class="role">Барбара • Коп, связи</div></div>
+          <div class="status-dot status-offline"></div>
+        </div>
+        <div class="crew-item">
+          <div class="avatar">💚</div>
+          <div class="info"><div class="name">Katie</div><div class="role">Кэти • Тесты, QA</div></div>
+          <div class="status-dot status-online"></div>
+        </div>
+        <div class="crew-item">
+          <div class="avatar">🧡</div>
+          <div class="info"><div class="name">Michelle</div><div class="role">Мишель • Механик, скорость</div></div>
+          <div class="status-dot status-away"></div>
+        </div>
+        <div class="crew-item">
+          <div class="avatar">💙</div>
+          <div class="info"><div class="name">Helena</div><div class="role">Хелена • Оружие, тишина</div></div>
+          <div class="status-dot status-offline"></div>
+        </div>
+        <div class="crew-item">
+          <div class="avatar">🖤</div>
+          <div class="info"><div class="name">Catalina</div><div class="role">Каталина • Дизайн, лендинги</div></div>
+          <div class="status-dot status-online"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTS -->
+    <div class="card" data-delay="0.5">
+      <div class="card-title"><span class="icon">🤖</span> Bots Status <span class="badge">1</span></div>
+      <div class="bots-list">
+        <div class="bot-card">
+          <div class="bot-icon">📦</div>
+          <div class="bot-info">
+            <div class="bot-name">DealBot</div>
+            <div class="bot-meta">Ozon price monitor • Docker</div>
+          </div>
+          <div class="bot-status online">ONLINE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="card" data-delay="0.65">
+      <div class="card-title"><span class="icon">⚡</span> Quick Actions</div>
+      <div class="actions-grid">
+        <div class="action-btn" onclick="fetchWeather();">
+          <span class="action-icon">🌤</span> Погода / Refresh
+        </div>
+        <div class="action-btn" onclick="window.open('https://github.com/Forward-Future/loopy','_blank');">
+          <span class="action-icon">🔄</span> Loopy Library
+        </div>
+        <div class="action-btn" onclick="fetchWeather();">
+          <span class="action-icon">📊</span> Статус / Status
+        </div>
+        <div class="action-btn" onclick="window.open('https://kelf2009-801.github.io/cj-command-center/','_blank');">
+          <span class="action-icon">🔗</span> GitHub Pages
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <span class="hl">◄</span> GROVE STREET — HOME <span class="hl">►</span><br>
+    <span id="update-time" style="margin-top:6px;display:inline-block;font-size:10px;">Загрузка...</span>
+  </div>
+
+</div>
+
+<script>
+// SCROLL REVEAL
+(() => {
+  const cards = document.querySelectorAll('.card');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const d = parseFloat(e.target.dataset.delay) || 0.2;
+        setTimeout(() => e.target.classList.add('revealed'), d * 1000);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -50px 0px' });
+  cards.forEach(c => obs.observe(c));
+})();
+
+// 3D TILT
+(() => {
+  document.querySelectorAll('.card').forEach(c => {
+    c.addEventListener('mousemove', e => {
+      const r = c.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      c.style.transform = `perspective(800px) rotateY(${x*3}deg) rotateX(${-y*3}deg)`;
+    });
+    c.addEventListener('mouseleave', () => { c.style.transform = ''; });
+  });
+})();
+
+// ===== WEATHER ANIMATION =====
+function setWeatherBg(code) {
+  const card = document.querySelector('.card');
+  if (!card) return;
+  const old = card.querySelector('.weather-bg');
+  if (old) old.remove();
+  const bg = document.createElement('div');
+  bg.className = 'weather-bg';
+  // Thunderstorm (95-99) or heavy rain
+  if (code >= 95 || code === 65 || code === 82) {
+    const l = document.createElement('div');
+    l.className = 'lightning-flash';
+    bg.appendChild(l);
+    for (let i = 0; i < 40; i++) {
+      const d = document.createElement('div');
+      d.className = 'rain-drop';
+      d.style.left = Math.random() * 100 + '%';
+      d.style.height = (Math.random() * 18 + 5) + 'px';
+      d.style.animationDuration = (Math.random() * 0.4 + 0.2) + 's';
+      d.style.animationDelay = Math.random() * 3 + 's';
+      bg.appendChild(d);
+    }
+  } else if ([51,53,55,61,63,80,81].includes(code)) {
+    for (let i = 0; i < 25; i++) {
+      const d = document.createElement('div');
+      d.className = 'rain-drop';
+      d.style.left = Math.random() * 100 + '%';
+      d.style.height = (Math.random() * 12 + 3) + 'px';
+      d.style.animationDuration = (Math.random() * 0.5 + 0.4) + 's';
+      d.style.animationDelay = Math.random() * 4 + 's';
+      d.style.opacity = '0.3';
+      bg.appendChild(d);
+    }
+  } else if ([45,48].includes(code)) {
+    const f = document.createElement('div');
+    f.className = 'fog-drift';
+    bg.appendChild(f);
+  } else if (code <= 1) {
+    const s = document.createElement('div');
+    s.className = 'sun-pulse';
+    bg.appendChild(s);
+  } else if (code >= 2) {
+    for (let i = 0; i < 4; i++) {
+      const c = document.createElement('div');
+      c.className = 'cloud-drift';
+      c.textContent = '☁';
+      c.style.top = (10 + i * 20) + '%';
+      c.style.animationDelay = (i * 5) + 's';
+      bg.appendChild(c);
+    }
+  }
+  card.appendChild(bg);
+}
+
+// ===== WEATHER CODES
+const WMO = {
+  0:['Ясно','☀️'],1:['Малооблачно','🌤'],2:['Облачно','⛅'],3:['Пасмурно','☁️'],
+  45:['Туман','🌫'],51:['Морось','🌦'],53:['Морось','🌦'],61:['Дождь','🌧'],
+  63:['Дождь','🌧'],65:['Сильный дождь','🌧'],
+  80:['Ливень','🌦'],81:['Ливень','🌧'],82:['Сильный ливень','🌧'],
+  95:['Гроза','⛈'],96:['Гроза','⛈'],99:['Гроза','⛈']
+};
+
+async function fetchWeather() {
+  const m = document.getElementById('weather-main');
+  const d = document.getElementById('weather-details');
+  m.innerHTML = '<div class="weather-loading">⟳ Получаем данные...</div>';
+  d.innerHTML = '<div class="weather-stat"><div class="weather-loading">...</div></div>'.repeat(4);
+
+  try {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=53.155&longitude=48.474'
+      + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,pressure_msl'
+      + '&daily=temperature_2m_max,temperature_2m_min&timezone=Europe/Samara';
+    const r = await fetch(url);
+    const j = await r.json();
+    const c = j.current;
+    const w = WMO[c.weather_code] || [c.weather_code, '🌡'];
+    const s = c.temperature_2m >= 0 ? '+' : '';
+
+    document.getElementById('update-time').textContent =
+      'Обновлено: ' + new Date().toLocaleString('ru-RU', {timeZone:'Europe/Samara'});
+
+    m.innerHTML = `
+      <div class="weather-emoji">${w[1]}</div>
+      <div>
+        <div class="weather-temp">${s}${Math.round(c.temperature_2m)}°C</div>
+        <div class="weather-desc">${w[0]} • ощущается ${s}${Math.round(c.apparent_temperature)}°C</div>
+      </div>`;
+    d.innerHTML = `
+      <div class="weather-stat"><div class="label">ВЛАЖНОСТЬ</div><div class="value">${c.relative_humidity_2m}%</div></div>
+      <div class="weather-stat"><div class="label">ВЕТЕР</div><div class="value">${c.wind_speed_10m.toFixed(1)} км/ч</div></div>
+      <div class="weather-stat"><div class="label">ДАВЛЕНИЕ</div><div class="value">${c.pressure_msl ? Math.round(c.pressure_msl) : '--'} гПа</div></div>
+      <div class="weather-stat"><div class="label">MIN / MAX</div><div class="value">${Math.round(j.daily.temperature_2m_min[0])} / ${Math.round(j.daily.temperature_2m_max[0])}°C</div></div>`;
+
+    setWeatherBg(c.weather_code);
+  } catch(e) {
+    m.innerHTML = '<div style="color:#f87171;font-size:13px;">⚠ Ошибка: ' + e.message + '</div>';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', fetchWeather);
+</script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova — AI Landing Page Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* === DALA DESIGN SYSTEM — Nova === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --iris: #8052ff;
+  --saffron: #ffb829;
+  --verdant: #15846e;
+  --void: #000000;
+  --ash: #9a9a9a;
+  --silver: #bdbdbd;
+  --bone: #ffffff;
+
+  --font: 'PPNeueMontreal', 'Inter', system-ui, sans-serif;
+  --radius: 24px;
+  --max-w: 1280px;
+  --section-gap: 100px;
+  --card-pad: 32px;
+  --elem-gap: 12px;
+  --base: 6px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--void);
+  color: var(--bone);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === TYPE === */
+h1, h2, h3, h4, .display {
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+h1 { font-size: clamp(48px, 7vw, 113px); }
+h2 { font-size: clamp(42px, 5vw, 78px); }
+h3 { font-size: clamp(30px, 3.5vw, 48px); }
+h4 { font-size: clamp(24px, 2.5vw, 42px); }
+
+p, .body {
+  font-weight: 200;
+  font-size: 18px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--silver);
+}
+
+.small {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+/* === LAYOUT === */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+section { padding: 80px 0; }
+
+/* === NAV === */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 18px 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(12px);
+}
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  text-decoration: none;
+}
+.logo svg { width: 28px; height: 28px; }
+.nav-links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+.nav-links a {
+  color: var(--ash);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 400;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--bone); }
+.nav-cta {
+  background: var(--iris);
+  color: var(--bone) !important;
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  font-weight: 400 !important;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* === HERO === */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 80px;
+}
+#particle-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero .container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.hero-content { max-width: 600px; }
+.hero-content .small { margin-bottom: 20px; display: block; }
+.hero-content h1 { margin-bottom: 24px; }
+.hero-content p { margin-bottom: 40px; max-width: 480px; }
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--iris);
+  color: var(--bone);
+  text-decoration: none;
+  padding: 16px 40px;
+  border-radius: var(--radius);
+  font-size: 18px;
+  font-weight: 400;
+  transition: opacity 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.hero-cta:hover { opacity: 0.85; }
+.hero-graphic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero-preview {
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, rgba(128,82,255,0.08), rgba(21,132,110,0.05));
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.preview-bar {
+  height: 8px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+}
+.preview-bar:nth-child(1) { width: 65%; }
+.preview-bar:nth-child(2) { width: 45%; }
+.preview-bar:nth-child(3) { width: 80%; height: 120px; }
+.preview-bar:nth-child(4) { width: 55%; }
+.preview-bar:nth-child(5) { width: 35%; }
+.preview-accent {
+  display: inline-block;
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: var(--iris);
+  align-self: flex-end;
+}
+
+/* === HOW IT WORKS === */
+.how { text-align: center; }
+.how .small { margin-bottom: 16px; }
+.how h2 { margin-bottom: 60px; }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  text-align: left;
+}
+.step {
+  padding: var(--card-pad);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: border-color 0.3s;
+}
+.step:hover { border-color: rgba(128,82,255,0.3); }
+.step-num {
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: rgba(128,82,255,0.3);
+  margin-bottom: 20px;
+  line-height: 1;
+}
+.step h3 {
+  font-size: 27px;
+  margin-bottom: 12px;
+}
+
+/* === STYLES GALLERY === */
+.styles { text-align: center; }
+.styles .small { margin-bottom: 16px; }
+.styles h2 { margin-bottom: 16px; }
+.styles > p { margin-bottom: 60px; max-width: 600px; margin-left: auto; margin-right: auto; }
+.style-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.style-card {
+  padding: 28px 24px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.06);
+  text-align: left;
+  transition: all 0.3s;
+  cursor: default;
+}
+.style-card:hover {
+  border-color: var(--iris);
+  background: rgba(128,82,255,0.04);
+}
+.style-card .style-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.style-card h4 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+.style-card p {
+  font-size: 14px;
+  font-weight: 200;
+  color: var(--ash);
+}
+
+/* === CTA SECTION === */
+.cta-section {
+  text-align: center;
+  padding: 120px 0;
+}
+.cta-section .small { margin-bottom: 16px; }
+.cta-section h2 { margin-bottom: 20px; max-width: 700px; margin-left: auto; margin-right: auto; }
+.cta-section p { margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+/* === FOOTER === */
+footer {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 32px 0;
+}
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+footer p { font-size: 14px; color: var(--ash); font-weight: 200; }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  color: var(--ash);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 200;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--bone); }
+
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+  .hero .container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  .hero-content p { margin-left: auto; margin-right: auto; }
+  .hero-preview { display: none; }
+  .steps { grid-template-columns: 1fr; }
+  .style-grid { grid-template-columns: repeat(2, 1fr); }
+  nav .nav-links a:not(.nav-cta) { display: none; }
+}
+@media (max-width: 600px) {
+  .style-grid { grid-template-columns: 1fr; }
+  section { padding: 60px 0; }
+  .container { padding: 0 20px; }
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-content, .step, .style-card {
+  animation: fadeUp 0.8s ease-out both;
+}
+.step:nth-child(2) { animation-delay: 0.15s; }
+.step:nth-child(3) { animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <a href="#" class="logo">
+      <svg viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="12" stroke="url(#logoGrad)" stroke-width="1.5"/>
+        <circle cx="14" cy="14" r="3" fill="url(#logoGrad)"/>
+        <circle cx="6" cy="10" r="1.5" fill="var(--saffron)" opacity="0.6"/>
+        <circle cx="22" cy="18" r="1" fill="var(--iris)" opacity="0.4"/>
+        <circle cx="10" cy="22" r="1.2" fill="var(--saffron)" opacity="0.5"/>
+        <defs>
+          <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
+            <stop stop-color="var(--iris)"/>
+            <stop offset="1" stop-color="var(--verdant)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      Nova
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#styles">Styles</a>
+      <a href="#cta" class="nav-cta">Try Nova</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="container">
+    <div class="hero-content">
+      <span class="small">AI-Powered Landing Page Builder</span>
+      <h1>Your landing page.<br>Just ask Nova for it.</h1>
+      <p>Pick a style, describe your product, and Nova generates a complete, production-ready landing page — in seconds. No editing, no back-and-forth.</p>
+      <a href="#cta" class="hero-cta">
+        Build your page
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="hero-graphic">
+      <div class="hero-preview">
+        <div class="preview-bar"></div>
+        <div class="preview-bar"></div>
+        <div class="preview-bar"></div>
+        <div class="preview-bar"></div>
+        <div class="preview-bar"></div>
+        <div class="preview-accent"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <span class="small">How it works</span>
+    <h2>Three steps to your landing page</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Choose a style</h3>
+        <p>Browse 2,000+ design references from real products — Dala, Linear, Mercury, Stripe, Authkit, and more. Pick the one that matches your brand.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Describe your product</h3>
+        <p>Tell Nova what you build in a sentence. The AI extracts your value proposition, target audience, and key features — no forms, no templates.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Get your page</h3>
+        <p>Nova generates a complete, responsive landing page in your chosen style. Production-ready HTML/CSS, no editing needed. Ship it as-is.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STYLES GALLERY -->
+<section class="styles" id="styles">
+  <div class="container">
+    <span class="small">Design references</span>
+    <h2>2,000+ styles from real products</h2>
+    <p>Every style is a full DESIGN.md — colors, typography, spacing, components. Your landing page inherits the visual system of the world's best products.</p>
+    <div class="style-grid">
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#8052ff,#000)"></div>
+        <h4>Dala</h4>
+        <p>Constellation floating on black velvet. Dark, violet-amber accent, sculptural typography.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#6ee7b7,#0f172a)"></div>
+        <h4>Mercury</h4>
+        <p>Alpine banking at blue hour. Dark teal, clean sans-serif, data-forward.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#5e6ad2,#1a1a2e)"></div>
+        <h4>Linear</h4>
+        <p>Midnight precision instrument. Dark indigo, crisp UI, minimal motion.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#f5f5f0,#d4a574)"></div>
+        <h4>ElevenLabs</h4>
+        <p>Warm cream editorial. Serif headings, warm neutrals, voice-forward.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#a78bfa,#1e1b4b)"></div>
+        <h4>Authkit</h4>
+        <p>Frosted glass cathedral at midnight. Violet-tinged glassmorphism, secure-yet-warm.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#6366f1,#0f0f23)"></div>
+        <h4>Stripe</h4>
+        <p>Indigo-ink ledger on frosted glass. Clean, financial, trusted.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#ff6b6b,#1a1a2e)"></div>
+        <h4>Raycast</h4>
+        <p>Midnight command center, coral neon. Dark, productive, extension-rich.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#fbbf24,#1a1a2e)"></div>
+        <h4>Superhuman</h4>
+        <p>Golden hour editorial dashboard. Warm gold, efficient, premium.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#f5f5f0,#2d2d2d)"></div>
+        <h4>Notion</h4>
+        <p>Warm paper notebook. Cream, block-based, content-first.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#58cc02,#1a1a2e)"></div>
+        <h4>Duolingo</h4>
+        <p>Playful classroom mascot. Green, gamified, friendly.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#fff,#ddd)"></div>
+        <h4>Apple</h4>
+        <p>Cathedral of white space. Minimal, product-as-hero, precision.</p>
+      </div>
+      <div class="style-card">
+        <div class="style-icon" style="background:linear-gradient(135deg,#00d4aa,#0a0a0a)"></div>
+        <h4>Auros</h4>
+        <p>Abyssal terminal. Dark, green-on-black, developer-forward.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="container">
+    <span class="small">Get started</span>
+    <h2>Your landing page is one choice away</h2>
+    <p>Pick a style, describe your product, get a production-ready page. No editing, no waiting.</p>
+    <a href="#" class="hero-cta">
+      Try Nova — it's free
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>© 2026 Nova. Built with AI, designed with taste.</p>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Twitter</a>
+    </div>
+  </div>
+</footer>
+
+<!-- PARTICLE CONSTELLATION -->
+<script>
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouse = { x: 0, y: 0 };
+let w, h;
+
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+const COLORS = ['#8052ff', '#ffb829', '#15846e', 'rgba(255,255,255,0.3)'];
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * w;
+    this.y = Math.random() * h;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.size = Math.random() * 2.5 + 0.5;
+    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    this.alpha = Math.random() * 0.6 + 0.2;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > w) this.vx *= -1;
+    if (this.y < 0 || this.y > h) this.vy *= -1;
+
+    // mouse interaction
+    const dx = this.x - mouse.x;
+    const dy = this.y - mouse.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 120) {
+      this.vx += dx * 0.0002;
+      this.vy += dy * 0.0002;
+    }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = this.alpha;
+    ctx.fill();
+  }
+}
+
+const NUM_PARTICLES = 120;
+for (let i = 0; i < NUM_PARTICLES; i++) particles.push(new Particle());
+
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 150) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        const alpha = (1 - dist / 150) * 0.15;
+        ctx.strokeStyle = `rgba(128, 82, 255, ${alpha})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, w, h);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawConnections();
+  requestAnimationFrame(animate);
+}
+
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+animate();
+</script>
+</body>
+</html>

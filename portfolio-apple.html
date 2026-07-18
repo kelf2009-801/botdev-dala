@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Андрей — Разработчик ботов и AI | Сызрань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================
+       RESET & BASE
+       ========================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      background: #ffffff;
+      color: #1d1d1f;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ==========================
+       DESIGN TOKENS — Apple
+       ========================== */
+    :root {
+      --apple-black: #000000;
+      --apple-white: #ffffff;
+      --apple-gray-100: #f5f5f7;
+      --apple-gray-200: #e8e8ed;
+      --apple-gray-300: #d2d2d7;
+      --apple-gray-400: #86868b;
+      --apple-gray-500: #6e6e73;
+      --apple-gray-600: #424245;
+      --apple-gray-700: #1d1d1f;
+      --apple-blue: #0071e3;
+      --apple-blue-hover: #0077ed;
+      --apple-blue-pressed: #006edb;
+      --apple-blue-light: rgba(0, 113, 227, 0.08);
+      --apple-blue-glow: rgba(0, 113, 227, 0.15);
+      --apple-glass: rgba(255, 255, 255, 0.72);
+      --apple-glass-border: rgba(0, 0, 0, 0.08);
+      --apple-glass-dark: rgba(0, 0, 0, 0.8);
+      --apple-green: #34c759;
+      --apple-orange: #ff9500;
+      --apple-red: #ff3b30;
+
+      --max-width: 980px;
+      --radius-pill: 980px;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+    }
+
+    /* ==========================
+       UTILITY
+       ========================== */
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 22px; }
+    .section-padding { padding: 120px 0; }
+    .section-dark { background: var(--apple-black); color: var(--apple-white); }
+    .section-light { background: var(--apple-gray-100); }
+    .section-white { background: var(--apple-white); }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      color: var(--apple-gray-400);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(40px, 6vw, 56px);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.04;
+      color: var(--apple-gray-700);
+      margin-bottom: 16px;
+    }
+
+    .section-dark .section-title { color: var(--apple-white); }
+
+    .section-subtitle {
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-weight: 400;
+      letter-spacing: 0.004em;
+      line-height: 1.4;
+      color: var(--apple-gray-500);
+      max-width: 680px;
+    }
+
+    .section-dark .section-subtitle { color: var(--apple-gray-300); }
+
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* ==========================
+       GLASS NAV
+       ========================== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 22px;
+      background: var(--apple-glass);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border-bottom: 1px solid var(--apple-glass-border);
+      transition: background 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      padding: 0;
+    }
+
+    .nav-logo {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--apple-gray-700);
+    }
+
+    .nav-logo span { color: var(--apple-blue); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--apple-gray-500);
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover { color: var(--apple-gray-700); }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: var(--apple-blue);
+      border-radius: 1px;
+      transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--apple-blue);
+      color: var(--apple-white) !important;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-cta:hover { background: var(--apple-blue-hover); transform: scale(1.02); color: var(--apple-white) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* Burger */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 1001;
+      padding: 6px;
+      background: none;
+      border: none;
+    }
+    .burger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--apple-gray-700);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ==========================
+       HERO — Black
+       ========================== */
+    .hero {
+      background: var(--apple-black);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 22px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(0, 113, 227, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--apple-blue);
+      letter-spacing: 0.02em;
+      margin-bottom: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--apple-blue);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(44px, 8vw, 72px);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.03;
+      color: var(--apple-white);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 .highlight { color: var(--apple-blue); }
+
+    .hero p {
+      font-size: clamp(17px, 2vw, 21px);
+      font-weight: 400;
+      letter-spacing: 0.004em;
+      line-height: 1.5;
+      color: var(--apple-gray-400);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==========================
+       BUTTONS — Apple Pill
+       ========================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--radius-pill);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--apple-blue);
+      color: var(--apple-white);
+    }
+    .btn-primary:hover {
+      background: var(--apple-blue-hover);
+      transform: scale(1.02);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--apple-white);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-outline:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+      transform: scale(1.02);
+    }
+
+    .btn-outline-dark {
+      background: transparent;
+      color: var(--apple-gray-700);
+      border: 1px solid var(--apple-gray-300);
+    }
+    .btn-outline-dark:hover {
+      border-color: var(--apple-gray-600);
+      background: rgba(0, 0, 0, 0.02);
+      transform: scale(1.02);
+    }
+
+    .btn-white {
+      background: var(--apple-white);
+      color: var(--apple-gray-700);
+    }
+    .btn-white:hover {
+      background: #f5f5f7;
+      transform: scale(1.02);
+    }
+
+    .btn-lg { padding: 16px 36px; font-size: 16px; }
+
+    .btn .icon {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ==========================
+       HERO STATS
+       ========================== */
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-top: 56px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-stat { text-align: center; }
+    .hero-stat-num {
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--apple-white);
+    }
+    .hero-stat-label {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--apple-gray-400);
+      margin-top: 4px;
+    }
+
+    .hero-stat-divider {
+      width: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ==========================
+       BOTS SECTION
+       ========================== */
+    .bots-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .bot-card {
+      background: var(--apple-white);
+      border-radius: var(--radius-md);
+      padding: 28px 24px;
+      text-align: left;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--apple-gray-200);
+    }
+
+    .bot-card:hover {
+      border-color: var(--apple-blue);
+      box-shadow: 0 8px 24px rgba(0, 113, 227, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .bot-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .bot-card-icon.c1 { background: rgba(0, 113, 227, 0.1); color: var(--apple-blue); }
+    .bot-card-icon.c2 { background: rgba(52, 199, 89, 0.1); color: var(--apple-green); }
+    .bot-card-icon.c3 { background: rgba(255, 149, 0, 0.1); color: var(--apple-orange); }
+    .bot-card-icon.c4 { background: rgba(0, 113, 227, 0.08); color: var(--apple-blue); }
+    .bot-card-icon.c5 { background: rgba(255, 59, 48, 0.1); color: var(--apple-red); }
+
+    .bot-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: var(--apple-gray-700);
+      margin-bottom: 8px;
+    }
+
+    .bot-card p {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--apple-gray-500);
+      margin-bottom: 16px;
+    }
+
+    .bot-card .bot-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--apple-blue);
+      background: var(--apple-blue-light);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+    }
+
+    .bot-card .bot-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--apple-blue);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      transition: gap 0.2s ease;
+    }
+
+    .bot-card:hover .bot-link { gap: 10px; }
+
+    .bot-card .bot-link::after {
+      content: '→';
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .bot-card:hover .bot-link::after { transform: translateX(3px); }
+
+    /* ==========================
+       STACK SECTION
+       ========================== */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 48px;
+    }
+
+    .stack-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stack-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(0, 113, 227, 0.3);
+    }
+
+    .stack-item .icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .stack-item h4 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--apple-white);
+      margin-bottom: 4px;
+    }
+
+    .stack-item p {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--apple-gray-400);
+    }
+
+    /* ==========================
+       ABOUT
+       ========================== */
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+      margin-top: 40px;
+    }
+
+    .about-text p {
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--apple-gray-500);
+      margin-bottom: 20px;
+    }
+
+    .about-text strong { color: var(--apple-gray-700); }
+
+    .about-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 32px;
+      background: var(--apple-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--apple-gray-200);
+    }
+
+    .about-highlight-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .about-highlight-item .hl-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--apple-blue-light);
+      color: var(--apple-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .about-highlight-item .hl-text {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--apple-gray-500);
+    }
+
+    .about-highlight-item .hl-text strong {
+      color: var(--apple-gray-700);
+      font-weight: 600;
+    }
+
+    /* ==========================
+       CTA SECTION
+       ========================== */
+    .cta-section {
+      background: var(--apple-black);
+      text-align: center;
+      padding: 140px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 113, 227, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(36px, 5vw, 48px);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.08;
+      color: var(--apple-white);
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-section p {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--apple-gray-400);
+      max-width: 520px;
+      margin: 0 auto 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-section .cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==========================
+       FOOTER
+       ========================== */
+    footer {
+      background: var(--apple-gray-100);
+      padding: 40px 22px;
+      text-align: center;
+      border-top: 1px solid var(--apple-gray-200);
+    }
+
+    footer p {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--apple-gray-400);
+    }
+
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      list-style: none;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    footer .footer-links a {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--apple-gray-500);
+      transition: color 0.2s ease;
+    }
+
+    footer .footer-links a:hover { color: var(--apple-blue); }
+
+    footer .footer-divider {
+      width: 1px;
+      height: 12px;
+      background: var(--apple-gray-300);
+    }
+
+    /* ==========================
+       RESPONSIVE
+       ========================== */
+    @media (max-width: 900px) {
+      .bots-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-content { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .burger { display: flex; }
+
+      .nav-links.mobile-open {
+        display: flex;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 28px;
+        z-index: 1000;
+      }
+
+      .nav-links.mobile-open a {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--apple-gray-700);
+      }
+
+      .nav-links.mobile-open .nav-cta {
+        font-size: 16px;
+        padding: 12px 28px;
+      }
+
+      .section-padding { padding: 80px 0; }
+      .hero-stats { gap: 32px; }
+      .hero-stat-num { font-size: 26px; }
+      .stack-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .bots-grid { grid-template-columns: 1fr; }
+      .stack-grid { grid-template-columns: 1fr; }
+      .hero-stats { flex-wrap: wrap; gap: 24px; }
+      .hero-stat-divider { display: none; }
+      .section-padding { padding: 60px 0; }
+    }
+
+    /* ==========================
+       ANIMATIONS
+       ========================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-in-delay-1 { transition-delay: 0.1s; }
+    .fade-in-delay-2 { transition-delay: 0.2s; }
+    .fade-in-delay-3 { transition-delay: 0.3s; }
+    .fade-in-delay-4 { transition-delay: 0.4s; }
+    .fade-in-delay-5 { transition-delay: 0.5s; }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================
+       NAV
+       ========================== -->
+  <nav id="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo">Андрей <span>Dev</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#bots">Боты</a></li>
+        <li><a href="#stack">Стек</a></li>
+        <li><a href="#about">Обо мне</a></li>
+        <li><a href="#contact" class="nav-cta">Связаться</a></li>
+      </ul>
+      <button class="burger" id="burger" aria-label="Меню">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==========================
+       HERO
+       ========================== -->
+  <section class="hero" id="hero">
+    <div class="hero-badge fade-in">
+      <span class="dot"></span>
+      Разработчик Telegram-ботов и AI
+    </div>
+    <h1 class="fade-in fade-in-delay-1">
+      Создаю умные<br>
+      <span class="highlight">Telegram-боты</span>
+    </h1>
+    <p class="fade-in fade-in-delay-2">
+      Андрей из Сызрани. Разрабатываю ботов на Python, которые автоматизируют бизнес, 
+      записывают клиентов, обрабатывают заказы и приносят прибыль. 
+      От идеи до запуска — под ключ.
+    </p>
+    <div class="hero-cta fade-in fade-in-delay-3">
+      <a href="#bots" class="btn btn-primary btn-lg">Посмотреть ботов</a>
+      <a href="tg://resolve?domain=Vandrey63" class="btn btn-outline btn-lg" target="_blank">Написать в Telegram</a>
+    </div>
+    <div class="hero-stats fade-in fade-in-delay-4">
+      <div class="hero-stat">
+        <div class="hero-stat-num">5+</div>
+        <div class="hero-stat-label">Рабочих ботов</div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">Python</div>
+        <div class="hero-stat-label">Основной стек</div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">Docker</div>
+        <div class="hero-stat-label">Деплой</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================
+       BOTS SECTION
+       ========================== -->
+  <section class="section-light section-padding" id="bots">
+    <div class="container text-center">
+      <div class="eyebrow fade-in">Мои проекты</div>
+      <h2 class="section-title fade-in fade-in-delay-1">Telegram-боты</h2>
+      <p class="section-subtitle mx-auto fade-in fade-in-delay-2">
+        Каждый бот решает конкретную бизнес-задачу: от записи клиентов 
+        до финансового учёта и AI-консультаций.
+      </p>
+    </div>
+
+    <div class="container" style="margin-top: 48px;">
+      <div class="bots-grid">
+        <!-- Bot 1: DealBot63 -->
+        <div class="bot-card fade-in fade-in-delay-1">
+          <div class="bot-card-icon c1">D</div>
+          <h3>DealBot63</h3>
+          <p>Бот для сделок и управления задачами. CRM-функционал, напоминания, 
+          работа с клиентами — всё в Telegram.</p>
+          <span class="bot-tag">@DealBot63_bot</span>
+          <a href="https://t.me/DealBot63_bot" target="_blank" class="bot-link">Запустить</a>
+        </div>
+
+        <!-- Bot 2: GlamBot -->
+        <div class="bot-card fade-in fade-in-delay-2">
+          <div class="bot-card-icon c2">G</div>
+          <h3>GlamBot</h3>
+          <p>Бот для салона красоты: онлайн-запись, каталог услуг, 
+          напоминания о визите, отзывы клиентов.</p>
+          <span class="bot-tag">@nail163_bot</span>
+          <a href="https://t.me/nail163_bot" target="_blank" class="bot-link">Запустить</a>
+        </div>
+
+        <!-- Bot 3: BeautyBot -->
+        <div class="bot-card fade-in fade-in-delay-3">
+          <div class="bot-card-icon c3">B</div>
+          <h3>BeautyBot</h3>
+          <p>Студийный бот для ногтевого сервиса и бровей. 
+          Круглосуточная запись, управление расписанием.</p>
+          <span class="bot-tag">@Nailselegantstudio_bot</span>
+          <a href="https://t.me/Nailselegantstudio_bot" target="_blank" class="bot-link">Запустить</a>
+        </div>
+
+        <!-- Bot 4: FinBot -->
+        <div class="bot-card fade-in fade-in-delay-4">
+          <div class="bot-card-icon c4">F</div>
+          <h3>FinBot</h3>
+          <p>Финансовый бот: учёт доходов/расходов, аналитика, 
+          категории, отчёты и экспорт данных.</p>
+          <span class="bot-tag">@finpro63_bot</span>
+          <a href="https://t.me/finpro63_bot" target="_blank" class="bot-link">Запустить</a>
+        </div>
+
+        <!-- Bot 5: DebiHackBot -->
+        <div class="bot-card fade-in fade-in-delay-5">
+          <div class="bot-card-icon c5">DH</div>
+          <h3>DebiHackBot</h3>
+          <p>AI-ассистент для автоматизации общения с клиентами, 
+          обработки заявок и генерации ответов.</p>
+          <span class="bot-tag">AI Assistant</span>
+          <a href="tg://resolve?domain=Vandrey63" target="_blank" class="bot-link">Узнать</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================
+       STACK SECTION
+       ========================== -->
+  <section class="section-dark section-padding" id="stack">
+    <div class="container text-center">
+      <div class="eyebrow fade-in" style="color: var(--apple-gray-400);">Технологии</div>
+      <h2 class="section-title fade-in fade-in-delay-1">Стек технологий</h2>
+      <p class="section-subtitle mx-auto fade-in fade-in-delay-2">
+        Современный инструментарий для надёжных и масштабируемых решений.
+      </p>
+    </div>
+
+    <div class="container">
+      <div class="stack-grid">
+        <div class="stack-item fade-in fade-in-delay-1">
+          <div class="icon">🐍</div>
+          <h4>Python</h4>
+          <p>Основной язык разработки</p>
+        </div>
+        <div class="stack-item fade-in fade-in-delay-1">
+          <div class="icon">🤖</div>
+          <h4>Aiogram</h4>
+          <p>Фреймворк для Telegram API</p>
+        </div>
+        <div class="stack-item fade-in fade-in-delay-2">
+          <div class="icon">🌐</div>
+          <h4>Flask</h4>
+          <p>REST API и веб-хуки</p>
+        </div>
+        <div class="stack-item fade-in fade-in-delay-2">
+          <div class="icon">🐳</div>
+          <h4>Docker</h4>
+          <p>Контейнеризация и деплой</p>
+        </div>
+        <div class="stack-item fade-in fade-in-delay-3">
+          <div class="icon">🚀</div>
+          <h4>OmniRoute</h4>
+          <p>Маршрутизация и прокси</p>
+        </div>
+        <div class="stack-item fade-in fade-in-delay-3">
+          <div class="icon">⚡</div>
+          <h4>Hermes</h4>
+          <p>AI-агентная платформа</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================
+       ABOUT SECTION
+       ========================== -->
+  <section class="section-white section-padding" id="about">
+    <div class="container">
+      <div class="eyebrow text-center fade-in">Обо мне</div>
+      <h2 class="section-title text-center fade-in fade-in-delay-1">Андрей из Сызрани</h2>
+
+      <div class="about-content">
+        <div class="about-text fade-in fade-in-delay-2">
+          <p>Привет! Я — разработчик из <strong>Сызрани</strong>. Специализируюсь на создании <strong>Telegram-ботов</strong> и <strong>AI-решений</strong>, которые реально помогают бизнесу.</p>
+          <p>За моими плечами — несколько рабочих ботов для разных сфер: от салонов красоты и ногтевого сервиса до финансового учёта и CRM. Каждый проект — это не просто код, а <strong>работающий инструмент</strong>, который экономит время и деньги.</p>
+          <p>Использую современный стек: <strong>Python, Aiogram, Flask, Docker, OmniRoute, Hermes</strong>. Пишу чистый, поддерживаемый код. Деплою в Docker-контейнерах — надёжно и масштабируемо.</p>
+          <p>Готов взять ваш проект — от идеи до запуска и поддержки.</p>
+        </div>
+
+        <div class="about-highlights fade-in fade-in-delay-3">
+          <div class="about-highlight-item">
+            <div class="hl-icon">🤖</div>
+            <div class="hl-text"><strong>5+ ботов</strong> в продакшене</div>
+          </div>
+          <div class="about-highlight-item">
+            <div class="hl-icon">🐍</div>
+            <div class="hl-text"><strong>Python + Aiogram</strong> — основной стек</div>
+          </div>
+          <div class="about-highlight-item">
+            <div class="hl-icon">🐳</div>
+            <div class="hl-text"><strong>Docker</strong> — контейнеризация и деплой</div>
+          </div>
+          <div class="about-highlight-item">
+            <div class="hl-icon">⚡</div>
+            <div class="hl-text"><strong>OmniRoute + Hermes</strong> — AI-агентная инфраструктура</div>
+          </div>
+          <div class="about-highlight-item">
+            <div class="hl-icon">🏘️</div>
+            <div class="hl-text">Из <strong>Сызрани</strong> — работаю удалённо</div>
+          </div>
+          <div class="about-highlight-item">
+            <div class="hl-icon">💬</div>
+            <div class="hl-text"><strong>Telegram</strong> — основной канал связи</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================
+       CTA SECTION
+       ========================== -->
+  <section class="cta-section" id="contact">
+    <h2 class="fade-in">Готовы обсудить проект?</h2>
+    <p class="fade-in fade-in-delay-1">
+      Напишите мне в Telegram — обсудим идею, сроки и стоимость. 
+      От небольших ботов до полноценных AI-платформ.
+    </p>
+    <div class="cta-group fade-in fade-in-delay-2">
+      <a href="tg://resolve?domain=Vandrey63" class="btn btn-primary btn-lg" target="_blank">
+        Написать в Telegram
+      </a>
+      <a href="#bots" class="btn btn-white btn-lg">Посмотреть проекты</a>
+    </div>
+  </section>
+
+  <!-- ==========================
+       FOOTER
+       ========================== -->
+  <footer>
+    <div class="container">
+      <ul class="footer-links">
+        <li><a href="#bots">Боты</a></li>
+        <li><a href="#stack">Стек</a></li>
+        <li><a href="#about">Обо мне</a></li>
+        <li><a href="tg://resolve?domain=Vandrey63" target="_blank">Telegram</a></li>
+      </ul>
+      <p>© 2026 Андрей из Сызрани. Разработка Telegram-ботов и AI-решений.</p>
+    </div>
+  </footer>
+
+  <!-- ==========================
+       JAVASCRIPT
+       ========================== -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Burger menu
+    const burger = document.getElementById('burger');
+    const navLinks = document.getElementById('navLinks');
+
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('active');
+      navLinks.classList.toggle('mobile-open');
+    });
+
+    // Close mobile menu on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        burger.classList.remove('active');
+        navLinks.classList.remove('mobile-open');
+      });
+    });
+
+    // Intersection Observer for fade-in
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

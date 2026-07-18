@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BotForge — Telegram Bot Management Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0B0F14;--panel:#131A22;--panel2:#171F29;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+--text:#E4E7EB;--text2:#9CA3AF;--text3:#6B7280;
+--cyan:#00D9FF;--teal:#14B8A6;--emerald:#10B981;--amber:#F59E0B;--red:#EF4444;
+--radius:8px;--sidebar:240px;--topbar:56px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+input{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--bg);border-right:1px solid var(--border);position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* Sidebar */
+.sidebar-header{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sidebar-logo{width:28px;height:28px;background:linear-gradient(135deg,var(--cyan),var(--teal));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--bg);font-size:14px}
+.sidebar-title{font-weight:700;font-size:15px;letter-spacing:-0.3px}
+.sidebar-subtitle{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:1px}
+.nav-section{padding:8px 0}
+.nav-section-label{padding:6px 20px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;color:var(--text2);font-size:13px;font-weight:500;transition:all 0.15s;cursor:pointer;border-left:2px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.03);color:var(--text)}
+.nav-item.active{background:rgba(0,217,255,0.05);color:var(--cyan);border-left-color:var(--cyan)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,0.08);color:var(--text2);font-weight:600}
+.nav-badge.alert{background:rgba(239,68,68,0.15);color:var(--red)}
+.sidebar-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sidebar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--bg)}
+.sidebar-user-name{font-size:12px;font-weight:600}
+.sidebar-user-role{font-size:10px;color:var(--text3)}
+
+/* Topbar */
+.topbar{height:var(--topbar);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:50}
+.topbar-search{flex:1;max-width:400px;position:relative}
+.topbar-search input{width:100%;height:34px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:0 12px 0 36px;color:var(--text);font-size:13px}
+.topbar-search input::placeholder{color:var(--text3)}
+.topbar-search input:focus{border-color:rgba(0,217,255,0.3)}
+.topbar-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text3)}
+.topbar-actions{display:flex;align-items:center;gap:12px;margin-left:auto}
+.topbar-btn{width:34px;height:34px;border-radius:6px;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.15s;position:relative}
+.topbar-btn:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.topbar-btn svg{width:18px;height:18px}
+.topbar-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%}
+.topbar-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--bg)}
+
+/* Content */
+.content{flex:1;padding:24px;max-width:1400px;width:100%}
+.page-header{display:flex;align-items:center;justify-content:between;margin-bottom:24px}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-0.4px}
+.page-subtitle{font-size:13px;color:var(--text3);margin-top:2px}
+.page-actions{margin-left:auto;display:flex;gap:8px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;transition:all 0.15s;white-space:nowrap}
+.btn svg{width:14px;height:14px}
+.btn-primary{background:var(--cyan);color:var(--bg)}
+.btn-primary:hover{background:#33DEFF}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.2)}
+.btn-danger{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.btn-danger:hover{background:rgba(239,68,68,0.15)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-icon{padding:6px;width:28px;height:28px;justify-content:center}
+
+/* Cards */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:600}
+
+/* Metric cards */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.metric-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.metric-card.cyan::before{background:var(--cyan)}
+.metric-card.teal::before{background:var(--teal)}
+.metric-card.emerald::before{background:var(--emerald)}
+.metric-card.amber::before{background:var(--amber)}
+.metric-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:8px}
+.metric-value{font-size:28px;font-weight:700;letter-spacing:-0.5px}
+.metric-delta{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px;font-weight:500}
+.metric-delta.up{color:var(--emerald)}
+.metric-delta.down{color:var(--red)}
+.metric-icon{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.metric-icon.cyan{background:rgba(0,217,255,0.08);color:var(--cyan)}
+.metric-icon.teal{background:rgba(20,184,166,0.08);color:var(--teal)}
+.metric-icon.emerald{background:rgba(16,185,129,0.08);color:var(--emerald)}
+.metric-icon.amber{background:rgba(245,158,11,0.08);color:var(--amber)}
+.metric-icon svg{width:18px;height:18px}
+
+/* Charts */
+.chart-container{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:160px;margin-top:16px}
+.chart-bar{flex:1;background:linear-gradient(180deg,var(--cyan),rgba(0,217,255,0.1));border-radius:3px 3px 0 0;position:relative;min-height:4px;transition:opacity 0.15s;cursor:pointer}
+.chart-bar:hover{opacity:0.8}
+.chart-bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text3);white-space:nowrap}
+.chart-legend{display:flex;gap:16px;margin-top:24px}
+.chart-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.chart-legend-dot{width:8px;height:8px;border-radius:2px}
+
+/* Donut chart */
+.donut-wrapper{display:flex;align-items:center;gap:24px}
+.donut{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--cyan) 0% 35%,var(--teal) 35% 65%,var(--emerald) 65% 85%,var(--amber) 85% 100%);position:relative}
+.donut::after{content:'';position:absolute;top:20%;left:20%;width:60%;height:60%;background:var(--panel);border-radius:50%}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:1}
+.donut-center-value{font-size:20px;font-weight:700}
+.donut-center-label{font-size:10px;color:var(--text3);text-transform:uppercase}
+.donut-legend{display:flex;flex-direction:column;gap:8px}
+.donut-legend-item{display:flex;align-items:center;gap:8px;font-size:12px}
+.donut-legend-dot{width:8px;height:8px;border-radius:2px}
+.donut-legend-value{margin-left:auto;font-weight:600;color:var(--text2)}
+
+/* Table */
+.table-container{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.table-header{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px}
+.table-header-title{font-size:14px;font-weight:600}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--panel2)}
+th{text-align:left;padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-online{background:rgba(16,185,129,0.12);color:var(--emerald)}
+.badge-offline{background:rgba(107,114,128,0.12);color:var(--text3)}
+.badge-webhook{background:rgba(0,217,255,0.1);color:var(--cyan)}
+.badge-polling{background:rgba(20,184,166,0.1);color:var(--teal)}
+.badge-info{background:rgba(0,217,255,0.1);color:var(--cyan)}
+.badge-warn{background:rgba(245,158,11,0.1);color:var(--amber)}
+.badge-error{background:rgba(239,68,68,0.1);color:var(--red)}
+.badge-owner{background:rgba(245,158,11,0.12);color:var(--amber)}
+.badge-admin{background:rgba(0,217,255,0.12);color:var(--cyan)}
+.badge-editor{background:rgba(20,184,166,0.12);color:var(--teal)}
+.badge-viewer{background:rgba(156,163,175,0.12);color:var(--text2)}
+.badge-dot{width:6px;height:6px;border-radius:50%}
+
+/* Bot avatar */
+.bot-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--bg);flex-shrink:0}
+.bot-cell{display:flex;align-items:center;gap:10px}
+.bot-name{font-weight:600;font-size:13px}
+.bot-username{font-size:11px;color:var(--text3)}
+
+/* Token */
+.token{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:12px;width:480px;max-width:90vw;max-height:90vh;overflow-y:auto}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.15s}
+.modal-close:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+/* Form */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.form-input{width:100%;height:38px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:0 12px;color:var(--text);font-size:13px}
+.form-input:focus{border-color:rgba(0,217,255,0.3)}
+.form-hint{font-size:11px;color:var(--text3);margin-top:4px}
+.form-select{width:100%;height:38px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:0 12px;color:var(--text);font-size:13px;cursor:pointer}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px}
+.tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.tab-badge{font-size:10px;padding:1px 5px;border-radius:8px;background:rgba(255,255,255,0.08);margin-left:4px}
+
+/* Empty state */
+.empty-state{text-align:center;padding:48px 24px}
+.empty-icon{width:64px;height:64px;margin:0 auto 16px;border-radius:16px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:var(--text3)}
+.empty-icon svg{width:32px;height:32px}
+.empty-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.empty-text{font-size:13px;color:var(--text3);max-width:360px;margin:0 auto 20px}
+
+/* Skeleton */
+.skeleton{background:linear-gradient(90deg,var(--panel) 25%,var(--panel2) 50%,var(--panel) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Toast */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3);min-width:300px;animation:slideIn 0.2s ease}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.success{border-left:3px solid var(--emerald)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--cyan)}
+.toast-icon{width:20px;height:20px;flex-shrink:0}
+.toast-text{font-size:12px;flex:1}
+
+/* Toggle */
+.toggle{width:36px;height:20px;background:rgba(255,255,255,0.1);border-radius:10px;position:relative;cursor:pointer;transition:background 0.2s}
+.toggle.on{background:var(--emerald)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.2s}
+.toggle.on::after{transform:translateX(16px)}
+
+/* Checkbox */
+.checkbox{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s}
+.checkbox.checked{background:var(--cyan);border-color:var(--cyan)}
+.checkbox.checked svg{display:block}
+.checkbox svg{display:none;width:12px;height:12px;color:var(--bg)}
+
+/* Grid layouts */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+
+/* Progress bar */
+.progress{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;background:var(--emerald);border-radius:3px;transition:width 0.3s}
+
+/* Filter pills */
+.filter-pills{display:flex;gap:6px;margin-left:auto}
+.filter-pill{padding:4px 12px;border-radius:16px;font-size:11px;font-weight:600;color:var(--text2);background:rgba(255,255,255,0.04);cursor:pointer;transition:all 0.15s;border:1px solid transparent}
+.filter-pill:hover{background:rgba(255,255,255,0.08)}
+.filter-pill.active{background:rgba(0,217,255,0.1);color:var(--cyan);border-color:rgba(0,217,255,0.2)}
+
+/* Responsive */
+@media(max-width:1024px){.metrics-grid{grid-template-columns:repeat(2,1fr)}.grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:transform 0.2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.metrics-grid,.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.topbar-search{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+<div class="sidebar-header">
+<div class="sidebar-logo">B</div>
+<div><div class="sidebar-title">BotForge</div><div class="sidebar-subtitle">v2.4.0</div></div>
+</div>
+<nav class="nav-section">
+<div class="nav-section-label">Management</div>
+<div class="nav-item active" onclick="switchPage('dashboard')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</div>
+<div class="nav-item" onclick="switchPage('bots')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>My Bots<span class="nav-badge">4</span></div>
+<div class="nav-item" onclick="switchPage('broadcasts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.594l-2.147-6.15M18 13a3 3 0 01-3 3h-2.382m0 0a3 3 0 01-2.598-1.528M12 2.76L7.5 12h9L12 2.76z"/></svg>Broadcasts</div>
+<div class="nav-item" onclick="switchPage('logs')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4V9m4-4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>Logs & Events<span class="nav-badge alert">3</span></div>
+<div class="nav-item" onclick="switchPage('analytics')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 12l3-3 3 3 4-4M3 3v18h18"/></svg>Analytics</div>
+</nav>
+<nav class="nav-section">
+<div class="nav-section-label">Configure</div>
+<div class="nav-item" onclick="switchPage('integrations')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>Integrations</div>
+<div class="nav-item" onclick="switchPage('team')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a4 4 0 00-5-3.47M9 20H4v-2a4 4 0 015-3.47m6.363-2.363a4 4 0 10-5.656-5.656 4 4 0 005.656 5.656z"/></svg>Team & Roles</div>
+<div class="nav-item" onclick="switchPage('settings')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Settings</div>
+<div class="nav-item" onclick="switchPage('billing')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>Billing</div>
+<div class="nav-item" onclick="switchPage('audit')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Audit Log</div>
+</nav>
+<div class="sidebar-footer">
+<div class="sidebar-avatar">А</div>
+<div><div class="sidebar-user-name">Андрей</div><div class="sidebar-user-role">Owner</div></div>
+</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+<!-- TOPBAR -->
+<header class="topbar">
+<div class="topbar-search">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+<input type="text" placeholder="Search bots, logs, users...">
+</div>
+<div class="topbar-actions">
+<button class="topbar-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg><div class="topbar-notif-dot"></div></button>
+<button class="topbar-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
+<div class="topbar-avatar">А</div>
+</div>
+</header>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+<!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page">
+<div class="page-header">
+<div><div class="page-title">Dashboard</div><div class="page-subtitle">Overview of your Telegram bot fleet</div></div>
+<div class="page-actions">
+<button class="btn btn-secondary" onclick="switchPage('logs')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4V9m4-4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>View Logs</button>
+<button class="btn btn-primary" onclick="openModal()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Add Bot</button>
+</div>
+</div>
+
+<!-- Metrics -->
+<div class="metrics-grid">
+<div class="metric-card cyan">
+<div class="metric-icon cyan"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+<div class="metric-label">Active Bots</div>
+<div class="metric-value">4</div>
+<div class="metric-delta up">▲ +1 this week</div>
+</div>
+<div class="metric-card teal">
+<div class="metric-icon teal"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a4 4 0 00-5-3.47M9 20H4v-2a4 4 0 015-3.47m6.363-2.363a4 4 0 10-5.656-5.656 4 4 0 005.656 5.656z"/></svg></div>
+<div class="metric-label">Total Users</div>
+<div class="metric-value">12,847</div>
+<div class="metric-delta up">▲ +832 (+6.9%)</div>
+</div>
+<div class="metric-card emerald">
+<div class="metric-icon emerald"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 14.762 3 13.318 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
+<div class="metric-label">Messages Today</div>
+<div class="metric-value">89.2K</div>
+<div class="metric-delta up">▲ +12.4% vs yesterday</div>
+</div>
+<div class="metric-card amber">
+<div class="metric-icon amber"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-2.99l-6.93-12a2 2 0 00-3.48 0l-6.93 12A2 2 0 005.07 19z"/></svg></div>
+<div class="metric-label">Errors</div>
+<div class="metric-value">3</div>
+<div class="metric-delta down">▼ -2 vs yesterday</div>
+</div>
+</div>
+
+<!-- Activity chart -->
+<div class="chart-container">
+<div class="card-header">
+<div class="card-title">Activity Overview</div>
+<div class="filter-pills">
+<div class="filter-pill active">24H</div>
+<div class="filter-pill">7D</div>
+<div class="filter-pill">30D</div>
+</div>
+</div>
+<div class="chart-bars" id="chartBars"></div>
+<div class="chart-legend">
+<div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--cyan)"></div>Messages Sent</div>
+<div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--teal)"></div>Commands Executed</div>
+<div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--amber)"></div>Errors</div>
+</div>
+</div>
+
+<!-- Recent events + Top bots -->
+<div class="grid-2">
+<div class="card">
+<div class="card-header"><div class="card-title">Recent Events</div><button class="btn btn-sm btn-secondary">View All</button></div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+<div class="badge badge-info">INFO</div>
+<span style="font-size:12px;flex:1">Bot @DealBot63_bot started polling</span>
+<span style="font-size:11px;color:var(--text3)">2m ago</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+<div class="badge badge-warn">WARN</div>
+<span style="font-size:12px;flex:1">Rate limit approaching on @HermesStudy_bot</span>
+<span style="font-size:11px;color:var(--text3)">14m ago</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+<div class="badge badge-error">ERROR</div>
+<span style="font-size:12px;flex:1">Webhook failed on @DebiHackBot</span>
+<span style="font-size:11px;color:var(--text3)">1h ago</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+<div class="badge badge-info">INFO</div>
+<span style="font-size:12px;flex:1">New user joined @DealBot63_bot</span>
+<span style="font-size:11px;color:var(--text3)">2h ago</span>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">Top Bots by Activity</div></div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+<div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--teal))">D</div><span style="font-size:13px;font-weight:600">@DealBot63_bot</span></div>
+<span style="font-size:12px;color:var(--text2)">42.1K msgs</span>
+</div>
+<div class="progress"><div class="progress-fill" style="width:85%;background:var(--cyan)"></div></div>
+</div>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+<div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--teal),var(--emerald))">H</div><span style="font-size:13px;font-weight:600">@HermesStudy_bot</span></div>
+<span style="font-size:12px;color:var(--text2)">28.5K msgs</span>
+</div>
+<div class="progress"><div class="progress-fill" style="width:58%;background:var(--teal)"></div></div>
+</div>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+<div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--amber),var(--red))">N</div><span style="font-size:13px;font-weight:600">@NailBot_bot</span></div>
+<span style="font-size:12px;color:var(--text2)">14.2K msgs</span>
+</div>
+<div class="progress"><div class="progress-fill" style="width:29%;background:var(--amber)"></div></div>
+</div>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+<div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--red),var(--amber))">X</div><span style="font-size:13px;font-weight:600">@DebiHackBot</span></div>
+<span style="font-size:12px;color:var(--text2)">4.4K msgs</span>
+</div>
+<div class="progress"><div class="progress-fill" style="width:9%;background:var(--red)"></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- MY BOTS PAGE -->
+<div id="page-bots" class="page" style="display:none">
+<div class="page-header">
+<div><div class="page-title">My Bots</div><div class="page-subtitle">Manage your connected Telegram bots</div></div>
+<div class="page-actions">
+<button class="btn btn-secondary">Export</button>
+<button class="btn btn-primary" onclick="openModal()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Add Bot</button>
+</div>
+</div>
+<div class="table-container">
+<div class="table-header"><div class="table-header-title">All Bots (4)</div></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Bot</th><th>Status</th><th>Mode</th><th>Users</th><th>Commands</th><th>Last Error</th><th>Token</th><th>Actions</th></tr></thead>
+<tbody>
+<tr>
+<td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--teal))">D</div><div><div class="bot-name">DealBot63</div><div class="bot-username">@DealBot63_bot</div></div></div></td>
+<td><div class="badge badge-online"><div class="badge-dot" style="background:var(--emerald)"></div>Online</div></td>
+<td><div class="badge badge-polling">Polling</div></td>
+<td>8,432</td><td>12</td><td style="color:var(--text3)">None</td>
+<td><span class="token">8585••••••••F5Wk</span></td>
+<td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-secondary">Test</button><button class="btn btn-sm btn-secondary">Edit</button><button class="btn btn-sm btn-danger">Delete</button></div></td>
+</tr>
+<tr>
+<td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--teal),var(--emerald))">H</div><div><div class="bot-name">HermesStudy</div><div class="bot-username">@HermesStudy_bot</div></div></div></td>
+<td><div class="badge badge-online"><div class="badge-dot" style="background:var(--emerald)"></div>Online</div></td>
+<td><div class="badge badge-webhook">Webhook</div></td>
+<td>3,847</td><td>8</td><td style="color:var(--amber)">Rate limit (14m)</td>
+<td><span class="token">8585••••••••E2x9</span></td>
+<td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-secondary">Test</button><button class="btn btn-sm btn-secondary">Edit</button><button class="btn btn-sm btn-danger">Delete</button></div></td>
+</tr>
+<tr>
+<td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--amber),var(--red))">N</div><div><div class="bot-name">NailBot</div><div class="bot-username">@NailBot_bot</div></div></div></td>
+<td><div class="badge badge-online"><div class="badge-dot" style="background:var(--emerald)"></div>Online</div></td>
+<td><div class="badge badge-polling">Polling</div></td>
+<td>1,204</td><td>6</td><td style="color:var(--text3)">None</td>
+<td><span class="token">7291••••••••K3mZ</span></td>
+<td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-secondary">Test</button><button class="btn btn-sm btn-secondary">Edit</button><button class="btn btn-sm btn-danger">Delete</button></div></td>
+</tr>
+<tr>
+<td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--red),var(--amber))">X</div><div><div class="bot-name">DebiHackBot</div><div class="bot-username">@DebiHackBot</div></div></div></td>
+<td><div class="badge badge-offline"><div class="badge-dot" style="background:var(--text3)"></div>Offline</div></td>
+<td><div class="badge badge-webhook">Webhook</div></td>
+<td>164</td><td>5</td><td style="color:var(--red)">Webhook failed (1h)</td>
+<td><span class="token">8942••••••••ImH8</span></td>
+<td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-secondary">Reconnect</button><button class="btn btn-sm btn-secondary">Edit</button><button class="btn btn-sm btn-danger">Delete</button></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ANALYTICS PAGE -->
+<div id="page-analytics" class="page" style="display:none">
+<div class="page-header">
+<div><div class="page-title">Analytics</div><div class="page-subtitle">Performance metrics across all bots</div></div>
+<div class="page-actions"><div class="filter-pills"><div class="filter-pill">7D</div><div class="filter-pill active">30D</div><div class="filter-pill">90D</div></div></div>
+</div>
+<div class="metrics-grid">
+<div class="metric-card cyan"><div class="metric-label">Messages Sent</div><div class="metric-value">1.24M</div><div class="metric-delta up">▲ +18.2%</div></div>
+<div class="metric-card teal"><div class="metric-label">Active Users</div><div class="metric-value">8,432</div><div class="metric-delta up">▲ +6.9%</div></div>
+<div class="metric-card emerald"><div class="metric-label">Commands Executed</div><div class="metric-value">456K</div><div class="metric-delta up">▲ +12.1%</div></div>
+<div class="metric-card amber"><div class="metric-label">Error Rate</div><div class="metric-value">0.3%</div><div class="metric-delta up">▼ -0.1%</div></div>
+</div>
+<div class="grid-2">
+<div class="card">
+<div class="card-header"><div class="card-title">Message Distribution</div></div>
+<div class="donut-wrapper">
+<div class="donut"><div class="donut-center"><div class="donut-center-value">1.24M</div><div class="donut-center-label">Total</div></div></div>
+<div class="donut-legend">
+<div class="donut-legend-item"><div class="donut-legend-dot" style="background:var(--cyan)"></div>DealBot63<span class="donut-legend-value">434K (35%)</span></div>
+<div class="donut-legend-item"><div class="donut-legend-dot" style="background:var(--teal)"></div>HermesStudy<span class="donut-legend-value">372K (30%)</span></div>
+<div class="donut-legend-item"><div class="donut-legend-dot" style="background:var(--emerald)"></div>NailBot<span class="donut-legend-value">248K (20%)</span></div>
+<div class="donut-legend-item"><div class="donut-legend-dot" style="background:var(--amber)"></div>DebiHackBot<span class="donut-legend-value">186K (15%)</span></div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">Daily Activity</div></div>
+<div class="chart-bars" id="chartBars2" style="height:140px"></div>
+</div>
+</div>
+</div>
+
+<!-- LOGS PAGE -->
+<div id="page-logs" class="page" style="display:none">
+<div class="page-header">
+<div><div class="page-title">Logs & Events</div><div class="page-subtitle">Real-time event stream</div></div>
+<div class="page-actions"><div class="filter-pills"><div class="filter-pill active">All</div><div class="filter-pill">Errors</div><div class="filter-pill">Warnings</div><div class="filter-pill">Info</div></div></div>
+</div>
+<div class="table-container">
+<div class="table-header"><div class="table-header-title">Event Log</div><button class="btn btn-sm btn-secondary">Export CSV</button></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Timestamp</th><th>Bot</th><th>Level</th><th>Message</th></tr></thead>
+<tbody id="logTable">
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 19:42:15</td><td>@DealBot63_bot</td><td><div class="badge badge-info">INFO</div></td><td>Bot started polling on port 443</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 19:28:03</td><td>@HermesStudy_bot</td><td><div class="badge badge-warn">WARN</div></td><td>Rate limit 80% reached (28/30 req/min)</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 18:45:22</td><td>@DebiHackBot</td><td><div class="badge badge-error">ERROR</div></td><td>Webhook delivery failed: connection refused</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 17:12:08</td><td>@NailBot_bot</td><td><div class="badge badge-info">INFO</div></td><td>New command /booking registered</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 16:33:41</td><td>@DealBot63_bot</td><td><div class="badge badge-info">INFO</div></td><td>Broadcast sent to 8,432 users</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 15:08:17</td><td>@HermesStudy_bot</td><td><div class="badge badge-warn">WARN</div></td><td>Memory usage 78%</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 14:22:55</td><td>@DebiHackBot</td><td><div class="badge badge-error">ERROR</div></td><td>API timeout: DashScope responded 503</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 13:45:02</td><td>@DealBot63_bot</td><td><div class="badge badge-info">INFO</div></td><td>User /start command executed</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- TEAM PAGE -->
+<div id="page-team" class="page" style="display:none">
+<div class="page-header">
+<div><div class="page-title">Team & Roles</div><div class="page-subtitle">Manage team members and permissions</div></div>
+<div class="page-actions"><button class="btn btn-primary"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Invite Member</button></div>
+</div>
+<div class="table-container">
+<div class="table-header"><div class="table-header-title">Members (3)</div></div>
+<table>
+<thead><tr><th>Member</th><th>Email</th><th>Role</th><th>Last Active</th><th>Actions</th></tr></thead>
+<tbody>
+<tr><td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--amber),var(--red))">А</div><div><div class="bot-name">Андрей</div><div class="bot-username">andrey@example.com</div></div></div></td><td>andrey@example.com</td><td><div class="badge badge-owner">Owner</div></td><td style="color:var(--text3)">Now</td><td><button class="btn btn-sm btn-secondary">Edit</button></td></tr>
+<tr><td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--teal))">Д</div><div><div class="bot-name">Debi</div><div class="bot-username">debi@hackbot.io</div></div></div></td><td>debi@hackbot.io</td><td><div class="badge badge-admin">Admin</div></td><td style="color:var(--text3)">1h ago</td><td><button class="btn btn-sm btn-secondary">Edit</button></td></tr>
+<tr><td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,var(--teal),var(--emerald))">C</div><div><div class="bot-name">CJ</div><div class="bot-username">cj@grove.fm</div></div></div></td><td>cj@grove.fm</td><td><div class="badge badge-editor">Editor</div></td><td style="color:var(--text3)">3h ago</td><td><button class="btn btn-sm btn-secondary">Edit</button></td></tr>
+</tbody>
+</table>
+</div>
+<div class="card" style="margin-top:24px">
+<div class="card-header"><div class="card-title">Permission Matrix</div></div>
+<table>
+<thead><tr><th>Permission</th><th>Owner</th><th>Admin</th><th>Editor</th><th>Viewer</th></tr></thead>
+<tbody>
+<tr><td>View Bots</td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td></tr>
+<tr><td>Add/Edit Bots</td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox"></div></td></tr>
+<tr><td>Delete Bots</td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox"></div></td><td><div class="checkbox"></div></td></tr>
+<tr><td>Send Broadcasts</td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox"></div></td></tr>
+<tr><td>Manage Team</td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox"></div></td><td><div class="checkbox"></div></td></tr>
+<tr><td>Billing</td><td><div class="checkbox checked"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></td><td><div class="checkbox"></div></td><td><div class="checkbox"></div></td><td><div class="checkbox"></div></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- OTHER PAGES (placeholder) -->
+<div id="page-broadcasts" class="page" style="display:none">
+<div class="page-header"><div><div class="page-title">Broadcasts</div><div class="page-subtitle">Mass messaging campaigns</div></div><div class="page-actions"><button class="btn btn-primary"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>New Broadcast</button></div></div>
+<div class="empty-state"><div class="empty-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.594l-2.147-6.15M18 13a3 3 0 01-3 3h-2.382m0 0a3 3 0 01-2.598-1.528M12 2.76L7.5 12h9L12 2.76z"/></svg></div><div class="empty-title">No broadcasts yet</div><div class="empty-text">Create your first broadcast to send messages to all bot users at once.</div><button class="btn btn-primary">Create Broadcast</button></div>
+</div>
+<div id="page-integrations" class="page" style="display:none">
+<div class="page-header"><div><div class="page-title">Integrations</div><div class="page-subtitle">Connect external services</div></div></div>
+<div class="grid-3">
+<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:40px;height:40px;border-radius:8px;background:rgba(0,217,255,0.08);display:flex;align-items:center;justify-content:center;color:var(--cyan)"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><div><div style="font-weight:600;font-size:14px">DashScope AI</div><div style="font-size:11px;color:var(--text3)">Qwen, DeepSeek models</div></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="badge badge-online">Connected</div><button class="btn btn-sm btn-secondary">Configure</button></div></div>
+<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:40px;height:40px;border-radius:8px;background:rgba(20,184,166,0.08);display:flex;align-items:center;justify-content:center;color:var(--teal)"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><div><div style="font-weight:600;font-size:14px">Groq API</div><div style="font-size:11px;color:var(--text3)">Llama, Qwen, DeepSeek</div></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="badge badge-online">Connected</div><button class="btn btn-sm btn-secondary">Configure</button></div></div>
+<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:40px;height:40px;border-radius:8px;background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;color:var(--emerald)"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div><div style="font-weight:600;font-size:14px">OmniRoute</div><div style="font-size:11px;color:var(--text3)">Multi-provider router</div></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="badge badge-online">Connected</div><button class="btn btn-sm btn-secondary">Configure</button></div></div>
+<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:40px;height:40px;border-radius:8px;background:rgba(245,158,11,0.08);display:flex;align-items:center;justify-content:center;color:var(--amber)"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9J06 7l6 2m4-6h-6"/></svg></div><div><div style="font-weight:600;font-size:14px">Mistral AI</div><div style="font-size:11px;color:var(--text3)">Mistral models</div></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="badge badge-offline">Not Connected</div><button class="btn btn-sm btn-primary">Connect</button></div></div>
+</div>
+</div>
+<div id="page-settings" class="page" style="display:none">
+<div class="page-header"><div><div class="page-title">Settings</div><div class="page-subtitle">Platform configuration</div></div></div>
+<div class="card" style="max-width:600px">
+<div class="card-header"><div class="card-title">General</div></div>
+<div class="form-group"><label class="form-label">Workspace Name</label><input class="form-input" value="BotForge HQ"></div>
+<div class="form-group"><label class="form-label">Default Bot Mode</label><select class="form-select"><option>Polling</option><option>Webhook</option></select></div>
+<div class="form-group"><label class="form-label">Proxy URL</label><input class="form-input" placeholder="socks5://..."></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0"><span style="font-size:13px">Auto-reconnect on failure</span><div class="toggle on"></div></div>
+<div style="display:flex;align-items:center;justify-content:between;padding:12px 0"><span style="font-size:13px">Error notifications</span><div class="toggle on"></div></div>
+</div>
+</div>
+<div id="page-billing" class="page" style="display:none">
+<div class="page-header"><div><div class="page-title">Billing</div><div class="page-subtitle">Subscription and usage</div></div></div>
+<div class="metrics-grid">
+<div class="metric-card emerald"><div class="metric-label">Current Plan</div><div class="metric-value" style="font-size:20px">Pro</div><div class="metric-delta">$29/mo</div></div>
+<div class="metric-card cyan"><div class="metric-label">Bots Used</div><div class="metric-value">4 / 10</div><div class="progress" style="margin-top:8px"><div class="progress-fill" style="width:40%"></div></div></div>
+<div class="metric-card teal"><div class="metric-label">Messages This Month</div><div class="metric-value">1.24M</div><div class="metric-delta">Limit: 5M</div></div>
+<div class="metric-card amber"><div class="metric-label">Next Invoice</div><div class="metric-value" style="font-size:20px">Aug 1</div><div class="metric-delta">$29.00</div></div>
+</div>
+</div>
+<div id="page-audit" class="page" style="display:none">
+<div class="page-header"><div><div class="page-title">Audit Log</div><div class="page-subtitle">Security event history</div></div></div>
+<div class="table-container">
+<table>
+<thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Resource</th><th>IP</th></tr></thead>
+<tbody>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 19:42</td><td>Андрей</td><td>Login</td><td>Dashboard</td><td>83.143.•.•</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 18:30</td><td>Андрей</td><td>Bot Added</td><td>@DebiHackBot</td><td>83.143.•.•</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 17:15</td><td>CJ</td><td>Broadcast Sent</td><td>@DealBot63_bot</td><td>83.143.•.•</td></tr>
+<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">2026-07-11 16:00</td><td>Debi</td><td>Role Changed</td><td>CJ → Editor</td><td>83.143.•.•</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+<div class="modal">
+<div class="modal-header"><div class="modal-title">Add New Bot</div><button class="modal-close" onclick="closeModal()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button></div>
+<div class="modal-body">
+<div class="form-group"><label class="form-label">Bot Token *</label><input class="form-input" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz" style="font-family:'JetBrains Mono',monospace"></div>
+<div class="form-hint">Get your token from <a href="https://t.me/BotFather" style="color:var(--cyan)">@BotFather</a> in Telegram</div>
+<div class="form-group" style="margin-top:16px"><label class="form-label">Display Name</label><input class="form-input" placeholder="My Awesome Bot"></div>
+<div class="form-group"><label class="form-label">Connection Mode</label><select class="form-select"><option>Polling (recommended)</option><option>Webhook</option></select></div>
+<div style="display:flex;align-items:center;gap:8px;padding:12px;background:rgba(0,217,255,0.05);border-radius:6px;margin-top:8px"><svg width="16" height="16" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-size:12px;color:var(--text2)">Token is encrypted and stored securely</span></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal();showToast('success','Bot added successfully')">Add Bot</button></div>
+</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toasts"></div>
+
+<script>
+function switchPage(page){
+document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+document.getElementById('page-'+page).style.display='block';
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+event.currentTarget.classList.add('active');
+}
+function openModal(){document.getElementById('modal').classList.add('active')}
+function closeModal(){document.getElementById('modal').classList.remove('active')}
+function showToast(type,msg){
+var t=document.createElement('div');t.className='toast '+type;
+var icon=type==='success'?'<svg class="toast-icon" fill="none" stroke="var(--emerald)" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>':'<svg class="toast-icon" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+t.innerHTML=icon+'<span class="toast-text">'+msg+'</span>';
+document.getElementById('toasts').appendChild(t);
+setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(100%)';setTimeout(function(){t.remove()},200)},3000);
+}
+// Chart bars
+function makeBars(id,count){
+var c=document.getElementById(id);if(!c)return;
+var colors=['var(--cyan)','var(--teal)','var(--amber)'];
+for(var i=0;i<count;i++){
+var bar=document.createElement('div');bar.className='chart-bar';
+var h=Math.random()*140+20;bar.style.height=h+'px';
+var g='linear-gradient(180deg,'+colors[i%3]+','+colors[i%3].replace(')',',0.1)')+')';
+bar.style.background='linear-gradient(180deg,'+colors[i%3]+',rgba(0,0,0,0.1))';
+c.appendChild(bar);
+}
+}
+makeBars('chartBars',24);
+makeBars('chartBars2',30);
+// Checkbox toggle
+document.querySelectorAll('.checkbox').forEach(function(c){c.addEventListener('click',function(){c.classList.toggle('checked')})});
+// Toggle
+document.querySelectorAll('.toggle').forEach(function(t){t.addEventListener('click',function(){t.classList.toggle('on')})});
+// Modal overlay click
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+// Keyboard
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
+</script>
+</body>
+</html>

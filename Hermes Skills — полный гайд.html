@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Skills — Полный гайд</title>
+<style>
+  :root {
+    --emerald: #05974f;
+    --emerald-dark: #047a3f;
+    --emerald-light: #e8f8ef;
+    --gold: #f5b342;
+    --gold-light: #fef3d6;
+    --text: #1a1a2e;
+    --text-secondary: #555;
+    --bg: #ffffff;
+    --card-bg: #f8faf9;
+    --border: #e0e8e4;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--emerald) 0%, #047a3f 50%, #036633 100%);
+    color: white;
+    padding: 60px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(245,179,66,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 2.6em;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    position: relative;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    font-size: 1.15em;
+    opacity: 0.9;
+    margin-top: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-top: 16px;
+    position: relative;
+  }
+
+  /* Content */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  section { padding: 40px 0; }
+  section + section { border-top: 1px solid var(--border); }
+
+  h2 {
+    font-size: 1.7em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .emoji { font-size: 1.2em; }
+  h3 {
+    font-size: 1.15em;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: var(--emerald-dark);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+  }
+
+  /* Command blocks */
+  .cmd {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.9em;
+    margin: 10px 0;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  .cmd .prompt { color: var(--gold); }
+  .cmd .comment { color: #6a9955; }
+  .cmd .highlight { color: #6fc3df; }
+
+  .inline-cmd {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    font-weight: 600;
+    margin: 2px 3px;
+  }
+  .tag-load { background: #dff0d8; color: #2d6a4f; }
+  .tag-create { background: #cce5ff; color: #004085; }
+  .tag-manage { background: #fff3cd; color: #856404; }
+  .tag-cli { background: #e8daef; color: #6c3483; }
+  .tag-cat { background: var(--emerald-light); color: var(--emerald-dark); }
+
+  /* Skill category section */
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--emerald-light);
+    border-radius: var(--radius);
+    margin: 24px 0 12px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 700;
+    font-size: 1.05em;
+  }
+  .cat-header .count {
+    background: var(--emerald);
+    color: white;
+    padding: 1px 9px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    margin-left: auto;
+  }
+  .cat-header .arrow { transition: transform 0.2s; }
+  .cat-header.open .arrow { transform: rotate(90deg); }
+
+  .cat-body { display: none; }
+  .cat-body.open { display: block; }
+
+  .skill-item {
+    padding: 14px 18px;
+    border-left: 3px solid var(--emerald);
+    margin: 6px 0;
+    background: white;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .skill-item .sname {
+    font-weight: 700;
+    color: var(--emerald-dark);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95em;
+  }
+  .skill-item .sdesc {
+    margin-top: 4px;
+    font-size: 0.92em;
+    color: var(--text-secondary);
+  }
+  .skill-item .sbadge {
+    display: inline-block;
+    font-size: 0.72em;
+    padding: 1px 8px;
+    border-radius: 8px;
+    background: var(--border);
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  /* Quick reference table */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92em;
+  }
+  .ref-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--emerald);
+    color: white;
+    font-weight: 600;
+  }
+  .ref-table th:first-child { border-radius: 8px 0 0 0; }
+  .ref-table th:last-child { border-radius: 0 8px 0 0; }
+  .ref-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .ref-table tr:hover td { background: var(--emerald-light); }
+
+  .tip-box {
+    background: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .tip-box .icon { font-size: 1.4em; flex-shrink: 0; }
+  .tip-box strong { color: #856404; }
+
+  /* Search */
+  #search {
+    width: 100%;
+    padding: 12px 18px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+  }
+  #search:focus { border-color: var(--emerald); }
+
+  .no-result {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+    display: none;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.8em; }
+    .container { padding: 0 16px; }
+    .ref-table { font-size: 0.82em; }
+    .ref-table th, .ref-table td { padding: 8px 10px; }
+  }
+
+  .print-hide { @media print { display: none; } }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .skill-item { animation: fadeIn 0.3s ease-out; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Hermes <span>Skills</span></h1>
+  <p>Полный гайд по работе со скиллами — как подключать, создавать, управлять и выбирать нужный скилл для любой задачи</p>
+  <div class="badge">🔥 94 скилла · 14 категорий</div>
+</div>
+
+<div class="container">
+
+<!-- === ЧАСТЬ 1: БЫСТРЫЙ СТАРТ === -->
+<section>
+  <h2><span class="emoji">🚀</span> Что такое скиллы?</h2>
+  <div class="card">
+    <p><strong>Скилл</strong> — это процедурная память Гермеса. Готовая инструкция, которую я загружаю, чтобы сделать задачу правильно и без лишних вопросов.</p>
+    <p style="margin-top: 12px;">Вместо того, чтобы гадать как делать — я читаю скилл и сразу знаю:</p>
+    <ul style="margin: 10px 0 0 20px; line-height: 2; color: var(--text-secondary);">
+      <li>какие команды запускать</li>
+      <li>в каком порядке</li>
+      <li>какие подводные камни есть</li>
+      <li>что делать если что-то пошло не так</li>
+    </ul>
+  </div>
+</section>
+
+<!-- === ЧАСТЬ 2: КАК ПОДКЛЮЧАТЬ === -->
+<section>
+  <h2><span class="emoji">🔌</span> Как подключать скиллы</h2>
+
+  <div class="card">
+    <div class="card-title">🎯 /skill название — прямо в чате</div>
+    <p>Самая частая команда. Пишешь в диалоге и я сразу загружаю скилл:</p>
+    <div class="cmd">
+      <span class="prompt">/skill</span> grove-street-crew<br>
+      <span class="prompt">/skill</span> web-animations<br>
+      <span class="prompt">/skill</span> ui-ux-pro-max
+    </div>
+    <div class="tip-box">
+      <div class="icon">💡</div>
+      <div><strong>Совет:</strong> Можно несколько скиллов за раз — <span class="inline-cmd">/skill grove-street-crew</span>, потом <span class="inline-cmd">/skill web-animations</span>. Каждый новый добавляется.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Загрузка при старте (флаг -s)</div>
+    <p>Если запускаешь Гермес из терминала — можно сразу загрузить скиллы:</p>
+    <div class="cmd">
+      <span class="prompt">hermes -s</span> grove-street-crew <span class="comment"># загрузить один</span><br>
+      <span class="prompt">hermes -s</span> ui-ux-pro-max -s web-animations <span class="comment"># или несколько</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 CLI команды для скиллов</div>
+    <div class="cmd">
+      <span class="prompt">hermes skills list</span>     <span class="comment"># список установленных</span><br>
+      <span class="prompt">hermes skills browse</span>    <span class="comment"># все доступные в каталоге</span><br>
+      <span class="prompt">hermes skills search</span> лендинг <span class="comment"># поиск по названию/описанию</span><br>
+      <span class="prompt">hermes skills install</span> имя <span class="comment"># установить из каталога</span><br>
+      <span class="prompt">hermes skills update</span>     <span class="comment"># обновить устаревшие</span><br>
+      <span class="prompt">hermes skills config</span>     <span class="comment"># включить/выключить на платформах</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Внутри диалога (slash-команды)</div>
+    <div class="cmd">
+      <span class="prompt">/skill</span> название     <span class="comment"># загрузить скилл</span><br>
+      <span class="prompt">/skills</span>             <span class="comment"># поиск/установка скиллов</span><br>
+      <span class="prompt">/reload-skills</span>      <span class="comment"># пересканировать папку skills/</span>
+    </div>
+  </div>
+</section>
+
+<!-- === ЧАСТЬ 3: КАК Я СОЗДАЮ СКИЛЛЫ === -->
+<section>
+  <h2><span class="emoji">⚡</span> Как Hermes создаёт скиллы</h2>
+
+  <div class="card">
+    <p>Когда я решаю сложную задачу, нахожу подводные камни или ты говоришь <em>«запомни это»</em> — я могу сохранить процедуру как скилл.</p>
+    <p style="margin-top: 10px; font-weight: 600;">Вот как это работает:</p>
+    <div class="cmd">
+      <span class="comment"># Я вызываю skill_manage внутри себя (ты этого не видишь)</span><br>
+      skill_manage(action=<span class="highlight">"create"</span>, name=<span class="highlight">"my-skill"</span>, content=<span class="highlight">"..."</span>)<br><br>
+      <span class="comment"># Или обновляю существующий:</span><br>
+      skill_manage(action=<span class="highlight">"patch"</span>, name=<span class="highlight">"my-skill"</span>, old_string=<span class="highlight">"..."</span>, new_string=<span class="highlight">"..."</span>)<br><br>
+      <span class="comment"># Или удаляю устаревший:</span><br>
+      skill_manage(action=<span class="highlight">"delete"</span>, name=<span class="highlight">"my-skill"</span>)
+    </div>
+    <div class="tip-box">
+      <div class="icon">🧠</div>
+      <div><strong>Памятка:</strong> Есть ещё <strong>self-learning</strong> скилл — он автоматически харвестит золотые пути из сессий и предлагает сохранить их как новые скиллы. Сам себя улучшает.</div>
+    </div>
+  </div>
+</section>
+
+<!-- === ЧАСТЬ 4: КАК ВЫБИРАТЬ СКИЛЛ === -->
+<section>
+  <h2><span class="emoji">🎯</span> Какой скилл когда подключать</h2>
+
+  <table class="ref-table">
+    <tr>
+      <th>Если хочешь...</th>
+      <th>Загрузи скилл</th>
+      <th>Что сделает</th>
+    </tr>
+    <tr>
+      <td>Сделать дизайн / лендинг</td>
+      <td><span class="inline-cmd">ui-ux-pro-max</span></td>
+      <td>50+ стилей, 161 палитра, шрифты, UX гайдлайны</td>
+    </tr>
+    <tr>
+      <td>Красивый Emerald лендинг</td>
+      <td><span class="inline-cmd">aura-glass-design</span></td>
+      <td>Aura/glass/neural стиль</td>
+    </tr>
+    <tr>
+      <td>Проверить дизайн на баги</td>
+      <td><span class="inline-cmd">impeccable</span></td>
+      <td>Аудит UI, UX, доступности, типографики</td>
+    </tr>
+    <tr>
+      <td>Анимации на страницу</td>
+      <td><span class="inline-cmd">web-animations</span></td>
+      <td>Партиклы, 3D tilt, scroll reveal, shimmer</td>
+    </tr>
+    <tr>
+      <td>Собрать банду (CJ + команда)</td>
+      <td><span class="inline-cmd">grove-street-crew</span></td>
+      <td>CJ распределяет задачи между профи</td>
+    </tr>
+    <tr>
+      <td>Запланировать архитектуру</td>
+      <td><span class="inline-cmd">plan</span></td>
+      <td>Пишет план, ничего не выполняет</td>
+    </tr>
+    <tr>
+      <td>Выполнить план с проверками</td>
+      <td><span class="inline-cmd">executing-plans</span></td>
+      <td>Пошаговая реализация с ревью</td>
+    </tr>
+    <tr>
+      <td>Проверить перед завершением</td>
+      <td><span class="inline-cmd">verification-before-completion</span></td>
+      <td>Запускает проверки, не даёт соврать</td>
+    </tr>
+    <tr>
+      <td>Разобраться с багом</td>
+      <td><span class="inline-cmd">systematic-debugging</span></td>
+      <td>4-фазный поиск корня проблемы</td>
+    </tr>
+    <tr>
+      <td>Парсить Ozon/WB</td>
+      <td><span class="inline-cmd">anti-detect-scraping</span></td>
+      <td>Camoufox, антидетект, обход блокировок</td>
+    </tr>
+    <tr>
+      <td>Сделать ASCII арт/видео</td>
+      <td><span class="inline-cmd">ascii-art</span> / <span class="inline-cmd">ascii-video</span></td>
+      <td>pyfiglet, cowsay, ASCII из видео</td>
+    </tr>
+    <tr>
+      <td>Инфографику / дашборд</td>
+      <td><span class="inline-cmd">baoyu-infographic</span></td>
+      <td>21 макет × 21 стиль</td>
+    </tr>
+    <tr>
+      <td>Диаграмму архитектуры</td>
+      <td><span class="inline-cmd">architecture-diagram</span></td>
+      <td>Тёмные SVG схемы как HTML</td>
+    </tr>
+    <tr>
+      <td>Мониторинг RSS/блогов</td>
+      <td><span class="inline-cmd">blogwatcher</span></td>
+      <td>Мониторинг лент и RSS</td>
+    </tr>
+    <tr>
+      <td>Найти научную статью</td>
+      <td><span class="inline-cmd">arxiv</span></td>
+      <td>Поиск по arXiv</td>
+    </tr>
+    <tr>
+      <td>Деплой бота в Docker</td>
+      <td><span class="inline-cmd">windows-docker-bot-deployment</span></td>
+      <td>Docker на Windows с авторестартом</td>
+    </tr>
+    <tr>
+      <td>Telegram Stars платежи</td>
+      <td><span class="inline-cmd">telegram-stars-payments</span></td>
+      <td>sendInvoice, pre_checkout_query</td>
+    </tr>
+    <tr>
+      <td>Отладить Telegram бота</td>
+      <td><span class="inline-cmd">telegram-bot-debugging</span></td>
+      <td>Хендлеры, polling, конфликты</td>
+    </tr>
+    <tr>
+      <td>Сохранить проект на GitHub</td>
+      <td><span class="inline-cmd">github-project-backup</span></td>
+      <td>Авто-бэкап в репу</td>
+    </tr>
+    <tr>
+      <td>Сделать дизайн Excalidraw</td>
+      <td><span class="inline-cmd">excalidraw</span></td>
+      <td>Hand-drawn диаграммы JSON</td>
+    </tr>
+    <tr>
+      <td>Работа с PDF</td>
+      <td><span class="inline-cmd">nano-pdf</span></td>
+      <td>Редактирование текста в PDF</td>
+    </tr>
+    <tr>
+      <td>Распознать текст с фото/скана</td>
+      <td><span class="inline-cmd">ocr-and-documents</span></td>
+      <td>pymupdf, marker-pdf</td>
+    </tr>
+    <tr>
+      <td>Заметки в Obsidian</td>
+      <td><span class="inline-cmd">obsidian</span></td>
+      <td>Чтение/поиск/создание заметок</td>
+    </tr>
+    <tr>
+      <td>Работа с Google (почта/календарь/drive)</td>
+      <td><span class="inline-cmd">google-workspace</span></td>
+      <td>Gmail, Calendar, Drive, Sheets</td>
+    </tr>
+    <tr>
+      <td>Генерация музыки/песен</td>
+      <td><span class="inline-cmd">songwriting-and-ai-music</span></td>
+      <td>Промты для Suno AI</td>
+    </tr>
+    <tr>
+      <td>Человеческий текст (убрать AI-стиль)</td>
+      <td><span class="inline-cmd">humanizer</span></td>
+      <td>Убирает AI-измы, добавляет живой голос</td>
+    </tr>
+  </table>
+</section>
+
+<!-- === ЧАСТЬ 5: ВСЕ СКИЛЛЫ === -->
+<section>
+  <h2><span class="emoji">📚</span> Все скиллы по категориям</h2>
+
+  <input type="text" id="search" placeholder="🔍  Поиск скилла по названию или описанию..." oninput="filterSkills()">
+
+  <div id="skills-container"></div>
+  <div id="no-result" class="no-result">🤷 Ничего не найдено. Попробуй другое слово.</div>
+</section>
+
+<!-- === ЧАСТЬ 6: СОВЕТЫ === -->
+<section>
+  <h2><span class="emoji">💎</span> Полезные советы</h2>
+
+  <div class="tip-box">
+    <div class="icon">🔥</div>
+    <div><strong>Банда — база.</strong> На любую крупную задачу загружай <span class="inline-cmd">grove-street-crew</span>. CJ сам распределит между профи: кто пилит код, кто тестит, кто дизайн делает.</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="icon">🎯</div>
+    <div><strong>Скиллы накапливаются.</strong> С каждым сложным проектом я запоминаю процедуры. Чем больше скиллов — тем быстрее и качественнее я работаю.</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="icon">🧠</div>
+    <div><strong>Self-learning.</strong> Этот скилл сам харвестит удачные решения и превращает их в новые скиллы. Включается автоматически на сложных задачах.</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="icon">📁</div>
+    <div><strong>Где лежат скиллы:</strong> <span class="inline-cmd">~/.hermes/skills/</span> — каждый скилл в своей папке. Можно заглянуть, почитать, отредактировать.</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="icon">🔄</div>
+    <div><strong>Не видишь скилл после загрузки?</strong> Сделай <span class="inline-cmd">/reset</span> (новый диалог) — скиллы загружаются при старте сессии.</div>
+  </div>
+
+  <div class="card" style="text-align: center; padding: 30px;">
+    <p style="font-size: 1.1em; font-weight: 600; color: var(--emerald-dark);">⚡ Быстрый старт с банды</p>
+    <p style="margin-top: 8px;">Пиши в чат: <span class="inline-cmd">/skill grove-street-crew</span></p>
+    <p style="color: var(--text-secondary); margin-top: 4px;">И CJ всё разрулит</p>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Сделано с ❤️ для Андрюхи · Hermes Skills v1.0 · 94 скилла · 14 категорий
+</footer>
+
+<script>
+// All skills data
+const SKILLS = {
+  "autonomous-ai-agents": [
+    ["claude-code", "Делегировать задачи Claude Code CLI"],
+    ["codex", "Делегировать задачи OpenAI Codex CLI"],
+    ["hermes-agent", "Настройка, конфигурация и расширение Hermes"],
+    ["opencode", "Делегировать задачи OpenCode CLI"]
+  ],
+  "creative": [
+    ["architecture-diagram", "Тёмные SVG диаграммы архитектуры в HTML"],
+    ["ascii-art", "ASCII-арт: pyfiglet, cowsay, image-to-ascii"],
+    ["ascii-video", "Конвертация видео/аудио в цветной ASCII MP4/GIF"],
+    ["baoyu-infographic", "Инфографика: 21 макет × 21 стиль"],
+    ["claude-design", "Дизайн одноразовых HTML артефактов"],
+    ["comfyui", "Генерация изображений, видео и аудио через ComfyUI"],
+    ["design-md", "Google DESIGN.md токен-спеки"],
+    ["excalidraw", "Hand-drawn Excalidraw JSON диаграммы"],
+    ["humanizer", "Убрать AI-измы, добавить живой голос"],
+    ["manim-video", "3Blue1Brown стиль анимации (математика/алгоритмы)"],
+    ["p5js", "p5.js скетчи: ген-арт, шейдеры, интерактив, 3D"],
+    ["popular-web-designs", "54 реальных дизайн-системы (Stripe, Linear, Vercel)"],
+    ["pretext", "Креативные браузерные демо с текстовой типографикой"],
+    ["sketch", "Быстрые HTML макеты: 2-3 варианта на выбор"],
+    ["songwriting-and-ai-music", "Написание песен и промты для Suno AI"],
+    ["touchdesigner-mcp", "Управление TouchDesigner через MCP (36 инструментов)"]
+  ],
+  "data-science": [
+    ["jupyter-live-kernel", "Интерактивный Python через живой Jupyter kernel"]
+  ],
+  "devops": [
+    ["ai-toolkit-windows-setup", "Установка AI-тулкитов на Windows"],
+    ["docker-deploy-windows", "Деплой Python ботов как Docker контейнеров на Windows"],
+    ["github-project-backup", "Сохранение проектов на GitHub"],
+    ["hermes-messaging-setup", "Настройка платформ (Telegram, Discord, Slack)"],
+    ["hermes-windows-credentials", "Управление API ключами в Hermes на Windows"],
+    ["windows-docker-bot-deployment", "Деплой Telegram ботов в Docker на Windows"]
+  ],
+  "email": [
+    ["himalaya", "IMAP/SMTP почта из терминала"]
+  ],
+  "github": [
+    ["codebase-inspection", "Анализ кодовой базы: LOC, языки, соотношения"],
+    ["github-auth", "Настройка GitHub аутентификации"],
+    ["github-code-review", "Ревью PR: диффы, инлайн-комментарии"],
+    ["github-issues", "Создание/триаж/метки/назначение issues"],
+    ["github-pr-workflow", "Жизненный цикл PR: ветка → коммит → CI → merge"],
+    ["github-repo-management", "Клонирование/создание/форки/релизы"]
+  ],
+  "media": [
+    ["gif-search", "Поиск/скачивание GIF через Tenor API"],
+    ["heartmula", "HeartMuLa: генерация песен из текста + тегов"],
+    ["songsee", "Аудио спектрограммы (mel, chroma, MFCC)"],
+    ["youtube-content", "Транскрипты YouTube → саммари, треды, посты"]
+  ],
+  "mlops": [
+    ["huggingface-hub", "HuggingFace CLI: поиск/скачивание/загрузка моделей"],
+    ["llama-cpp", "Локальный GGUF инференс через llama.cpp"],
+    ["segment-anything-model", "SAM: сегментация изображений через точки/боксы/маски"],
+    ["weights-and-biases", "W&B: логи экспериментов, sweeps, model registry"]
+  ],
+  "note-taking": [
+    ["obsidian", "Чтение, поиск, создание и редактирование заметок в Obsidian"]
+  ],
+  "productivity": [
+    ["airtable", "Airtable REST API: CRUD, фильтры, upserts"],
+    ["google-workspace", "Gmail, Calendar, Drive, Docs, Sheets"],
+    ["maps", "Геокодинг, POI, маршруты, часовые пояса через OSM/OSRM"],
+    ["nano-pdf", "Редактирование текста в PDF (NL промты)"],
+    ["notion", "Notion API: страницы, базы данных, markdown"],
+    ["ocr-and-documents", "Извлечение текста из PDF/сканов (pymupdf, marker-pdf)"],
+    ["petdex", "Установка и выбор анимированных масокотов для Hermes"],
+    ["powerpoint", "Создание/чтение/редактирование .pptx презентаций"],
+    ["self-learning", "META: автоматический харвест золотых путей → новые скиллы"],
+    ["teams-meeting-pipeline", "Саммари встреч Teams через Hermes CLI"],
+    ["telegram-bot-ozon", "Telegram бот мониторинга цен Ozon"]
+  ],
+  "research": [
+    ["arxiv", "Поиск научных статей по arXiv"],
+    ["blogwatcher", "Мониторинг блогов и RSS/Atom лент"],
+    ["deep-investigation", "Глубокое исследование ресурса/URL/темы"],
+    ["llm-wiki", "Википедия LLM в markdown"],
+    ["polymarket", "Прогнозные рынки Polymarket"]
+  ],
+  "smart-home": [
+    ["openhue", "Управление Philips Hue через OpenHue CLI"]
+  ],
+  "software-development": [
+    ["ai-cli-persona-injection", "Установка кастомных персон в AI CLI (opencode, omp, pi)"],
+    ["anti-detect-scraping", "Антидетект браузер для парсинга (Camoufox)"],
+    ["captcha-solving", "3-уровневая система решения капчи"],
+    ["data-recency", "Форсирование актуальных данных (не из обучения)"],
+    ["frontend-testing", "Тестирование фронтенда без бэкенда"],
+    ["grove-street-crew", "БАНДА: CJ распределяет задачи (Deebi, Girlfriends)"],
+    ["hermes-agent-skill-authoring", "Написание SKILL.md для скиллов"],
+    ["hermes-cron", "Cron задачи: расписания, доставка, скрипты"],
+    ["hermes-custom-providers", "Настройка кастомных провайдеров (DashScope, DeepSeek)"],
+    ["loopy", "Библиотека практичных циклов для AI-агентов"],
+    ["node-inspect-debugger", "Дебаг Node.js через Chrome DevTools Protocol"],
+    ["plan", "Написание плана в .hermes/plans/, без выполнения"],
+    ["requesting-code-review", "Pre-commit ревью: security scan, quality gates"],
+    ["simplify-code", "Параллельная очистка кода (3 агента)"],
+    ["spike", "Быстрый эксперимент для проверки идеи"],
+    ["systematic-debugging", "4-фазный поиск корня бага"],
+    ["telegram-bot-debugging", "Дебаг Telegram ботов"],
+    ["telegram-stars-payments", "Telegram Stars платежи (sendInvoice)"],
+    ["test-driven-development", "TDD: RED → GREEN → REFACTOR"],
+    ["windows-system-diagnostics", "Диагностика Windows для AI CLI"]
+  ],
+  "web-design": [
+    ["aura-glass-design", "Aura/glass/neural стиль для лендингов"],
+    ["authkit-blueprint-design", "AuthKit blueprint стиль (midnight ink)"],
+    ["css-theme-toggle", "Dark/light mode toggle для HTML"],
+    ["dala-cosmic-design", "Dala cosmic стиль (black void, violet)"],
+    ["web-animations", "Анимации: particles, 3D tilt, scroll reveal, shimmer"]
+  ]
+};
+
+const CATEGORY_EMOJI = {
+  "autonomous-ai-agents": "🤖",
+  "creative": "🎨",
+  "data-science": "📊",
+  "devops": "⚙️",
+  "email": "📧",
+  "github": "🐙",
+  "media": "🎬",
+  "mlops": "🧪",
+  "note-taking": "📝",
+  "productivity": "⚡",
+  "research": "🔬",
+  "smart-home": "🏠",
+  "software-development": "💻",
+  "web-design": "🖌️"
+};
+
+const CATEGORY_LABELS = {
+  "autonomous-ai-agents": "Автономные AI агенты",
+  "creative": "Креатив",
+  "data-science": "Data Science",
+  "devops": "DevOps",
+  "email": "Email",
+  "github": "GitHub",
+  "media": "Медиа",
+  "mlops": "MLOps",
+  "note-taking": "Заметки",
+  "productivity": "Продуктивность",
+  "research": "Исследования",
+  "smart-home": "Умный дом",
+  "software-development": "Разработка",
+  "web-design": "Веб-дизайн"
+};
+
+let container = document.getElementById('skills-container');
+
+function renderSkills(filter) {
+  container.innerHTML = '';
+  let hasResults = false;
+  let filterLower = filter ? filter.toLowerCase() : '';
+
+  for (let [cat, skills] of Object.entries(SKILLS)) {
+    let filtered = skills;
+    if (filterLower) {
+      filtered = skills.filter(s =>
+        s[0].toLowerCase().includes(filterLower) ||
+        s[1].toLowerCase().includes(filterLower)
+      );
+    }
+    if (filtered.length === 0) continue;
+    hasResults = true;
+
+    let catDiv = document.createElement('div');
+    let emoji = CATEGORY_EMOJI[cat] || '📁';
+    let label = CATEGORY_LABELS[cat] || cat;
+
+    catDiv.innerHTML = `
+      <div class="cat-header open" onclick="toggleCategory(this)">
+        <span>${emoji}</span> ${label}
+        <span class="arrow">▶</span>
+        <span class="count">${filtered.length}</span>
+      </div>
+      <div class="cat-body open">
+        ${filtered.map(s => `
+          <div class="skill-item">
+            <div class="sname">${s[0]}</div>
+            <div class="sdesc">${s[1]}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(catDiv);
+  }
+
+  document.getElementById('no-result').style.display = hasResults ? 'none' : 'block';
+}
+
+function toggleCategory(el) {
+  el.classList.toggle('open');
+  let body = el.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+function filterSkills() {
+  let val = document.getElementById('search').value;
+  renderSkills(val);
+}
+
+// Initial render
+renderSkills('');
+</script>
+
+</body>
+</html>

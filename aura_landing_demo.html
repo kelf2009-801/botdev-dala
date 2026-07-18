@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuralBot — AI Telegram Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --deep-navy: #0F172A;
+  --sky-blue: #60A5FA;
+  --ocean-blue: #3B82F6;
+  --white: #FFFFFF;
+  --gray: #A3A3A3;
+  --glass-bg: rgba(255,255,255,0.05);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-shadow: rgba(0,0,0,0.5) 0 20px 40px -10px, rgba(255,255,255,0.08) inset 0 1px 1px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #000000;
+  color: var(--white);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ========== PARTICLES CANVAS ========== */
+#particles-canvas {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0; pointer-events: none;
+}
+
+/* ========== CURSOR GLOW ========== */
+#cursor-glow {
+  position: fixed;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(96,165,250,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 1;
+  transform: translate(-50%, -50%);
+  transition: left 0.2s ease-out, top 0.2s ease-out;
+}
+
+/* ========== CSS ORBS ========== */
+.bg-blobs {
+  position: fixed; inset: 0; z-index: 0;
+  overflow: hidden; pointer-events: none;
+}
+.bg-blobs .blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+  animation: blobFloat 25s infinite ease-in-out;
+}
+.bg-blobs .blob:nth-child(1) {
+  background: #3B82F6; top: 5%; left: 5%;
+  width: 400px; height: 400px;
+}
+.bg-blobs .blob:nth-child(2) {
+  background: #60A5FA; top: 55%; right: 5%;
+  animation-delay: -7s;
+  width: 350px; height: 350px;
+}
+.bg-blobs .blob:nth-child(3) {
+  background: #1D4ED8; bottom: 5%; left: 25%;
+  animation-delay: -14s;
+  width: 300px; height: 300px;
+}
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  25%  { transform: translate(60px,-100px) scale(1.15); }
+  50%  { transform: translate(-40px,70px) scale(0.9); }
+  75%  { transform: translate(80px,50px) scale(1.05); }
+}
+
+/* ========== NAV ========== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  animation: navSlideIn 0.8s ease-out;
+}
+@keyframes navSlideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.nav-logo {
+  font-size: 20px; font-weight: 600;
+  background: linear-gradient(135deg, #60A5FA, #3B82F6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-links a {
+  color: var(--gray); text-decoration: none; font-size: 14px; font-weight: 400;
+  position: relative; transition: color 0.3s;
+}
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1.5px;
+  background: var(--sky-blue);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { width: 100%; }
+.nav-btn {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, var(--sky-blue), var(--ocean-blue));
+  border: none; border-radius: 8px;
+  color: #fff; font-size: 13px; font-weight: 600;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: box-shadow 0.3s;
+  text-decoration: none;
+}
+.nav-btn:hover { box-shadow: 0 0 30px rgba(96,165,250,0.3); }
+.nav-btn::before {
+  content: ''; position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+.nav-btn:hover::before { left: 100%; }
+
+/* ========== HERO ========== */
+.hero {
+  position: relative; z-index: 2;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 20px 60px;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 16px;
+  background: rgba(96,165,250,0.1);
+  border: 1px solid rgba(96,165,250,0.2);
+  border-radius: 999px;
+  font-size: 12px; color: var(--sky-blue); font-weight: 500;
+  margin-bottom: 24px;
+  animation: floatUp 4s ease-in-out infinite;
+}
+@keyframes floatUp {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
+.hero h1 {
+  font-size: clamp(32px, 7vw, 60px);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, #60A5FA, #3B82F6, #60A5FA);
+  background-size: 200% 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+.hero p {
+  font-size: clamp(13px, 1.6vw, 16px);
+  color: var(--gray);
+  max-width: 460px;
+  line-height: 1.6;
+  margin-bottom: 36px;
+}
+.hero-cta {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 48px;
+}
+.btn-primary {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, var(--sky-blue), var(--ocean-blue));
+  border: none; border-radius: 8px;
+  color: #fff; font-size: 15px; font-weight: 600;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: box-shadow 0.3s, transform 0.3s;
+  text-decoration: none;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 40px rgba(96,165,250,0.3);
+  transform: translateY(-2px);
+}
+.btn-primary::before {
+  content: ''; position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+.btn-primary:hover::before { left: 100%; }
+.btn-ghost {
+  padding: 14px 32px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  color: var(--white); font-size: 15px; font-weight: 500;
+  cursor: pointer; transition: all 0.3s; text-decoration: none;
+}
+.btn-ghost:hover {
+  border-color: var(--sky-blue);
+  color: var(--sky-blue);
+}
+
+/* ========== AI CORE ========== */
+.ai-core-wrapper {
+  height: 260px;
+  display: flex; justify-content: center; align-items: center;
+  margin-bottom: 48px;
+  position: relative;
+}
+.ai-core {
+  width: 100px; height: 100px;
+  position: relative;
+}
+.ai-core-orb {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #60A5FA, #2563EB, #1D4ED8);
+  box-shadow: 0 0 80px rgba(59,130,246,0.3), 0 0 160px rgba(59,130,246,0.1);
+  animation: orbPulse 3s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+@keyframes orbPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 80px rgba(59,130,246,0.3); }
+  50%     { transform: scale(1.05); box-shadow: 0 0 140px rgba(59,130,246,0.5), 0 0 260px rgba(59,130,246,0.15); }
+}
+.ai-core-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 190px; height: 190px;
+  margin: -95px 0 0 -95px;
+  border: 1.5px solid transparent;
+  border-top-color: rgba(96,165,250,0.4);
+  border-right-color: rgba(96,165,250,0.15);
+  border-radius: 50%;
+  animation: ringSpin 8s linear infinite;
+  z-index: 1;
+}
+.ai-core-ring:nth-child(2) {
+  width: 240px; height: 240px;
+  margin: -120px 0 0 -120px;
+  border-top-color: rgba(59,130,246,0.2);
+  border-right-color: rgba(59,130,246,0.4);
+  border-left-color: rgba(59,130,246,0.05);
+  animation: ringSpin 12s linear infinite reverse;
+}
+.ai-core-ring:nth-child(3) {
+  width: 160px; height: 160px;
+  margin: -80px 0 0 -80px;
+  border-top-color: rgba(147,197,253,0.2);
+  border-bottom-color: rgba(147,197,253,0.3);
+  border-left-color: rgba(147,197,253,0.05);
+  animation: ringSpin 6s linear infinite;
+  animation-delay: -2s;
+}
+@keyframes ringSpin { to { transform: rotate(360deg); } }
+
+/* Floating badges around core */
+.core-badge {
+  position: absolute;
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--gray);
+  white-space: nowrap;
+  animation: badgeFloat 4s ease-in-out infinite;
+  z-index: 3;
+}
+.core-badge:nth-child(4) { top: -20px; right: -40px; animation-delay: 0s; }
+.core-badge:nth-child(5) { bottom: -10px; left: -50px; animation-delay: -1s; }
+.core-badge:nth-child(6) { top: 50px; right: -60px; animation-delay: -2s; }
+.core-badge:nth-child(7) { bottom: 40px; left: -55px; animation-delay: -3s; }
+.core-badge:nth-child(8) { top: -5px; right: auto; left: -60px; animation-delay: -1.5s; }
+@keyframes badgeFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%     { transform: translateY(-8px) scale(1.05); }
+}
+
+/* ========== BOT PREVIEW CARD ========== */
+.bot-preview {
+  width: 100%; max-width: 380px;
+  margin: 0 auto;
+}
+.bot-preview-card {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  box-shadow: var(--glass-shadow);
+}
+.bot-preview-card::before {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(255,255,255,0.05), transparent);
+  pointer-events: none;
+  z-index: -1;
+}
+.bot-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+}
+.bot-avatar {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--sky-blue), var(--ocean-blue));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.bot-info h4 { font-size: 14px; font-weight: 600; }
+.bot-info span { font-size: 12px; color: #22c55e; }
+.bot-msg {
+  display: flex; gap: 10px; margin-bottom: 16px;
+}
+.bot-msg-avatar {
+  width: 28px; height: 28px; min-width: 28px;
+  background: rgba(96,165,250,0.2);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.bot-msg-bubble {
+  background: rgba(96,165,250,0.12);
+  padding: 10px 14px;
+  border-radius: 0 12px 12px 12px;
+  font-size: 13px; line-height: 1.5;
+  flex: 1;
+}
+.price-line { margin-top: 6px; display: flex; gap: 8px; align-items: center; }
+.old-price { font-size: 12px; color: #666; text-decoration: line-through; }
+.new-price { font-size: 14px; color: var(--sky-blue); font-weight: 700; }
+.bot-stats {
+  display: flex; gap: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 12px; color: var(--gray);
+}
+.bot-stats span strong { color: var(--white); font-weight: 600; }
+
+/* ========== FEATURES ========== */
+.features {
+  position: relative; z-index: 2;
+  padding: 100px 20px;
+  max-width: 1100px; margin: 0 auto;
+}
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--sky-blue); letter-spacing: 0.15em;
+  margin-bottom: 12px; text-align: center;
+}
+.section-title {
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.section-sub {
+  text-align: center;
+  color: var(--gray);
+  max-width: 500px; margin: 0 auto 56px;
+  font-size: 15px; line-height: 1.7;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.feature-card {
+  padding: 32px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.feature-card::after {
+  content: ''; position: absolute; top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(96,165,250,0.05), transparent 50%);
+  opacity: 0; transition: opacity 0.4s; pointer-events: none;
+}
+.feature-card:hover::after { opacity: 1; }
+.feature-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(96,165,250,0.2);
+}
+.feature-icon {
+  width: 44px; height: 44px;
+  background: rgba(96,165,250,0.1);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+.feature-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+.feature-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+
+/* ========== STATS ========== */
+.stats {
+  position: relative; z-index: 2;
+  padding: 80px 20px;
+  max-width: 900px; margin: 0 auto;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 24px;
+  text-align: center;
+}
+.stat-item {
+  padding: 32px 16px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+}
+.stat-number {
+  font-size: 36px; font-weight: 300;
+  color: var(--sky-blue);
+}
+.stat-number .counter { background: none !important; }
+.stat-label {
+  font-size: 13px; color: var(--gray);
+  margin-top: 6px;
+}
+
+/* ========== PRICING ========== */
+.pricing {
+  position: relative; z-index: 2;
+  padding: 100px 20px;
+  max-width: 900px; margin: 0 auto;
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+.pricing-card {
+  display: flex; flex-direction: column;
+  padding: 36px 28px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 40px rgba(96,165,250,0.08);
+}
+.pricing-card.popular {
+  border-color: rgba(96,165,250,0.3);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 20px rgba(96,165,250,0.08); }
+  50%     { box-shadow: 0 0 50px rgba(96,165,250,0.18); }
+}
+.popular-badge {
+  position: absolute; top: -10px; right: 20px;
+  padding: 4px 14px;
+  background: linear-gradient(135deg, var(--sky-blue), var(--ocean-blue));
+  border-radius: 999px;
+  font-size: 11px; font-weight: 600;
+}
+.pricing-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.pricing-card .price {
+  font-size: 40px; font-weight: 300; color: var(--white);
+  margin: 12px 0;
+}
+.pricing-card .price span { font-size: 16px; color: var(--gray); font-weight: 400; }
+.pricing-card .desc { font-size: 13px; color: var(--gray); margin-bottom: 24px; }
+.pricing-features {
+  list-style: none;
+  flex: 1;
+  margin-bottom: 28px;
+}
+.pricing-features li {
+  padding: 8px 0;
+  font-size: 14px; color: var(--gray);
+  display: flex; align-items: center; gap: 10px;
+}
+.pricing-features li::before {
+  content: '✦';
+  color: var(--sky-blue); font-size: 12px;
+}
+
+/* ========== CTA SECTION ========== */
+.cta-section {
+  position: relative; z-index: 2;
+  padding: 100px 20px 60px;
+  text-align: center;
+}
+.cta-card {
+  max-width: 600px; margin: 0 auto;
+  padding: 48px 40px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  position: relative;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 12px; color: #444;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ========== REVEAL ========== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1),
+              transform 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.7s cubic-bezier(0.34,1.56,0.64,1),
+              transform 0.7s cubic-bezier(0.34,1.56,0.64,1);
+}
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+.reveal-left { opacity: 0; transform: translateX(-40px); transition: all 0.8s ease-out; }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(40px); transition: all 0.8s ease-out; }
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ========== SECTION DIVIDERS ========== */
+.section-glow {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.2), transparent);
+  margin: 0 auto;
+}
+
+/* ========== ACCORDION ========== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 640px) {
+  nav { padding: 12px 16px; }
+  .nav-links a { display: none; }
+  .nav-links a.nav-btn { display: inline-block; }
+  .features-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .bot-preview-card { padding: 16px; }
+  .ai-core-wrapper { height: 220px; }
+  .ai-core { width: 80px; height: 80px; }
+  .ai-core-orb { width: 80px; height: 80px; }
+  .ai-core-ring { width: 150px; height: 150px; margin: -75px 0 0 -75px; }
+  .ai-core-ring:nth-child(2) { width: 200px; height: 200px; margin: -100px 0 0 -100px; }
+  .ai-core-ring:nth-child(3) { width: 130px; height: 130px; margin: -65px 0 0 -65px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Blobs BG -->
+<div class="bg-blobs">
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+</div>
+
+<!-- Particles Canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Cursor Glow -->
+<div id="cursor-glow"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">✦ NeuralBot</div>
+  <div class="nav-links">
+    <a href="#features">Возможности</a>
+    <a href="#pricing">Тарифы</a>
+    <a href="#cta" class="nav-btn btn-shimmer">Запустить</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">🚀 AI агент в Telegram</div>
+  <h1>
+    Умный бот, который<br>
+    <span style="background:linear-gradient(135deg, #60A5FA, #3B82F6, #60A5FA);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 4s ease-in-out infinite;">работает за тебя</span>
+  </h1>
+  <p>NeuralBot — AI-агент с голосовым вводом, мониторингом цен и автопостингом. Работает 24/7, не спит, не ошибается.</p>
+  <div class="hero-cta">
+    <a href="#cta" class="btn-primary">✨ Начать бесплатно</a>
+    <a href="#features" class="btn-ghost">Как это работает</a>
+  </div>
+  <div class="ai-core-wrapper reveal">
+    <div class="ai-core">
+      <div class="ai-core-orb"></div>
+      <div class="ai-core-ring"></div>
+      <div class="ai-core-ring"></div>
+      <div class="ai-core-ring"></div>
+      <div class="core-badge">🎤 Голос</div>
+      <div class="core-badge">📉 Цены</div>
+      <div class="core-badge">🤖 AI</div>
+      <div class="core-badge">⚡ 24/7</div>
+    </div>
+  </div>
+  <div class="bot-preview reveal">
+    <div class="bot-preview-card">
+      <div class="bot-header">
+        <div class="bot-avatar">🤖</div>
+        <div class="bot-info">
+          <h4>NeuralBot</h4>
+          <span>🟢 онлайн</span>
+        </div>
+      </div>
+      <div class="bot-msg">
+        <div class="bot-msg-avatar">🧑</div>
+        <div class="bot-msg-bubble">
+          Следи за ценой на iPhone 16
+          <div class="price-line">
+            <span class="old-price">119 990 ₽</span>
+            <span class="new-price">→ 89 990 ₽</span>
+          </div>
+        </div>
+      </div>
+      <div class="bot-stats">
+        <span>📊 <strong>247</strong> товаров</span>
+        <span>⚡ <strong>12</strong> срабатываний</span>
+        <span>📅 <strong>7</strong> дней</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-glow"></div>
+
+<!-- Features -->
+<section id="features" class="features">
+  <div class="section-label reveal">// ВОЗМОЖНОСТИ</div>
+  <h2 class="section-title reveal" style="transition-delay:0.1s">Всё, что нужно для автомата</h2>
+  <p class="section-sub reveal" style="transition-delay:0.2s">Голосовой ввод, мониторинг, кастомные скрипты. Без лишнего кода.</p>
+  <div class="features-grid">
+    <div class="feature-card reveal" style="transition-delay:0.05s">
+      <div class="feature-icon">🎤</div>
+      <h3>Голосовой ввод</h3>
+      <p>Просто говори — бот расшифрует, поймёт и сделает. Faster-Whisper на борту.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.1s">
+      <div class="feature-icon">📉</div>
+      <h3>Мониторинг цен</h3>
+      <p>Парсинг Ozon, WB, Яндекс.Маркет. Мгновенный алерт при снижении цены.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.15s">
+      <div class="feature-icon">🤖</div>
+      <h3>AI-агенты</h3>
+      <p>Запускай параллельных агентов для анализа, отчётов, ресерча. Делегируй.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.2s">
+      <div class="feature-icon">📅</div>
+      <h3>Cron-задачи</h3>
+      <p>Ежедневные отчёты, дайджесты, напоминалки. Расписание в 2 клика.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.25s">
+      <div class="feature-icon">🔗</div>
+      <h3>Docker деплой</h3>
+      <p>Запуск в контейнере — не зависнет, не упадёт, живёт после перезагрузки.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.3s">
+      <div class="feature-icon">🎨</div>
+      <h3>Лендинги на WOW</h3>
+      <p>AURA-дизайн с частицами, 3D-кубом и shimmer-эффектами. Не скучно.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-glow"></div>
+
+<!-- Stats -->
+<section class="stats">
+  <div class="stats-grid">
+    <div class="stat-item reveal-scale" style="transition-delay:0s">
+      <div class="stat-number"><span class="counter" data-target="12500">0</span>+</div>
+      <div class="stat-label">Пользователей</div>
+    </div>
+    <div class="stat-item reveal-scale" style="transition-delay:0.1s">
+      <div class="stat-number"><span class="counter" data-target="99">0</span>%</div>
+      <div class="stat-label">Аптайм</div>
+    </div>
+    <div class="stat-item reveal-scale" style="transition-delay:0.2s">
+      <div class="stat-number"><span class="counter" data-target="247000">0</span></div>
+      <div class="stat-label">Товаров отслежено</div>
+    </div>
+    <div class="stat-item reveal-scale" style="transition-delay:0.3s">
+      <div class="stat-number"><span class="counter" data-target="3400">0</span>+</div>
+      <div class="stat-label">Ботов запущено</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-glow"></div>
+
+<!-- Pricing -->
+<section id="pricing" class="pricing">
+  <div class="section-label reveal">// ТАРИФЫ</div>
+  <h2 class="section-title reveal" style="transition-delay:0.1s">Выбери план</h2>
+  <p class="section-sub reveal" style="transition-delay:0.2s">Без скрытых платежей, без головной боли.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card reveal" style="transition-delay:0.05s">
+      <h3>Старт</h3>
+      <div class="price">0 <span>₽</span></div>
+      <p class="desc">Попробуй, ничего не теряешь</p>
+      <ul class="pricing-features">
+        <li>1 бот</li>
+        <li>50 запросов / день</li>
+        <li>Базовая аналитика</li>
+        <li>Telegram поддержка</li>
+      </ul>
+      <a href="#cta" class="btn-ghost" style="text-align:center">Начать</a>
+    </div>
+    <div class="pricing-card popular reveal" style="transition-delay:0.1s">
+      <div class="popular-badge">🔥 ХИТ</div>
+      <h3>Премиум</h3>
+      <div class="price">999 <span>₽ / мес</span></div>
+      <p class="desc">Полный фарш для профи</p>
+      <ul class="pricing-features">
+        <li>5 ботов</li>
+        <li>Безлимит запросов</li>
+        <li>Голосовой ввод</li>
+        <li>Мониторинг цен</li>
+        <li>AI-агенты</li>
+        <li>Cron + Docker деплой</li>
+      </ul>
+      <a href="#cta" class="btn-primary" style="text-align:center">Выбрать</a>
+    </div>
+    <div class="pricing-card reveal" style="transition-delay:0.15s">
+      <h3>VIP</h3>
+      <div class="price">2 500 <span>₽ / мес</span></div>
+      <p class="desc">Для бизнеса и королей</p>
+      <ul class="pricing-features">
+        <li>Безлимит ботов</li>
+        <li>Всё из Премиум</li>
+        <li>Кастомные интеграции</li>
+        <li>Выделенный сервер</li>
+        <li>Приоритетная поддержка</li>
+        <li>Личный менеджер</li>
+      </ul>
+      <a href="#cta" class="btn-ghost" style="text-align:center">Связаться</a>
+    </div>
+  </div>
+</section>
+
+<div class="section-glow"></div>
+
+<!-- CTA -->
+<section id="cta" class="cta-section">
+  <div class="cta-card reveal-scale">
+    <div class="section-label" style="color:var(--sky-blue)">// ГОТОВ СТАРТОВАТЬ?</div>
+    <h2 class="section-title" style="font-size:clamp(24px,4vw,32px); margin-bottom:12px;">Запусти своего бота сейчас</h2>
+    <p style="color:var(--gray); font-size:15px; margin-bottom:28px;">5 минут — и бот уже в Telegram. Без серверов, без заморочек.</p>
+    <a href="#" class="btn-primary shimmer" style="display:inline-block">✨ Запустить NeuralBot</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 NeuralBot — сделано с ❤️ для Grove Street Families</p>
+</footer>
+
+<script>
+(() => {
+/* ========== PARTICLES ========== */
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouseX = -1000, mouseY = -1000;
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.25;
+    this.speedY = (Math.random() - 0.5) * 0.25;
+    this.opacity = Math.random() * 0.4 + 0.1;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    const dx = mouseX - this.x;
+    const dy = mouseY - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 150) {
+      const force = (150 - dist) / 150 * 0.5;
+      this.x -= dx / dist * force;
+      this.y -= dy / dist * force;
+    }
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+    }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(96, 165, 250, ${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+const count = Math.min(Math.floor(canvas.width * canvas.height / 14000), 100);
+for (let i = 0; i < count; i++) particles.push(new Particle());
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 180) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(96, 165, 250, ${(1 - dist / 180) * 0.12})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+/* ========== CURSOR GLOW ========== */
+const glow = document.getElementById('cursor-glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+/* ========== SCROLL REVEAL ========== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-scale, .reveal-left, .reveal-right')
+  .forEach(el => observer.observe(el));
+
+/* ========== COUNTER ANIMATION ========== */
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const duration = 2000;
+      const startTime = performance.now();
+      function update(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target).toLocaleString('ru-RU');
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+/* ========== FEATURE CARD LIGHT TRACKING ========== */
+document.querySelectorAll('.feature-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+
+})();
+</script>
+</body>
+</html>

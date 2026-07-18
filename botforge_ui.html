@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BotForge — Telegram Bot Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0B0F14;--panel:#131A22;--panel2:#171F29;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--text:#E4E7EB;--text2:#9CA3AF;--text3:#6B7280;--cyan:#00D9FF;--teal:#14B8A6;--emerald:#10B981;--amber:#F59E0B;--red:#EF4444;--radius:8px;--sidebar:240px;--topbar:56px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow-x:hidden}
+input,button,select{font-family:inherit;outline:none}
+button{cursor:pointer;border:none;background:none;color:inherit}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--bg);border-right:1px solid var(--border);position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+.content{flex:1;padding:24px;max-width:1400px}
+.sidebar-header{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sidebar-logo{width:28px;height:28px;background:linear-gradient(135deg,var(--cyan),var(--teal));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--bg);font-size:14px}
+.sidebar-title{font-weight:700;font-size:15px;letter-spacing:-0.3px}
+.sidebar-ver{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
+.nav-section{padding:8px 0}
+.nav-label{padding:6px 20px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;border-left:2px solid transparent;transition:all 0.12s}
+.nav-item:hover{background:rgba(255,255,255,0.03);color:var(--text)}
+.nav-item.active{background:rgba(0,217,255,0.05);color:var(--cyan);border-left-color:var(--cyan)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,0.08);color:var(--text2);font-weight:600}
+.nav-badge.err{background:rgba(239,68,68,0.15);color:var(--red)}
+.sidebar-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
+.sidebar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--bg)}
+.topbar{height:var(--topbar);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:50}
+.topbar-search{flex:1;max-width:400px;position:relative}
+.topbar-search input{width:100%;height:34px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:0 12px 0 36px;color:var(--text);font-size:13px}
+.topbar-search input:focus{border-color:var(--cyan)}
+.topbar-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text3);pointer-events:none}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.topbar-btn{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text2);position:relative}
+.topbar-btn:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.topbar-btn svg{width:18px;height:18px}
+.notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%}
+.topbar-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--bg)}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-0.4px}
+.page-sub{font-size:13px;color:var(--text3);margin-top:2px}
+.page-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;transition:all 0.12s;white-space:nowrap}
+.btn svg{width:14px;height:14px}
+.btn-primary{background:var(--cyan);color:var(--bg)}
+.btn-primary:hover{background:#33DEFF}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{background:rgba(255,255,255,0.03)}
+.btn-danger{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.btn-danger:hover{background:rgba(239,68,68,0.15)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.metric{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--cyan))}
+.metric-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:8px}
+.metric-val{font-size:28px;font-weight:700;letter-spacing:-0.5px}
+.metric-icon{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.metric-icon svg{width:18px;height:18px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-hdr-title{font-size:15px;font-weight:600}
+.tbl-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.tbl-hdr{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px}
+.tbl-hdr-title{font-size:14px;font-weight:600}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--panel2)}
+th{text-align:left;padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-on{background:rgba(16,185,129,0.12);color:var(--emerald)}
+.badge-off{background:rgba(107,114,128,0.12);color:var(--text3)}
+.badge-wh{background:rgba(0,217,255,0.1);color:var(--cyan)}
+.badge-pl{background:rgba(20,184,166,0.1);color:var(--teal)}
+.badge-i{background:rgba(0,217,255,0.1);color:var(--cyan)}
+.badge-w{background:rgba(245,158,11,0.1);color:var(--amber)}
+.badge-e{background:rgba(239,68,68,0.1);color:var(--red)}
+.badge-owner{background:rgba(245,158,11,0.12);color:var(--amber)}
+.badge-admin{background:rgba(0,217,255,0.12);color:var(--cyan)}
+.badge-editor{background:rgba(20,184,166,0.12);color:var(--teal)}
+.badge-viewer{background:rgba(156,163,175,0.12);color:var(--text2)}
+.badge-dot{width:6px;height:6px;border-radius:50%}
+.bot-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--bg);flex-shrink:0}
+.bot-cell{display:flex;align-items:center;gap:10px}
+.bot-name{font-weight:600;font-size:13px}
+.bot-un{font-size:11px;color:var(--text3)}
+.token{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:12px;width:480px;max-width:90vw;max-height:90vh;overflow-y:auto}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.modal-close:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.modal-body{padding:24px}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.fi{width:100%;height:38px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:0 12px;color:var(--text);font-size:13px}
+.fi:focus{border-color:var(--cyan)}
+.fh{font-size:11px;color:var(--text3);margin-top:4px}
+.fs{width:100%;height:38px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:0 12px;color:var(--text);font-size:13px;cursor:pointer}
+.page{display:none}
+.page.act{display:block}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:160px;margin-top:16px}
+.chart-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;cursor:pointer}
+.chart-legend{display:flex;gap:16px;margin-top:24px}
+.chart-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.chart-dot{width:8px;height:8px;border-radius:2px}
+.pills{display:flex;gap:6px}
+.pill{padding:4px 12px;border-radius:16px;font-size:11px;font-weight:600;color:var(--text2);background:rgba(255,255,255,0.04);cursor:pointer;border:1px solid transparent}
+.pill:hover{background:rgba(255,255,255,0.08)}
+.pill.act{background:rgba(0,217,255,0.1);color:var(--cyan);border-color:rgba(0,217,255,0.2)}
+.progress{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.3s}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:1024px){.metrics{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);z-index:100}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.metrics{grid-template-columns:1fr}.topbar-search{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="sidebar-header"><div class="sidebar-logo">B</div><div><div class="sidebar-title">BotForge</div><div class="sidebar-ver">v2.4.0</div></div></div>
+<nav class="nav-section">
+<div class="nav-label">Управление</div>
+<div class="nav-item active" data-p="dash"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</div>
+<div class="nav-item" data-p="bots"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>Мои боты<span class="nav-badge" id="bc">0</span></div>
+<div class="nav-item" data-p="logs"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4V9m4-4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>Логи<span class="nav-badge err" id="ec">0</span></div>
+<div class="nav-item" data-p="analytics"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 12l3-3 3 3 4-4M3 3v18h18"/></svg>Аналитика</div>
+<div class="nav-item" data-p="integrations"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>Интеграции</div>
+<div class="nav-item" data-p="team"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a4 4 0 00-5-3.47M9 20H4v-2a4 4 0 015-3.47m6.363-2.363a4 4 0 10-5.656-5.656 4 4 0 005.656 5.656z"/></svg>Команда</div>
+<div class="nav-item" data-p="billing"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>Биллинг</div>
+<div class="nav-item" data-p="audit"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Аудит</div>
+</nav>
+<div class="sidebar-footer"><div class="sidebar-avatar">А</div><div>Андрей <span style="color:var(--text3);font-weight:400;font-size:11px">· Owner</span></div></div>
+</aside>
+<div class="main">
+<header class="topbar">
+<div class="topbar-search"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" id="si" placeholder="Поиск..." oninput="doSearch(this.value)"></div>
+<div class="topbar-actions"><button class="topbar-btn" onclick="toast('i','Уведомлений нет')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg><div class="notif-dot"></div></button><div class="topbar-avatar">А</div></div>
+</header>
+<div class="content" id="content">
+<div class="page act" id="p-dash">
+<div class="page-header"><div><div class="page-title">Dashboard</div><div class="page-sub">Обзор твоих Telegram ботов</div></div><div class="page-actions"><button class="btn btn-secondary" onclick="switchPage('logs')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4V9m4-4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>Логи</button><button class="btn btn-primary" onclick="openModal()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Добавить бота</button></div></div>
+<div class="metrics" id="dm"></div>
+<div class="g2"><div class="card"><div class="card-hdr"><div class="card-hdr-title">Последние события</div><button class="btn btn-sm btn-secondary" onclick="switchPage('logs')">Все</button></div><div id="rev"></div></div><div class="card"><div class="card-hdr"><div class="card-hdr-title">Топ ботов</div></div><div id="tb"></div></div></div>
+</div>
+<div class="page" id="p-bots">
+<div class="page-header"><div><div class="page-title">Мои боты</div><div class="page-sub">Управление ботами</div></div><div class="page-actions"><button class="btn btn-primary" onclick="openModal()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>Добавить бота</button></div></div>
+<div class="tbl-wrap"><div class="tbl-hdr"><div class="tbl-hdr-title">Все боты</div><span style="font-size:12px;color:var(--text3)" id="bcl"></span></div><div class="tbl-scroll"><table><thead><tr><th>Бот</th><th>Статус</th><th>Режим</th><th>Пользователи</th><th>Команды</th><th>Токен</th><th>Действия</th></tr></thead><tbody id="btb"></tbody></table></div></div>
+</div>
+<div class="page" id="p-logs">
+<div class="page-header"><div><div class="page-title">Логи</div><div class="page-sub">Поток событий</div></div><div class="page-actions"><div class="pills" id="lf"><div class="pill act" data-v="">Все</div><div class="pill" data-v="ERROR">Ошибки</div><div class="pill" data-v="WARN">Предупреждения</div><div class="pill" data-v="INFO">Инфо</div></div></div></div>
+<div class="tbl-wrap"><div class="tbl-hdr"><div class="tbl-hdr-title">Журнал</div></div><div class="tbl-scroll"><table><thead><tr><th>Время</th><th>Бот</th><th>Уровень</th><th>Сообщение</th></tr></thead><tbody id="ltb"></tbody></table></div></div>
+</div>
+<div class="page" id="p-analytics"><div class="page-header"><div><div class="page-title">Аналитика</div></div></div><div class="metrics" id="am"></div></div>
+<div class="page" id="p-integrations"><div class="page-header"><div><div class="page-title">Интеграции</div></div></div><div class="g2" id="ig"></div></div>
+<div class="page" id="p-team"><div class="page-header"><div><div class="page-title">Команда</div></div></div><div class="tbl-wrap"><table><thead><tr><th>Участник</th><th>Email</th><th>Роль</th><th>Активность</th></tr></thead><tbody id="ttb"></tbody></table></div></div>
+<div class="page" id="p-billing"><div class="page-header"><div><div class="page-title">Биллинг</div></div></div><div class="metrics" id="bm"></div></div>
+<div class="page" id="p-audit"><div class="page-header"><div><div class="page-title">Аудит</div></div></div><div class="tbl-wrap"><table><thead><tr><th>Время</th><th>Пользователь</th><th>Действие</th><th>Ресурс</th></tr></thead><tbody id="atb"></tbody></table></div></div>
+</div></div></div>
+
+<!-- Add Bot Modal -->
+<div class="modal-overlay" id="modal"><div class="modal"><div class="modal-hdr"><div class="modal-title">Добавить бота</div><button class="modal-close" onclick="closeModal()"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button></div><div class="modal-body"><div class="fg"><label class="fl">Токен бота *</label><input class="fi" id="ti" placeholder="123456789:ABCdefGHIjklMNOp" style="font-family:'JetBrains Mono',monospace"></div><div class="fg"><label class="fl">Название</label><input class="fi" id="ni" placeholder="Мой бот"></div><div class="fg"><label class="fl">Режим</label><select class="fs" id="mi"><option value="Polling">Polling</option><option value="Webhook">Webhook</option></select></div></div><div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal()">Отмена</button><button class="btn btn-primary" onclick="addBot()">Добавить</button></div></div></div>
+
+<!-- Edit Bot Modal -->
+<div class="modal-overlay" id="editModal"><div class="modal"><div class="modal-hdr"><div class="modal-title">Редактировать бота</div><button class="modal-close" onclick="document.getElementById('editModal').classList.remove('show')"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button></div><div class="modal-body"><div class="fg"><label class="fl">Название</label><input class="fi" id="en"></div><div class="fg"><label class="fl">Токен</label><input class="fi" id="et" style="font-family:'JetBrains Mono',monospace"></div><div class="fg"><label class="fl">Режим</label><select class="fs" id="em"><option value="Polling">Polling</option><option value="Webhook">Webhook</option></select></div><input type="hidden" id="ei"></div><div class="modal-foot"><button class="btn btn-secondary" onclick="document.getElementById('editModal').classList.remove('show')">Отмена</button><button class="btn btn-primary" onclick="saveEdit()">Сохранить</button></div></div></div>
+
+<div class="toast-box" id="tbx"></div>
+<script>
+const API='http://localhost:8000/api';
+const KEY='Bearer botforge-secret-key-2026';
+
+async function api(path,opts={}){
+    const h={'Authorization':KEY,'Content-Type':'application/json',...opts.headers};
+    try{
+        const r=await fetch(API+path,{...opts,headers:h});
+        if(!r.ok){const e=await r.json().catch(()=>({detail:r.statusText}));throw new Error(e.detail||'API error')}
+        return await r.json();
+    }catch(e){
+        if(e.message.includes('Failed to fetch')) toast('e','Бэкенд не запущен. Запусти: python botforge_backend.py');
+        else toast('e',e.message);
+        throw e;
+    }
+}
+
+function toast(type,msg){
+    const box=document.getElementById('tbx');
+    const t=document.createElement('div');
+    t.className='toast '+type;
+    const icons={'s':'<svg class="toast-icon" fill="none" stroke="var(--emerald)" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>','e':'<svg class="toast-icon" fill="none" stroke="var(--red)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-2.99l-6.93-12a2 2 0 00-3.48 0l-6.93 12A2 2 0 005.07 19z"/></svg>','i':'<svg class="toast-icon" fill="none" stroke="var(--cyan)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'};
+    t.innerHTML=(icons[type]||icons.i)+'<span class="toast-txt">'+msg+'</span>';
+    box.appendChild(t);
+    setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100%)';setTimeout(()=>t.remove(),200)},3000);
+}
+
+function switchPage(name){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));
+    document.getElementById('p-'+name).classList.add('act');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelector(`.nav-item[data-p="${name}"]`).classList.add('active');
+    loadPage(name);
+}
+document.querySelectorAll('.nav-item').forEach(el=>{el.addEventListener('click',()=>switchPage(el.dataset.p))});
+
+function openModal(){document.getElementById('modal').classList.add('show');document.getElementById('ti').focus()}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+async function addBot(){
+    const token=document.getElementById('ti').value.trim();
+    const name=document.getElementById('ni').value.trim()||'New Bot';
+    const mode=document.getElementById('mi').value;
+    if(!token){toast('e','Введите токен');return}
+    await api('/bots',{method:'POST',body:JSON.stringify({token,name,mode})});
+    closeModal();document.getElementById('ti').value='';document.getElementById('ni').value='';
+    toast('s','Бот добавлен!');loadBots();loadDashboard();
+}
+
+async function deleteBot(id){
+    if(!confirm('Удалить бота?'))return;
+    await api('/bots/'+id,{method:'DELETE'});
+    toast('i','Бот удалён');loadBots();loadDashboard();
+}
+
+async function testBot(id){
+    const r=await api('/bots/'+id+'/test',{method:'POST'});
+    toast('s',r.message||'Тест пройден');
+}
+
+async function editBot(id){
+    const bot=await api('/bots/'+id);
+    document.getElementById('ei').value=bot.id;
+    document.getElementById('en').value=bot.name;
+    document.getElementById('et').value=bot.token;
+    document.getElementById('em').value=bot.mode;
+    document.getElementById('editModal').classList.add('show');
+}
+
+async function saveEdit(){
+    const id=document.getElementById('ei').value;
+    const name=document.getElementById('en').value;
+    const token=document.getElementById('et').value;
+    const mode=document.getElementById('em').value;
+    await api('/bots/'+id,{method:'PATCH',body:JSON.stringify({name,mode,token})});
+    document.getElementById('editModal').classList.remove('show');
+    toast('s','Бот обновлён');loadBots();loadDashboard();
+}
+
+async function loadDashboard(){
+    try{
+        const s=await api('/stats');
+        document.getElementById('dm').innerHTML=`
+            <div class="metric" style="--accent:var(--cyan)"><div class="metric-lbl">Активные боты</div><div class="metric-val">${s.online}</div></div>
+            <div class="metric" style="--accent:var(--teal)"><div class="metric-lbl">Всего ботов</div><div class="metric-val">${s.bots}</div></div>
+            <div class="metric" style="--accent:var(--emerald)"><div class="metric-lbl">Пользователи</div><div class="metric-val">${s.users.toLocaleString()}</div></div>
+            <div class="metric" style="--accent:var(--amber)"><div class="metric-lbl">Ошибки</div><div class="metric-val">${s.errors}</div></div>`;
+        const logs=await api('/logs?limit=5');
+        document.getElementById('rev').innerHTML=logs.map(l=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div class="badge ${l.level==='ERROR'?'badge-e':l.level==='WARN'?'badge-w':'badge-i'}">${l.level}</div><span style="font-size:12px;flex:1">${l.message}</span></div>`).join('');
+        const bots=await api('/bots');
+        const max=Math.max(...bots.map(b=>b.users_count||0),1);
+        document.getElementById('tb').innerHTML=bots.map(b=>`<div style="margin-bottom:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,${b.color},${b.color2});width:24px;height:24px;font-size:10px">${b.name[0]}</div><span style="font-size:13px;font-weight:600">${b.username}</span></div><span style="font-size:12px;color:var(--text2)">${(b.users_count||0).toLocaleString()} users</span></div><div class="progress"><div class="progress-fill" style="width:${Math.round((b.users_count||0)/max*100)}%;background:${b.color}"></div></div></div>`).join('');
+    }catch(e){}
+}
+
+async function loadBots(){
+    try{
+        const bots=await api('/bots');
+        document.getElementById('bc').textContent=bots.length;
+        document.getElementById('bcl').textContent=bots.length+' ботов';
+        document.getElementById('btb').innerHTML=bots.map(b=>`<tr><td><div class="bot-cell"><div class="bot-avatar" style="background:linear-gradient(135deg,${b.color},${b.color2})">${b.name[0]}</div><div><div class="bot-name">${b.name}</div><div class="bot-un">${b.username}</div></div></div></td><td><div class="badge ${b.status==='online'?'badge-on':'badge-off'}"><div class="badge-dot" style="background:${b.status==='online'?'var(--emerald)':'var(--text3)'}"></div>${b.status==='online'?'Online':'Offline'}</div></td><td><div class="badge ${b.mode==='Webhook'?'badge-wh':'badge-pl'}">${b.mode}</div></td><td>${(b.users_count||0).toLocaleString()}</td><td>${b.commands_count||0}</td><td><span class="token">${b.token}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sm btn-secondary" onclick="testBot('${b.id}')">Test</button><button class="btn btn-sm btn-secondary" onclick="editBot('${b.id}')">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteBot('${b.id}')">Delete</button></div></td></tr>`).join('');
+    }catch(e){}
+}
+
+async function loadLogs(){
+    try{
+        const active=document.querySelector('#lf .pill.act');
+        const level=active?active.dataset.v:'';
+        const logs=await api('/logs?level='+level+'&limit=30');
+        document.getElementById('ec').textContent=logs.filter(l=>l.level==='ERROR').length;
+        document.getElementById('ltb').innerHTML=logs.map(l=>`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">${l.ts||''}</td><td>${l.bot_name||''}</td><td><div class="badge ${l.level==='ERROR'?'badge-e':l.level==='WARN'?'badge-w':'badge-i'}">${l.level}</div></td><td>${l.message}</td></tr>`).join('');
+    }catch(e){}
+}
+document.querySelectorAll('#lf .pill').forEach(p=>{p.addEventListener('click',function(){document.querySelectorAll('#lf .pill').forEach(x=>x.classList.remove('act'));this.classList.add('act');loadLogs()})});
+
+async function loadAnalytics(){
+    try{
+        const s=await api('/stats');
+        document.getElementById('am').innerHTML=`
+            <div class="metric" style="--accent:var(--cyan)"><div class="metric-lbl">Ботов</div><div class="metric-val">${s.bots}</div></div>
+            <div class="metric" style="--accent:var(--teal)"><div class="metric-lbl">Пользователей</div><div class="metric-val">${s.users.toLocaleString()}</div></div>
+            <div class="metric" style="--accent:var(--emerald)"><div class="metric-lbl">Ошибок</div><div class="metric-val">${s.errors}</div></div>
+            <div class="metric" style="--accent:var(--amber)"><div class="metric-lbl">Online</div><div class="metric-val">${s.online}</div></div>`;
+    }catch(e){}
+}
+
+async function loadIntegrations(){
+    try{
+        const ints=await api('/integrations');
+        document.getElementById('ig').innerHTML=ints.map(i=>{
+            const on=i.status==='connected';
+            return `<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:40px;height:40px;border-radius:8px;background:rgba(0,217,255,0.08);display:flex;align-items:center;justify-content:center;color:var(--cyan)"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><div><div style="font-weight:600;font-size:14px">${i.name}</div><div style="font-size:11px;color:var(--text3)">${i.description}</div></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="badge ${on?'badge-on':'badge-off'}">${on?'Подключено':'Не подключено'}</div><button class="btn btn-sm ${on?'btn-secondary':'btn-primary'}" onclick="toggleIntegration(${i.id},${!on})">${on?'Отключить':'Подключить'}</button></div></div>`;
+        }).join('');
+    }catch(e){}
+}
+async function toggleIntegration(id,active){await api('/integrations/'+id,{method:'PATCH',body:JSON.stringify({status:active?'connected':'disconnected'})});toast('s',active?'Подключено':'Отключено');loadIntegrations()}
+
+async function loadTeam(){
+    try{
+        const team=await api('/team');
+        const cls=r=>r==='Owner'?'badge-owner':r==='Admin'?'badge-admin':r==='Editor'?'badge-editor':'badge-viewer';
+        document.getElementById('ttb').innerHTML=team.map(t=>`<tr><td>${t.name}</td><td>${t.email}</td><td><div class="badge ${cls(t.role)}">${t.role}</div></td><td style="color:var(--text3)">${t.last_active||''}</td></tr>`).join('');
+    }catch(e){}
+}
+
+async function loadBilling(){
+    try{
+        const s=await api('/stats');
+        document.getElementById('bm').innerHTML=`
+            <div class="metric" style="--accent:var(--emerald)"><div class="metric-lbl">Тариф</div><div class="metric-val" style="font-size:20px">Pro</div><div class="metric-delta">$29/мес</div></div>
+            <div class="metric" style="--accent:var(--cyan)"><div class="metric-lbl">Ботов</div><div class="metric-val">${s.bots}/10</div></div>
+            <div class="metric" style="--accent:var(--teal)"><div class="metric-lbl">Пользователей</div><div class="metric-val">${s.users.toLocaleString()}</div></div>
+            <div class="metric" style="--accent:var(--amber)"><div class="metric-lbl">След. платёж</div><div class="metric-val" style="font-size:20px">1 авг</div></div>`;
+    }catch(e){}
+}
+
+async function loadAudit(){
+    try{
+        const audit=await api('/audit');
+        document.getElementById('atb').innerHTML=audit.map(a=>`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">${a.ts||''}</td><td>${a.user}</td><td>${a.action}</td><td>${a.resource}</td></tr>`).join('');
+    }catch(e){}
+}
+
+function loadPage(name){
+    switch(name){
+        case 'dash':loadDashboard();break;
+        case 'bots':loadBots();break;
+        case 'logs':loadLogs();break;
+        case 'analytics':loadAnalytics();break;
+        case 'integrations':loadIntegrations();break;
+        case 'team':loadTeam();break;
+        case 'billing':loadBilling();break;
+        case 'audit':loadAudit();break;
+    }
+}
+
+async function doSearch(q){
+    if(!q){loadBots();return}
+    try{
+        const bots=await api('/bots?q='+encodeURIComponent(q));
+        document.getElementById('btb').innerHTML=bots.length?bots.map(b=>`<tr><td><div class="bot-cell">...</div></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Ничего не найдено</td></tr>';
+        if(bots.length) loadBots();
+    }catch(e){}
+}
+
+document.addEventListener('DOMContentLoaded',()=>{loadDashboard();loadBots()});
+</script>
+</body>
+</html>

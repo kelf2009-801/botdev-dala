@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LandForge — AI-конструктор лендингов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== ELEVENLABS DESIGN SYSTEM =====
+   Brand: Warm cream editorial — Bauhaus notebook
+   Canvas: #fdfcfc | Text: #000000 | Accents: #0447ff, #ff4704 (product only)
+   Font: Waldenburg 300 (display) / Inter 400/500 (body)
+   Radius: 9999px (pill) buttons, 20px cards, 4px inputs
+   Elevation: none — flat, 1px hairline borders
+   =============================== */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink: #000000;
+  --graphite: #44403b;
+  --smoke: #777169;
+  --ash: #a59f97;
+  --stone: #ebe8e4;
+  --taupe: #f5f3f1;
+  --eggshell: #fdfcfc;
+  --violet: #0447ff;
+  --ember: #ff4704;
+  --font-display: 'Inter', 'Söhne', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --radius-pill: 9999px;
+  --radius-card: 20px;
+  --radius-lg: 24px;
+  --radius-sm: 4px;
+  --max-w: 1280px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--eggshell);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 24px;
+  background: rgba(253,252,252,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--stone);
+}
+.nav-inner {
+  max-width: var(--max-w); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-size: 15px; font-weight: 500; letter-spacing: 0.01em;
+  color: var(--ink);
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-dot {
+  display: inline-block; width: 8px; height: 8px;
+  background: var(--violet); border-radius: 50%;
+}
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a {
+  color: var(--smoke); text-decoration: none;
+  font-size: 14px; font-weight: 400; letter-spacing: 0.01em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  display: inline-block;
+  padding: 10px 28px; border-radius: var(--radius-pill);
+  background: var(--ink); color: var(--eggshell);
+  font-size: 14px; font-weight: 500; text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* ===== HERO ===== */
+.hero {
+  padding: 140px 24px 100px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-inner {
+  max-width: var(--max-w); margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-left { max-width: 600px; }
+.hero-badge {
+  display: inline-block;
+  padding: 6px 16px; border-radius: var(--radius-pill);
+  background: var(--taupe);
+  color: var(--graphite);
+  font-size: 13px; font-weight: 400; letter-spacing: 0.02em;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 48px; font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  margin-bottom: 20px;
+}
+.hero h1 span { color: var(--violet); }
+.hero h1 .accent { color: var(--ember); }
+.hero p {
+  font-size: 18px; font-weight: 400;
+  line-height: 1.5;
+  color: var(--smoke);
+  margin-bottom: 32px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-block;
+  padding: 14px 36px; border-radius: var(--radius-pill);
+  background: var(--ink); color: var(--eggshell);
+  font-size: 15px; font-weight: 500; text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-outline {
+  display: inline-block;
+  padding: 14px 36px; border-radius: var(--radius-pill);
+  border: 1px solid var(--stone);
+  color: var(--ink); font-size: 15px; font-weight: 400;
+  text-decoration: none; letter-spacing: 0.01em;
+  transition: border-color 0.2s, background 0.2s;
+  background: var(--eggshell);
+}
+.btn-outline:hover { border-color: var(--ink); background: var(--taupe); }
+.hero-visual {
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-sphere {
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #0447ff 0%, #ff4704 60%, transparent 80%);
+  opacity: 0.85;
+  position: relative;
+  animation: pulse 4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+.hero-sphere::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1px solid var(--stone);
+  opacity: 0.5;
+}
+
+/* ===== SECTIONS ===== */
+section { padding: 96px 24px; }
+.section-inner {
+  max-width: var(--max-w); margin: 0 auto;
+}
+.section-label {
+  color: var(--graphite); font-size: 13px; font-weight: 400;
+  letter-spacing: 0.02em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.17;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 16px; font-weight: 400;
+  line-height: 1.5; color: var(--smoke);
+  max-width: 560px;
+}
+
+/* ===== HOW IT WORKS ===== */
+#how {
+  background: var(--taupe);
+  border-top: 1px solid var(--stone);
+  border-bottom: 1px solid var(--stone);
+}
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 48px;
+}
+.step {
+  background: var(--eggshell);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  border: 1px solid var(--stone);
+}
+.step-num {
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--violet);
+  margin-bottom: 12px;
+}
+.step h3 {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.step p {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.5; color: var(--smoke);
+}
+
+/* ===== STYLES SHOWCASE ===== */
+.styles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+.style-card {
+  border-radius: var(--radius-card);
+  padding: 24px;
+  border: 1px solid var(--stone);
+  background: var(--eggshell);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.style-card:hover { border-color: var(--ink); background: var(--taupe); }
+.style-preview {
+  width: 100%; height: 80px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.style-card h4 {
+  font-size: 14px; font-weight: 500;
+  letter-spacing: 0.01em;
+  margin-bottom: 4px;
+}
+.style-card p {
+  font-size: 13px; font-weight: 400;
+  color: var(--smoke);
+}
+
+/* ===== FEATURES ===== */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-top: 48px;
+}
+.feature {
+  display: flex; gap: 20px;
+  align-items: flex-start;
+  padding: 24px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--stone);
+  background: var(--eggshell);
+}
+.feature-icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--taupe);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.feature h3 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.feature p {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.5; color: var(--smoke);
+}
+
+/* ===== CTA ===== */
+.cta-section {
+  text-align: center;
+  background: var(--taupe);
+  border-top: 1px solid var(--stone);
+  padding: 120px 24px;
+}
+.cta-section h2 {
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.17;
+  margin-bottom: 16px;
+}
+.cta-section p {
+  font-size: 16px; font-weight: 400;
+  color: var(--smoke);
+  max-width: 480px; margin: 0 auto 28px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 28px 24px;
+  border-top: 1px solid var(--stone);
+}
+.footer-inner {
+  max-width: var(--max-w); margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+}
+footer p {
+  font-size: 13px; font-weight: 400;
+  color: var(--ash);
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  color: var(--smoke); text-decoration: none;
+  font-size: 13px; font-weight: 400;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--ink); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; text-align: center; }
+  .hero-left { max-width: 100%; }
+  .hero-actions { justify-content: center; }
+  .hero-visual { display: none; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .styles-grid { grid-template-columns: repeat(2, 1fr); }
+  .features-grid { grid-template-columns: 1fr; }
+  .nav-links a:not(.nav-cta) { display: none; }
+}
+@media (max-width: 560px) {
+  .styles-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 36px; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-outline { width: 100%; text-align: center; }
+  .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="logo-dot"></span>LandForge</div>
+    <div class="nav-links">
+      <a href="#how">Как работает</a>
+      <a href="#styles">Стили</a>
+      <a href="#features">Возможности</a>
+      <a href="#cta" class="nav-cta">Запустить</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">AI-конструктор лендингов</div>
+      <h1>
+        Опиши идею —<br>
+        мы соберём <span>лендинг</span><br>
+        за <span class="accent">30 секунд</span>
+      </h1>
+      <p>
+        Выбери стиль из 2000+ дизайн-систем. Напиши, о чём проект.
+        LandForge сгенерирует готовый лендинг — без единого клика с твоей стороны.
+      </p>
+      <div class="hero-actions">
+        <a href="#styles" class="btn-primary">Выбрать стиль</a>
+        <a href="#how" class="btn-outline">Как это работает</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-sphere"></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label">Алгоритм</div>
+    <h2 class="section-title">Три шага до готового лендинга</h2>
+    <p class="section-sub">
+      Никаких редакторов. Никаких навыков. Просто выбор и описание.
+    </p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Выбери стиль</h3>
+        <p>
+          Открой галерею из 2000+ дизайн-систем: Dala, Linear, Stripe,
+          ElevenLabs, Mercury, Cursor и сотни других. Каждый стиль —
+          реальная цветовая палитра, типографика и компоненты.
+        </p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Опиши проект</h3>
+        <p>
+          Напиши пару предложений: название, тема, аудитория, что
+          продаёшь. Или просто кинь ссылку на конкурента — AI сам
+          вытянет контекст.
+        </p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Получи результат</h3>
+        <p>
+          Бот собирает лендинг под капотом: структура, контент,
+          адаптив, SEO. Через минуту ты держишь в руках готовый
+          сайт. Ничего доделывать не нужно.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="styles">
+  <div class="section-inner">
+    <div class="section-label">Галерея стилей</div>
+    <h2 class="section-title">2000+ дизайн-систем</h2>
+    <p class="section-sub">
+      Реальные стили от лучших продуктов мира. Не «премиум-шаблон»,
+      а живой дизайн, который используют миллионы.
+    </p>
+    <div class="styles-grid">
+      <div class="style-card">
+        <div class="style-preview" style="background:#faf6f0;color:#1a1a1a;">◆</div>
+        <h4>ElevenLabs</h4>
+        <p>Тёплая кремовая редакция</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#000;color:#8052ff;">✦</div>
+        <h4>Dala</h4>
+        <p>Созвездие на чёрном</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#0a0a1a;color:#6366f1;">◆</div>
+        <h4>Linear</h4>
+        <p>Полуночный прецизионный</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#1a1a2e;color:#e0cfa5;">▲</div>
+        <h4>Mercury</h4>
+        <p>Альпийский банк</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#0d0d0d;color:#7c3aed;">●</div>
+        <h4>Authkit</h4>
+        <p>Морозный стеклянный собор</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#f8f5f0;color:#1a1a1a;">■</div>
+        <h4>Cursor</h4>
+        <p>Тёплая мастерская</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#0a0a0a;color:#ff6b6b;">✦</div>
+        <h4>Raycast</h4>
+        <p>Командный центр, неон</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#0f0f1a;color:#a78bfa;">◈</div>
+        <h4>Stripe</h4>
+        <p>Индиго на матовом стекле</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#1a1a1a;color:#22d3ee;">○</div>
+        <h4>Notion</h4>
+        <p>Тёплый бумажный блокнот</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#0a0a0a;color:#fbbf24;">☆</div>
+        <h4>Superhuman</h4>
+        <p>Золотой час, дашборд</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#111;color:#34d399;">◈</div>
+        <h4>Hyperstudio</h4>
+        <p>Чертежи на обсидиане</p>
+      </div>
+      <div class="style-card">
+        <div class="style-preview" style="background:#faf6f0;color:#0447ff;">●</div>
+        <h4>Family</h4>
+        <p>Storybook на кремовой бумаге</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">Возможности</div>
+    <h2 class="section-title">Всё, что нужно для лендинга</h2>
+    <p class="section-sub">
+      LandForge не просто генерирует HTML — он продумывает каждый аспект.
+    </p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">🎨</div>
+        <div>
+          <h3>Точная цветопередача</h3>
+          <p>Каждый стиль — это реальная дизайн-система с палитрой, шрифтами, отступами, скруглениями и компонентами. Никаких «похожих» цветов.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <div>
+          <h3>Адаптив с первого кадра</h3>
+          <p>Мобила, планшет, десктоп — лендинг выглядит идеально на любом экране. Без перетаскивания блоков и правок CSS.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🚀</div>
+        <div>
+          <h3>Готовый код</h3>
+          <p>Чистый HTML+CSS. Никаких конструкторов, никаких зависимостей. Открыл в браузере — работает. Загрузил на хостинг — летает.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <div>
+          <h3>SEO-структура</h3>
+          <p>Заголовки, мета-теги, Open Graph, семантическая разметка. Лендинг готов к индексации сразу после генерации.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <h3>Генерация за секунды</h3>
+          <p>Выбрал стиль → описал проект → получил ссылку. Весь процесс занимает меньше минуты. Без очередей и ожидания.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔄</div>
+        <div>
+          <h3>Смена стиля в один клик</h3>
+          <p>Не уверен в стиле? Просто выбери другой — AI перегенерирует лендинг с новой дизайн-системой, сохранив весь контент.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="cta-section">
+  <div class="section-inner">
+    <h2>Твой лендинг<br>ждёт своего стиля</h2>
+    <p>Выбери дизайн из 2000+ систем. Напиши пару строк. И получи готовый сайт через минуту.</p>
+    <a href="#" class="btn-primary">Начать бесплатно</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <p>© 2026 LandForge — AI-конструктор лендингов</p>
+    <div class="footer-links">
+      <a href="#">Telegram</a>
+      <a href="#">GitHub</a>
+      <a href="#">Документация</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

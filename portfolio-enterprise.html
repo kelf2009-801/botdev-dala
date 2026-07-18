@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Андрей — Bot Developer & AI Engineer</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+  background: #0B0F14;
+  color: #E8EDF2;
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0B0F14; }
+::-webkit-scrollbar-thumb { background: #1E2A3A; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2D3F55; }
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.02em; color: #E8EDF2; }
+h1 { font-size: clamp(2.8rem, 7vw, 5rem); line-height: 1.05; }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 2rem; }
+h3 { font-size: 1.25rem; }
+p { color: #9BA8B5; }
+a { color: #22D3EE; text-decoration: none; transition: color 0.2s; }
+a:hover { color: #7EE8FA; }
+
+/* ===== LAYOUT ===== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ===== NAV ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(11, 15, 20, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+nav .container {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-brand { font-weight: 700; font-size: 1.1rem; color: #E8EDF2; letter-spacing: -0.01em; }
+.nav-brand span { color: #22D3EE; }
+.nav-links { display: flex; gap: 8px; list-style: none; }
+.nav-links a {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #9BA8B5;
+  transition: all 0.2s;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: #E8EDF2;
+  background: rgba(255,255,255,0.04);
+}
+.nav-links a.active { color: #22D3EE; }
+
+/* ===== SECTIONS ===== */
+.section {
+  display: none;
+  padding: 120px 0 80px;
+  min-height: 100vh;
+}
+.section.active { display: block; }
+
+/* ===== HERO ===== */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 40px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 100px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  background: rgba(34, 211, 238, 0.06);
+  font-size: 0.85rem;
+  color: #22D3EE;
+  margin-bottom: 32px;
+}
+.hero-badge svg { width: 14px; height: 14px; }
+.hero h1 { margin-bottom: 12px; }
+.hero h1 .accent { color: #22D3EE; }
+.hero .role {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  color: #9BA8B5;
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+.hero .location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #6B7785;
+  font-size: 0.95rem;
+  margin-bottom: 48px;
+}
+.hero .location svg { width: 16px; height: 16px; color: #2DD4BF; }
+
+/* ===== METRICS ===== */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 800px;
+}
+.metric-card {
+  background: #131A22;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #22D3EE, transparent);
+  opacity: 0.4;
+}
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #E8EDF2;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.metric-label {
+  font-size: 0.8rem;
+  color: #6B7785;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ===== TECH STACK ===== */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.tech-item {
+  background: #131A22;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: all 0.2s;
+  cursor: default;
+}
+.tech-item:hover {
+  border-color: rgba(34, 211, 238, 0.25);
+  background: #171F29;
+}
+.tech-icon {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+  display: block;
+}
+.tech-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #E8EDF2;
+}
+.tech-category {
+  font-size: 0.75rem;
+  color: #6B7785;
+  margin-top: 2px;
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #22D3EE, #3B82F6, #2DD4BF, transparent);
+  opacity: 0.3;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 32px;
+  background: #131A22;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s;
+}
+.timeline-item:hover {
+  border-color: rgba(34, 211, 238, 0.15);
+  background: #171F29;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 28px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22D3EE;
+  border: 2px solid #0B0F14;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+}
+.timeline-item.featured::before {
+  background: #2DD4BF;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.3);
+}
+.timeline-item.featured {
+  border-color: rgba(45, 212, 191, 0.2);
+  background: linear-gradient(135deg, rgba(45,212,191,0.04), transparent);
+}
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.timeline-header h3 {
+  font-size: 1.1rem;
+  color: #E8EDF2;
+}
+.timeline-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(34, 211, 238, 0.1);
+  color: #22D3EE;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+}
+.timeline-badge.featured {
+  background: rgba(45, 212, 191, 0.12);
+  color: #2DD4BF;
+  border-color: rgba(45, 212, 191, 0.2);
+}
+.timeline-desc {
+  font-size: 0.9rem;
+  color: #9BA8B5;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.timeline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #22D3EE;
+  transition: color 0.2s;
+}
+.timeline-link:hover { color: #7EE8FA; }
+.timeline-link svg { width: 14px; height: 14px; }
+
+/* ===== STATS ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: #131A22;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #22D3EE, transparent);
+  opacity: 0.3;
+}
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #E8EDF2;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.stat-value.cyan { color: #22D3EE; }
+.stat-value.blue { color: #3B82F6; }
+.stat-value.teal { color: #2DD4BF; }
+.stat-label {
+  font-size: 0.85rem;
+  color: #6B7785;
+}
+.stat-chart {
+  grid-column: 1 / -1;
+  background: #131A22;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 28px 24px;
+}
+.stat-chart h3 {
+  font-size: 0.9rem;
+  color: #6B7785;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 180px;
+}
+.chart-bar {
+  flex: 1;
+  background: linear-gradient(180deg, #22D3EE, #1A9BB3);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  position: relative;
+  transition: height 1s ease;
+  cursor: default;
+}
+.chart-bar:hover { opacity: 0.8; }
+.chart-bar-label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  color: #6B7785;
+  white-space: nowrap;
+}
+
+/* ===== CONTACT ===== */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: #131A22;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.2s;
+}
+.contact-card:hover {
+  border-color: rgba(34, 211, 238, 0.2);
+  background: #171F29;
+}
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+.contact-icon.telegram { background: rgba(34, 211, 238, 0.1); color: #22D3EE; }
+.contact-icon.github { background: rgba(155, 168, 181, 0.1); color: #E8EDF2; }
+.contact-handle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #E8EDF2;
+}
+.contact-label {
+  font-size: 0.8rem;
+  color: #6B7785;
+}
+
+/* ===== SECTION DIVIDER ===== */
+.section-divider {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.section-divider h2 {
+  margin-bottom: 8px;
+}
+.section-divider p {
+  max-width: 500px;
+  margin: 0 auto;
+  font-size: 0.95rem;
+}
+.section-divider .accent-line {
+  width: 40px;
+  height: 3px;
+  background: #22D3EE;
+  border-radius: 2px;
+  margin: 16px auto 0;
+}
+
+/* ===== GLASS PANEL ===== */
+.glass-panel {
+  background: rgba(19, 26, 34, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.section.active .hero { animation: fadeInUp 0.5s ease; }
+.section.active .tech-grid > * { animation: fadeInUp 0.4s ease forwards; opacity: 0; }
+.section.active .tech-grid > *:nth-child(1) { animation-delay: 0.05s; }
+.section.active .tech-grid > *:nth-child(2) { animation-delay: 0.1s; }
+.section.active .tech-grid > *:nth-child(3) { animation-delay: 0.15s; }
+.section.active .tech-grid > *:nth-child(4) { animation-delay: 0.2s; }
+.section.active .tech-grid > *:nth-child(5) { animation-delay: 0.25s; }
+.section.active .tech-grid > *:nth-child(6) { animation-delay: 0.3s; }
+.section.active .tech-grid > *:nth-child(7) { animation-delay: 0.35s; }
+.section.active .tech-grid > *:nth-child(8) { animation-delay: 0.4s; }
+.section.active .timeline-item { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+.section.active .timeline-item:nth-child(1) { animation-delay: 0.05s; }
+.section.active .timeline-item:nth-child(2) { animation-delay: 0.1s; }
+.section.active .timeline-item:nth-child(3) { animation-delay: 0.15s; }
+.section.active .timeline-item:nth-child(4) { animation-delay: 0.2s; }
+.section.active .timeline-item:nth-child(5) { animation-delay: 0.25s; }
+.section.active .stat-card { animation: fadeInUp 0.4s ease forwards; opacity: 0; }
+.section.active .stat-card:nth-child(1) { animation-delay: 0.05s; }
+.section.active .stat-card:nth-child(2) { animation-delay: 0.1s; }
+.section.active .stat-card:nth-child(3) { animation-delay: 0.15s; }
+.section.active .contact-card { animation: fadeInUp 0.4s ease forwards; opacity: 0; }
+.section.active .contact-card:nth-child(1) { animation-delay: 0.05s; }
+.section.active .contact-card:nth-child(2) { animation-delay: 0.1s; }
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.count-animate { animation: countUp 0.3s ease forwards; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .nav-links { gap: 4px; }
+  .nav-links a { padding: 6px 10px; font-size: 0.8rem; }
+  .section { padding: 100px 0 60px; }
+  .timeline-item { padding: 18px; }
+  .chart-bars { height: 120px; }
+}
+@media (max-width: 480px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .metric-card { padding: 16px 12px; }
+  .metric-value { font-size: 1.5rem; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="container">
+    <div class="nav-brand">A<span>.</span>K</div>
+    <ul class="nav-links">
+      <li><a class="active" data-screen="hero">Главная</a></li>
+      <li><a data-screen="tech">Стек</a></li>
+      <li><a data-screen="projects">Проекты</a></li>
+      <li><a data-screen="stats">Статистика</a></li>
+      <li><a data-screen="contact">Контакты</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="screen-hero" class="section active">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Open for collaboration
+      </div>
+      <h1>Андрей</h1>
+      <div class="role">Bot Developer <span style="color:#6B7785;">&amp;</span> AI Engineer</div>
+      <div class="location">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Сызрань, Россия
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-value">5</div><div class="metric-label">Telegram ботов</div></div>
+        <div class="metric-card"><div class="metric-value">3<span style="font-size:1rem;color:#6B7785;">+</span></div><div class="metric-label">Года разработки</div></div>
+        <div class="metric-card"><div class="metric-value">500<span style="font-size:1rem;color:#6B7785;">+</span></div><div class="metric-label">Пользователей</div></div>
+        <div class="metric-card"><div class="metric-value">1</div><div class="metric-label">AI ассистент</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TECH STACK ===== -->
+<section id="screen-tech" class="section">
+  <div class="container">
+    <div class="section-divider">
+      <h2>Tech Stack</h2>
+      <p>Технологии и инструменты, которые я использую в разработке</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-item"><span class="tech-icon">🐍</span><div class="tech-name">Python</div><div class="tech-category">Language</div></div>
+      <div class="tech-item"><span class="tech-icon">🤖</span><div class="tech-name">aiogram</div><div class="tech-category">Bot Framework</div></div>
+      <div class="tech-item"><span class="tech-icon">⚡</span><div class="tech-name">Flask</div><div class="tech-category">Web Framework</div></div>
+      <div class="tech-item"><span class="tech-icon">🐳</span><div class="tech-name">Docker</div><div class="tech-category">Containerization</div></div>
+      <div class="tech-item"><span class="tech-icon">🛣️</span><div class="tech-name">OmniRoute</div><div class="tech-category">AI Gateway</div></div>
+      <div class="tech-item"><span class="tech-icon">🧠</span><div class="tech-name">Hermes</div><div class="tech-category">AI Agent</div></div>
+      <div class="tech-item"><span class="tech-icon">🌐</span><div class="tech-name">HTML / CSS</div><div class="tech-category">Frontend</div></div>
+      <div class="tech-item"><span class="tech-icon">🔮</span><div class="tech-name">DashScope</div><div class="tech-category">AI API</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROJECTS ===== -->
+<section id="screen-projects" class="section">
+  <div class="container">
+    <div class="section-divider">
+      <h2>Projects Timeline</h2>
+      <p>Мои проекты — от трекера цен до AI ассистента</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>DealBot63</h3>
+          <span class="timeline-badge">Ozon</span>
+        </div>
+        <div class="timeline-desc">
+          Трекер цен на Ozon. Отслеживает изменения стоимости товаров, уведомляет о снижении цены, показывает историю колебаний. Удобный инструмент для экономии на маркетплейсе.
+        </div>
+        <a class="timeline-link" href="tg://resolve?domain=DealBot63_bot" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          @DealBot63_bot
+        </a>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>GlamBot</h3>
+          <span class="timeline-badge">Beauty</span>
+        </div>
+        <div class="timeline-desc">
+          Бот для записи в nail-студию. Управление расписанием, запись на услуги, напоминания о визите. Автоматизация бизнес-процессов салона красоты.
+        </div>
+        <a class="timeline-link" href="tg://resolve?domain=nail163_bot" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          @nail163_bot
+        </a>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>BeautyBot</h3>
+          <span class="timeline-badge">Beauty</span>
+        </div>
+        <div class="timeline-desc">
+          Расширенный бот для beauty-услуг. Продвинутая система записи, каталог услуг, интеграция с календарем, управление клиентской базой.
+        </div>
+        <a class="timeline-link" href="tg://resolve?domain=Nailselegantstudio_bot" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          @Nailselegantstudio_bot
+        </a>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>FinBot</h3>
+          <span class="timeline-badge">Finance</span>
+        </div>
+        <div class="timeline-desc">
+          Финансовый ассистент для учёта расходов и доходов. Категоризация транзакций, статистика по периодам, бюджетирование и аналитика личных финансов.
+        </div>
+        <a class="timeline-link" href="tg://resolve?domain=finpro63_bot" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          @finpro63_bot
+        </a>
+      </div>
+
+      <div class="timeline-item featured">
+        <div class="timeline-header">
+          <h3>DebiHackBot</h3>
+          <span class="timeline-badge featured">★ Featured</span>
+        </div>
+        <div class="timeline-desc">
+          AI ассистент на базе языковых моделей. Решает широкий спектр задач: отвечает на вопросы, генерирует контент, анализирует данные. Мой флагманский проект, объединяющий всё, что я умею.
+        </div>
+        <a class="timeline-link" href="tg://resolve?domain=DebiHackBot" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          @DebiHackBot
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section id="screen-stats" class="section">
+  <div class="container">
+    <div class="section-divider">
+      <h2>Stats Dashboard</h2>
+      <p>Метрики и показатели активности проектов</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value cyan" id="stat-daily">0</div>
+        <div class="stat-label">Дневная активность (сообщений)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value blue" id="stat-users">0</div>
+        <div class="stat-label">Активные пользователи</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value teal" id="stat-total">0</div>
+        <div class="stat-label">Всего сообщений за месяц</div>
+      </div>
+      <div class="stat-chart">
+        <h3>Активность по дням недели</h3>
+        <div class="chart-bars" id="chart-bars"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="screen-contact" class="section">
+  <div class="container">
+    <div class="section-divider">
+      <h2>Contact</h2>
+      <p>Свяжитесь со мной для сотрудничества</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="contact-grid">
+      <a class="contact-card" href="https://t.me/Vandrey63" target="_blank">
+        <div class="contact-icon telegram">✈</div>
+        <div class="contact-handle">@Vandrey63</div>
+        <div class="contact-label">Telegram</div>
+      </a>
+      <a class="contact-card" href="https://github.com/kelf2009-801" target="_blank">
+        <div class="contact-icon github">⌘</div>
+        <div class="contact-handle">kelf2009-801</div>
+        <div class="contact-label">GitHub</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== JS ===== -->
+<script>
+(function() {
+  'use strict';
+
+  // ===== Screen Switching =====
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sections = document.querySelectorAll('.section');
+
+  function switchScreen(screenId) {
+    sections.forEach(function(s) { s.classList.remove('active'); });
+    navLinks.forEach(function(l) { l.classList.remove('active'); });
+
+    var target = document.getElementById('screen-' + screenId);
+    if (target) target.classList.add('active');
+
+    var activeLink = document.querySelector('.nav-links a[data-screen="' + screenId + '"]');
+    if (activeLink) activeLink.classList.add('active');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      switchScreen(this.getAttribute('data-screen'));
+    });
+  });
+
+  // ===== Stats Counter Animation =====
+  var statsAnimated = false;
+
+  function animateStats() {
+    if (statsAnimated) return;
+    statsAnimated = true;
+
+    var targets = [
+      { id: 'stat-daily', target: 850, current: 0 },
+      { id: 'stat-users', target: 128, current: 0 },
+      { id: 'stat-total', target: 12400, current: 0 }
+    ];
+
+    var duration = 1500;
+    var startTime = null;
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+
+      targets.forEach(function(item) {
+        var val = Math.round(item.target * eased);
+        var el = document.getElementById(item.id);
+        if (el) {
+          el.textContent = val.toLocaleString();
+          el.classList.add('count-animate');
+        }
+      });
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        targets.forEach(function(item) {
+          var el = document.getElementById(item.id);
+          if (el) el.textContent = item.target.toLocaleString();
+        });
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  // ===== Chart Bars =====
+  function renderChart() {
+    var container = document.getElementById('chart-bars');
+    if (!container) return;
+
+    var days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    var values = [45, 62, 38, 75, 90, 120, 55];
+    var maxVal = Math.max.apply(null, values);
+
+    container.innerHTML = '';
+    days.forEach(function(day, i) {
+      var bar = document.createElement('div');
+      var pct = (values[i] / maxVal) * 100;
+      bar.className = 'chart-bar';
+      bar.style.height = '0%';
+      bar.setAttribute('title', day + ': ' + values[i]);
+      bar.innerHTML = '<span class="chart-bar-label">' + day + '</span>';
+      container.appendChild(bar);
+
+      setTimeout(function() {
+        bar.style.height = Math.max(pct, 4) + '%';
+      }, 200 + i * 80);
+    });
+  }
+
+  // ===== Trigger on section visibility =====
+  var statsSection = document.getElementById('screen-stats');
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        animateStats();
+        renderChart();
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  if (statsSection) observer.observe(statsSection);
+
+  // ===== Keyboard navigation =====
+  document.addEventListener('keydown', function(e) {
+    var screens = ['hero', 'tech', 'projects', 'stats', 'contact'];
+    var current = null;
+    navLinks.forEach(function(l) {
+      if (l.classList.contains('active')) current = l.getAttribute('data-screen');
+    });
+    var idx = screens.indexOf(current);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      if (idx < screens.length - 1) switchScreen(screens[idx + 1]);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      if (idx > 0) switchScreen(screens[idx - 1]);
+    }
+  });
+
+  // ===== Initial render (chart on stats if already visible) =====
+  if (statsSection && statsSection.classList.contains('active')) {
+    animateStats();
+    renderChart();
+  }
+
+})();
+</script>
+</body>
+</html>

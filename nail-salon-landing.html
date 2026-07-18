@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nail-салон «Лакомка» в Сызрани. Маникюр, педикюр, гель-лак, дизайн. Запись через Telegram-бот." />
+  <title>Лакомка · nail-салон в Сызрани</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c97b8b' d='M12 2c-2.8 0-4 2.4-4 5 0 1.6.4 3 1 4.2C7 12.6 5 15.4 5 19c0 2.2 1.8 3 3.5 3 1 0 2-.4 2.5-1.2.4 1 1.4 1.7 2.5 1.7 1.5 0 2.5-1 2.5-2.5 0-.4-.1-.8-.2-1.1.7.4 1.4.6 2.2.6 1.5 0 2.5-1 2.5-2.5 0-3.4-2.6-5.8-4.5-7.4.6-1 1-2.3 1-3.6 0-2.6-1.2-5-4-5z'/%3E%3C/svg%3E" />
+
+  <style>
+    /* =========================================================
+       Design tokens
+       ========================================================= */
+    :root {
+      /* Fonts */
+      --font-display: 'Fraunces', 'Times New Roman', serif;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+      /* Type scale (ratio 1.25, fluid) */
+      --fs-xs: 12px;
+      --fs-sm: 14px;
+      --fs-base: clamp(15px, 0.94rem + 0.3vw, 17px);
+      --fs-lg: clamp(17px, 1rem + 0.4vw, 19px);
+      --fs-xl: clamp(20px, 1.1rem + 0.6vw, 24px);
+      --fs-2xl: clamp(24px, 1.3rem + 1vw, 32px);
+      --fs-3xl: clamp(32px, 1.6rem + 1.8vw, 48px);
+      --fs-4xl: clamp(40px, 1.8rem + 3.4vw, 72px);
+
+      --lh-tight: 1.1;
+      --lh-snug: 1.25;
+      --lh-normal: 1.55;
+      --lh-loose: 1.7;
+
+      --ls-tight: -0.025em;
+      --ls-normal: 0;
+      --ls-wide: 0.06em;
+
+      /* Spacing scale */
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+      --sp-6: 32px;
+      --sp-7: 48px;
+      --sp-8: 64px;
+      --sp-9: 96px;
+      --sp-10: 128px;
+
+      /* Radii */
+      --r-xs: 6px;
+      --r-sm: 10px;
+      --r-md: 16px;
+      --r-lg: 24px;
+      --r-xl: 32px;
+      --r-pill: 999px;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --t-fast: 160ms;
+      --t-base: 240ms;
+      --t-slow: 480ms;
+
+      /* Container */
+      --container: 1180px;
+    }
+
+    /* Light theme — blush / mauve / peach (warm, soft, premium-but-friendly) */
+    [data-theme="light"] {
+      /* Surfaces */
+      --surface-base: oklch(98% 0.012 25);        /* warm off-white */
+      --surface-raised: oklch(96% 0.018 30);      /* blush cream */
+      --surface-soft: oklch(94% 0.022 35);        /* peachy tint */
+      --surface-card: oklch(99% 0.008 30);
+      --surface-overlay: oklch(92% 0.028 30);
+
+      /* Text */
+      --text-primary: oklch(22% 0.04 25);         /* espresso-ish */
+      --text-secondary: oklch(38% 0.05 25);
+      --text-muted: oklch(55% 0.035 30);
+      --text-dim: oklch(70% 0.02 30);
+      --text-inverse: oklch(98% 0.01 25);
+
+      /* Borders */
+      --border-subtle: oklch(91% 0.02 30);
+      --border-strong: oklch(82% 0.035 25);
+
+      /* Brand — mauve primary, peach for warmth, blush for soft fills */
+      --brand: oklch(58% 0.13 5);                 /* dusty mauve */
+      --brand-hover: oklch(52% 0.15 5);
+      --brand-soft: oklch(93% 0.04 8);
+      --peach: oklch(78% 0.12 45);                /* warm peach */
+      --peach-soft: oklch(95% 0.05 45);
+      --blush: oklch(88% 0.06 15);                /* soft blush */
+      --blush-soft: oklch(96% 0.025 18);
+
+      /* State */
+      --success: oklch(60% 0.13 150);
+      --warning: oklch(72% 0.15 70);
+
+      /* Shadows (warm-tinted) */
+      --shadow-sm: 0 1px 2px oklch(50% 0.04 25 / 0.06);
+      --shadow-md: 0 10px 30px -8px oklch(40% 0.05 25 / 0.10);
+      --shadow-lg: 0 30px 80px -20px oklch(30% 0.05 25 / 0.18);
+      --shadow-glow: 0 0 60px oklch(70% 0.10 15 / 0.25);
+    }
+
+    /* Dark theme — espresso & rose */
+    [data-theme="dark"] {
+      --surface-base: oklch(15% 0.02 25);
+      --surface-raised: oklch(20% 0.025 25);
+      --surface-soft: oklch(23% 0.03 25);
+      --surface-card: oklch(19% 0.025 25);
+      --surface-overlay: oklch(26% 0.035 25);
+
+      --text-primary: oklch(95% 0.015 30);
+      --text-secondary: oklch(78% 0.02 30);
+      --text-muted: oklch(62% 0.025 30);
+      --text-dim: oklch(48% 0.02 30);
+      --text-inverse: oklch(18% 0.025 25);
+
+      --border-subtle: oklch(28% 0.02 25);
+      --border-strong: oklch(38% 0.03 25);
+
+      --brand: oklch(72% 0.13 8);                 /* rose */
+      --brand-hover: oklch(78% 0.14 8);
+      --brand-soft: oklch(30% 0.06 8);
+      --peach: oklch(80% 0.10 50);
+      --peach-soft: oklch(28% 0.05 45);
+      --blush: oklch(72% 0.08 18);
+      --blush-soft: oklch(25% 0.04 15);
+
+      --success: oklch(70% 0.14 150);
+      --warning: oklch(78% 0.15 70);
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 10px 30px -8px rgba(0, 0, 0, 0.55);
+      --shadow-lg: 0 30px 80px -20px rgba(0, 0, 0, 0.7);
+      --shadow-glow: 0 0 60px oklch(50% 0.10 15 / 0.4);
+    }
+
+    /* =========================================================
+       Reset & base
+       ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: var(--fs-base);
+      line-height: var(--lh-normal);
+      color: var(--text-primary);
+      background: var(--surface-base);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color var(--t-slow) var(--ease-out), color var(--t-slow) var(--ease-out);
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { margin: 0; line-height: var(--lh-tight); letter-spacing: var(--ls-tight); font-weight: 600; }
+    p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    img, svg { display: block; max-width: 100%; }
+    :focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
+
+    /* =========================================================
+       Mesh gradient background + grain + orbs
+       ========================================================= */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 10%, var(--peach-soft) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 60% at 90% 20%, var(--brand-soft) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 60% at 50% 100%, var(--blush-soft) 0%, transparent 60%),
+        var(--surface-base);
+      animation: meshDrift 42s ease-in-out infinite alternate;
+    }
+    @keyframes meshDrift {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(-2%, 1%, 0) scale(1.04); }
+    }
+
+    .bg-grain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.05;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' /%3E%3C/svg%3E");
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .orb-1 {
+      width: 480px; height: 480px;
+      top: -10%; left: -8%;
+      background: var(--peach);
+      animation: orbDrift1 32s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 380px; height: 380px;
+      top: 35%; right: -8%;
+      background: var(--blush);
+      animation: orbDrift2 36s ease-in-out infinite alternate;
+    }
+    .orb-3 {
+      width: 420px; height: 420px;
+      bottom: -12%; left: 30%;
+      background: var(--brand);
+      opacity: 0.25;
+      animation: orbDrift3 40s ease-in-out infinite alternate;
+    }
+    @keyframes orbDrift1 { to { transform: translate(60px, 40px); } }
+    @keyframes orbDrift2 { to { transform: translate(-50px, 60px); } }
+    @keyframes orbDrift3 { to { transform: translate(40px, -50px); } }
+
+    /* Cursor glow */
+    .cursor-glow {
+      position: fixed;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--brand-soft) 0%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: opacity 300ms var(--ease-out);
+    }
+    .cursor-glow.is-active { opacity: 0.35; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-mesh, .orb { animation: none; }
+      .cursor-glow { display: none; }
+    }
+
+    /* =========================================================
+       Layout primitives
+       ========================================================= */
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--sp-5);
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: 6px 14px 6px 10px;
+      background: var(--brand-soft);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-pill);
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: -0.005em;
+    }
+    .eyebrow .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 3px var(--brand-soft);
+    }
+
+    .section { padding: var(--sp-10) 0; position: relative; }
+    .section-head { margin-bottom: var(--sp-8); max-width: 760px; }
+    .section-head .kicker {
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--text-muted);
+      letter-spacing: var(--ls-wide);
+      text-transform: uppercase;
+    }
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-size: var(--fs-3xl);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      margin-top: var(--sp-3);
+      font-variation-settings: "opsz" 80, "SOFT" 30;
+    }
+    .section-head p {
+      margin-top: var(--sp-4);
+      font-size: var(--fs-lg);
+      color: var(--text-muted);
+      max-width: 60ch;
+    }
+
+    /* =========================================================
+       Nav
+       ========================================================= */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: saturate(160%) blur(14px);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      background: color-mix(in oklch, var(--surface-base) 70%, transparent);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-4) 0;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-3);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      font-variation-settings: "opsz" 24;
+    }
+    .logo-mark {
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--brand), var(--peach));
+      border-radius: 12px;
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-sm);
+    }
+    .logo small {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text-muted);
+      font-size: 11px;
+      letter-spacing: var(--ls-wide);
+      text-transform: uppercase;
+      margin-left: 2px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-7);
+    }
+    .nav-links a {
+      font-size: var(--fs-sm);
+      color: var(--text-secondary);
+      transition: color var(--t-fast) var(--ease-out);
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .theme-toggle {
+      width: 38px; height: 38px;
+      display: grid; place-items: center;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      transition: all var(--t-fast) var(--ease-out);
+    }
+    .theme-toggle:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      background: var(--surface-raised);
+    }
+    .theme-toggle svg { width: 16px; height: 16px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: 12px 22px;
+      border-radius: var(--r-pill);
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      transition: all var(--t-base) var(--ease-out);
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .btn-primary {
+      background: var(--text-primary);
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-md);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-strong);
+    }
+    .btn-ghost:hover {
+      background: var(--surface-raised);
+      border-color: var(--text-primary);
+    }
+    .btn .arrow {
+      transition: transform var(--t-base) var(--ease-out);
+    }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+    }
+
+    /* =========================================================
+       Hero
+       ========================================================= */
+    .hero {
+      padding: var(--sp-9) 0 var(--sp-10);
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: var(--sp-9);
+      align-items: center;
+    }
+    .hero-text { max-width: 560px; }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: var(--fs-4xl);
+      font-weight: 400;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      margin-top: var(--sp-5);
+      font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 0;
+    }
+    .hero-title .accent {
+      color: var(--brand);
+      font-style: italic;
+      font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+    }
+    .hero-lede {
+      margin-top: var(--sp-5);
+      font-size: var(--fs-lg);
+      color: var(--text-muted);
+      max-width: 52ch;
+    }
+    .hero-actions {
+      margin-top: var(--sp-6);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+    }
+    .hero-meta {
+      margin-top: var(--sp-8);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: var(--sp-7);
+      flex-wrap: wrap;
+    }
+    .hero-meta .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hero-meta .stat-num {
+      font-family: var(--font-display);
+      font-size: var(--fs-xl);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      font-variation-settings: "opsz" 36;
+    }
+    .hero-meta .stat-label {
+      font-size: var(--fs-xs);
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
+    }
+
+    @media (max-width: 920px) {
+      .hero { padding: var(--sp-7) 0 var(--sp-8); }
+      .hero-grid { grid-template-columns: 1fr; gap: var(--sp-7); }
+    }
+
+    /* =========================================================
+       Chat mockup
+       ========================================================= */
+    .chat-wrap {
+      position: relative;
+      perspective: 1500px;
+    }
+    .chat {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transform: rotateY(-4deg) rotateX(2deg);
+      transition: transform 700ms var(--ease-out);
+    }
+    .chat:hover { transform: rotateY(0deg) rotateX(0deg); }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-4) var(--sp-5);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--surface-raised);
+    }
+    .chat-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand), var(--peach));
+      display: grid; place-items: center;
+      color: var(--text-inverse);
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+    .chat-info { flex: 1; min-width: 0; }
+    .chat-info .name {
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chat-info .name .verified { color: var(--brand); width: 14px; height: 14px; }
+    .chat-info .status {
+      font-size: 13px;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chat-info .status .online-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .chat-actions { display: flex; gap: var(--sp-2); color: var(--text-muted); }
+    .chat-actions button {
+      width: 32px; height: 32px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      transition: background var(--t-fast) var(--ease-out);
+    }
+    .chat-actions button:hover { background: var(--surface-overlay); }
+
+    .chat-body {
+      padding: var(--sp-5) var(--sp-4) var(--sp-3);
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background:
+        radial-gradient(circle at 25% 5%, var(--brand-soft) 0%, transparent 50%),
+        radial-gradient(circle at 90% 95%, var(--peach-soft) 0%, transparent 50%),
+        var(--surface-card);
+    }
+    .chat-date {
+      align-self: center;
+      font-size: var(--fs-xs);
+      color: var(--text-dim);
+      padding: 4px 12px;
+      background: var(--surface-raised);
+      border-radius: var(--r-pill);
+      margin-bottom: var(--sp-2);
+    }
+    .msg {
+      max-width: 82%;
+      padding: 9px 14px;
+      border-radius: 18px;
+      font-size: 14.5px;
+      line-height: 1.45;
+      opacity: 0;
+      transform: translateY(8px);
+      animation: msgIn 420ms var(--ease-out) forwards;
+      position: relative;
+    }
+    .msg.bot {
+      align-self: flex-start;
+      background: var(--surface-raised);
+      border-bottom-left-radius: 6px;
+      white-space: pre-line;
+    }
+    .msg.user {
+      align-self: flex-end;
+      background: var(--brand);
+      color: var(--text-inverse);
+      border-bottom-right-radius: 6px;
+    }
+    .msg .meta {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      opacity: 0.6;
+      text-align: right;
+    }
+    .msg.user .meta { color: rgba(255, 255, 255, 0.75); }
+    .msg-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .msg-btn {
+      padding: 6px 12px;
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-pill);
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: all var(--t-fast) var(--ease-out);
+      cursor: pointer;
+    }
+    .msg-btn:hover {
+      background: var(--brand);
+      color: var(--text-inverse);
+      border-color: var(--brand);
+    }
+    @keyframes msgIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-typing {
+      align-self: flex-start;
+      display: none;
+      gap: 4px;
+      padding: 12px 16px;
+      background: var(--surface-raised);
+      border-radius: 18px;
+      border-bottom-left-radius: 6px;
+    }
+    .chat-typing span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: typing 1.2s infinite ease-in-out;
+    }
+    .chat-typing span:nth-child(2) { animation-delay: .15s; }
+    .chat-typing span:nth-child(3) { animation-delay: .3s; }
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-3) var(--sp-4);
+      border-top: 1px solid var(--border-subtle);
+      background: var(--surface-raised);
+    }
+    .chat-input-field {
+      flex: 1;
+      padding: 9px 14px;
+      background: var(--surface-base);
+      border-radius: var(--r-pill);
+      font-size: 14px;
+      color: var(--text-dim);
+      border: 1px solid transparent;
+    }
+    .chat-send {
+      width: 38px; height: 38px;
+      display: grid; place-items: center;
+      background: var(--brand);
+      color: var(--text-inverse);
+      border-radius: 50%;
+      transition: transform var(--t-fast) var(--ease-out);
+    }
+    .chat-send:hover { transform: scale(1.06); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .msg { animation: none; opacity: 1; transform: none; }
+      .chat-typing { display: none !important; }
+      .chat { transform: none; }
+    }
+
+    /* =========================================================
+       Services grid
+       ========================================================= */
+    .services {
+      background: var(--surface-raised);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+    }
+    .service-card {
+      position: relative;
+      padding: var(--sp-6);
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      transition: all var(--t-base) var(--ease-out);
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--brand), var(--peach), transparent);
+      opacity: 0;
+      transition: opacity var(--t-base) var(--ease-out);
+    }
+    .service-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .service-card:hover::before { opacity: 1; }
+    .service-icon {
+      width: 44px; height: 44px;
+      display: grid; place-items: center;
+      background: var(--brand-soft);
+      border-radius: 12px;
+      color: var(--brand);
+      margin-bottom: var(--sp-4);
+    }
+    .service-card h3 {
+      font-family: var(--font-display);
+      font-size: var(--fs-xl);
+      font-weight: 500;
+      margin-bottom: var(--sp-2);
+      letter-spacing: -0.02em;
+      font-variation-settings: "opsz" 36;
+    }
+    .service-card p {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.55;
+      margin-bottom: var(--sp-4);
+    }
+    .service-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-top: var(--sp-4);
+      border-top: 1px dashed var(--border-subtle);
+    }
+    .service-price {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      font-variation-settings: "opsz" 24;
+    }
+    .service-price span {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-family: var(--font-sans);
+      margin-left: 2px;
+    }
+    .service-time {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 820px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px) { .services-grid { grid-template-columns: 1fr; } }
+
+    /* =========================================================
+       Portfolio — image grid
+       ========================================================= */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--sp-3);
+    }
+    .work {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--r-md);
+      background: var(--surface-soft);
+      aspect-ratio: 1 / 1;
+      cursor: pointer;
+      transition: transform var(--t-base) var(--ease-out);
+    }
+    .work:hover { transform: scale(1.02); }
+    .work-tall { aspect-ratio: 1 / 1.4; }
+    .work-wide { aspect-ratio: 1.4 / 1; }
+    .work-large { grid-column: span 4; }
+    .work-medium { grid-column: span 3; }
+    .work-small { grid-column: span 2; }
+
+    .work-1 { grid-column: span 6; aspect-ratio: 1.4 / 1; }
+    .work-2 { grid-column: span 3; aspect-ratio: 1 / 1.3; }
+    .work-3 { grid-column: span 3; aspect-ratio: 1 / 1.3; }
+    .work-4 { grid-column: span 4; aspect-ratio: 1 / 1; }
+    .work-5 { grid-column: span 4; aspect-ratio: 1 / 1; }
+    .work-6 { grid-column: span 4; aspect-ratio: 1 / 1; }
+
+    @media (max-width: 760px) {
+      .work-1, .work-2, .work-3, .work-4, .work-5, .work-6 {
+        grid-column: span 6;
+        aspect-ratio: 1 / 1;
+      }
+    }
+    @media (max-width: 460px) {
+      .work-1, .work-2, .work-3, .work-4, .work-5, .work-6 {
+        grid-column: span 12;
+        aspect-ratio: 4 / 3;
+      }
+    }
+
+    /* Decorative nail swatches (no fake photos) */
+    .work {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      border: 1px solid var(--border-subtle);
+    }
+    .work-nail {
+      width: 56%;
+      aspect-ratio: 1 / 1.35;
+      border-radius: 40% 40% 18% 18% / 50% 50% 8% 8%;
+      box-shadow:
+        inset 0 -12px 24px oklch(0% 0 0 / 0.18),
+        inset 0 8px 16px oklch(100% 0 0 / 0.35),
+        var(--shadow-md);
+      position: relative;
+    }
+    .work-nail::after {
+      content: "";
+      position: absolute;
+      top: 12%; left: 22%;
+      width: 24%; height: 50%;
+      background: linear-gradient(180deg, oklch(100% 0 0 / 0.55), oklch(100% 0 0 / 0));
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+    .work-label {
+      position: absolute;
+      bottom: var(--sp-3);
+      left: var(--sp-3);
+      padding: 4px 10px;
+      background: color-mix(in oklch, var(--surface-base) 85%, transparent);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-pill);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-primary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       Masters
+       ========================================================= */
+    .masters-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-4);
+    }
+    .master-card {
+      padding: var(--sp-5);
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      transition: all var(--t-base) var(--ease-out);
+    }
+    .master-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md);
+    }
+    .master-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--text-inverse);
+      margin-bottom: var(--sp-4);
+      letter-spacing: -0.02em;
+    }
+    .master-1 { background: linear-gradient(135deg, var(--brand), var(--peach)); }
+    .master-2 { background: linear-gradient(135deg, var(--peach), var(--blush)); color: var(--text-primary); }
+    .master-3 { background: linear-gradient(135deg, var(--blush), var(--brand)); }
+
+    .master-card h3 {
+      font-family: var(--font-display);
+      font-size: var(--fs-xl);
+      font-weight: 500;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+      font-variation-settings: "opsz" 36;
+    }
+    .master-role {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: var(--sp-4);
+    }
+    .master-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: var(--sp-4);
+    }
+    .master-tag {
+      padding: 3px 10px;
+      background: var(--surface-soft);
+      border-radius: var(--r-pill);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+    .master-exp {
+      padding-top: var(--sp-3);
+      border-top: 1px dashed var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 820px) { .masters-grid { grid-template-columns: 1fr; } }
+
+    /* =========================================================
+       Prices
+       ========================================================= */
+    .prices {
+      background: var(--surface-raised);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .price-table {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+    }
+    .price-row {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr auto;
+      align-items: center;
+      gap: var(--sp-4);
+      padding: var(--sp-4) var(--sp-5);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background var(--t-fast) var(--ease-out);
+    }
+    .price-row:last-child { border-bottom: none; }
+    .price-row:hover { background: var(--surface-soft); }
+    .price-row.header {
+      background: var(--surface-soft);
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .price-row.header:hover { background: var(--surface-soft); }
+    .price-name {
+      font-weight: 500;
+      font-size: 15px;
+    }
+    .price-name .desc {
+      display: block;
+      font-weight: 400;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .price-amount {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--brand);
+      font-variation-settings: "opsz" 24;
+      text-align: right;
+    }
+    .price-amount span {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-family: var(--font-sans);
+      margin-left: 2px;
+    }
+    .price-time {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .price-cta {
+      padding: 8px 16px;
+      background: var(--text-primary);
+      color: var(--text-inverse);
+      border-radius: var(--r-pill);
+      font-size: 13px;
+      font-weight: 600;
+      transition: opacity var(--t-fast) var(--ease-out);
+    }
+    .price-cta:hover { opacity: 0.8; }
+
+    @media (max-width: 720px) {
+      .price-row { grid-template-columns: 1fr auto; gap: var(--sp-2); }
+      .price-time, .price-row.header > :nth-child(3) { display: none; }
+    }
+
+    /* =========================================================
+       Contact CTA
+       ========================================================= */
+    .contact { text-align: center; }
+    .contact-card {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: var(--sp-8) var(--sp-6);
+      background: var(--surface-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-xl);
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-card::before {
+      content: "";
+      position: absolute;
+      top: -50%; left: -10%;
+      width: 120%; height: 200%;
+      background: radial-gradient(ellipse at center, var(--brand-soft), transparent 60%);
+      pointer-events: none;
+    }
+    .contact-card > * { position: relative; }
+    .contact h2 {
+      font-family: var(--font-display);
+      font-size: var(--fs-3xl);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      margin-top: var(--sp-4);
+      margin-bottom: var(--sp-4);
+      font-variation-settings: "opsz" 100, "SOFT" 40;
+    }
+    .contact p {
+      color: var(--text-muted);
+      font-size: var(--fs-lg);
+      max-width: 50ch;
+      margin: 0 auto var(--sp-6);
+    }
+    .contact-actions {
+      display: flex;
+      justify-content: center;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+    }
+    .contact-meta {
+      margin-top: var(--sp-6);
+      font-size: var(--fs-xs);
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      letter-spacing: 0.02em;
+    }
+
+    /* =========================================================
+       Footer
+       ========================================================= */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: var(--sp-6) 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--sp-4);
+    }
+    .footer-links { display: flex; gap: var(--sp-5); }
+    .footer-links a:hover { color: var(--text-primary); }
+
+    /* =========================================================
+       Reveal on scroll
+       ========================================================= */
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: revealUp linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 30%;
+      }
+      .reveal-stagger > * {
+        animation: revealUp linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 25%;
+      }
+      .reveal-stagger > *:nth-child(2) { animation-range: entry 2% cover 27%; }
+      .reveal-stagger > *:nth-child(3) { animation-range: entry 4% cover 29%; }
+      .reveal-stagger > *:nth-child(4) { animation-range: entry 6% cover 31%; }
+      .reveal-stagger > *:nth-child(5) { animation-range: entry 8% cover 33%; }
+      .reveal-stagger > *:nth-child(6) { animation-range: entry 10% cover 35%; }
+      @keyframes revealUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-stagger > * { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        <span class="logo-mark" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-2.8 0-4 2.4-4 5 0 1.6.4 3 1 4.2C7 12.6 5 15.4 5 19c0 2.2 1.8 3 3.5 3 1 0 2-.4 2.5-1.2.4 1 1.4 1.7 2.5 1.7 1.5 0 2.5-1 2.5-2.5 0-.4-.1-.8-.2-1.1.7.4 1.4.6 2.2.6 1.5 0 2.5-1 2.5-2.5 0-3.4-2.6-5.8-4.5-7.4.6-1 1-2.3 1-3.6 0-2.6-1.2-5-4-5z"/></svg>
+        </span>
+        Лакомка <small>· syzran</small>
+      </a>
+      <nav class="nav-links" aria-label="Главная навигация">
+        <a href="#services">Услуги</a>
+        <a href="#portfolio">Работы</a>
+        <a href="#masters">Мастера</a>
+        <a href="#prices">Цены</a>
+        <a href="#contact">Запись</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="#contact" class="btn btn-primary">Записаться</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== HERO ===================== -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <span class="eyebrow">
+            <span class="dot"></span>
+            Запись на июль открыта
+          </span>
+          <h1 class="hero-title">
+            Ногти, которые<br />
+            <span class="accent">не стыдно</span><br />
+            показать.
+          </h1>
+          <p class="hero-lede">
+            Маникюр, гель-лак и дизайн в Сызрани. Запись за минуту в Telegram-боте —
+            выбираете услугу, мастера и время, приходите к назначенному часу.
+          </p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary btn-magnetic">
+              Записаться через бота
+              <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#portfolio" class="btn btn-ghost">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              Смотреть работы
+            </a>
+          </div>
+          <div class="hero-meta">
+            <div class="stat">
+              <span class="stat-num">12 лет</span>
+              <span class="stat-label">опыта мастеров</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">CND · Uno</span>
+              <span class="stat-label">гель-лаки и базы</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">1 мин</span>
+              <span class="stat-label">запись через бота</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat mockup: запись через nailbot -->
+        <div class="chat-wrap">
+          <div class="chat" aria-label="Демонстрация записи через Telegram-бот">
+            <div class="chat-header">
+              <div class="chat-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+              </div>
+              <div class="chat-info">
+                <div class="name">
+                  @nail_syzran_bot
+                  <svg class="verified" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 2.4 3.4-.4.4 3.4L20.6 9.8 18.2 12.2l.4 3.4-3.4-.4L12 17.6 9.6 15.2l-3.4.4.4-3.4L3.4 9.8l2.4-2.4-.4-3.4 3.4.4z"/></svg>
+                </div>
+                <div class="status">
+                  <span class="online-dot"></span>
+                  бот · в сети
+                </div>
+              </div>
+              <div class="chat-actions">
+                <button aria-label="Меню">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="chat-body">
+              <div class="chat-date">сегодня · 14:22</div>
+
+              <div class="msg bot" style="animation-delay: 200ms">
+                Привет! Я бот nail-салона «Лакомка». Помогу записаться за минуту.
+
+                <span class="msg-actions">
+                  <button class="msg-btn">💅 Записаться</button>
+                  <button class="msg-btn">📋 Услуги и цены</button>
+                </span>
+                <span class="meta">14:22</span>
+              </div>
+
+              <div class="msg user" style="animation-delay: 1400ms">
+                💅 Записаться
+                <span class="meta">14:22 ✓</span>
+              </div>
+
+              <div class="chat-typing" id="chatTyping">
+                <span></span><span></span><span></span>
+              </div>
+
+              <div class="msg bot" id="msgBot2" style="animation-delay: 100ms">
+                Какую услугу хотите?
+                <span class="msg-actions">
+                  <button class="msg-btn">Маникюр</button>
+                  <button class="msg-btn">Гель-лак</button>
+                  <button class="msg-btn">Педикюр</button>
+                  <button class="msg-btn">Дизайн</button>
+                </span>
+                <span class="meta">14:22 ✓</span>
+              </div>
+
+              <div class="msg user" style="animation-delay: 200ms">
+                Гель-лак + френч
+                <span class="meta">14:23 прочитано</span>
+              </div>
+
+              <div class="msg bot" style="animation-delay: 400ms">
+                Свободные слоты на эту неделю:
+                <span class="msg-actions">
+                  <button class="msg-btn">чт 18 июл · 14:00</button>
+                  <button class="msg-btn">пт 19 июл · 11:30</button>
+                  <button class="msg-btn">сб 20 июл · 16:00</button>
+                </span>
+                <span class="meta">14:23 ✓✓</span>
+              </div>
+            </div>
+
+            <div class="chat-input">
+              <div class="chat-input-field">Выберите время или напишите…</div>
+              <button class="chat-send" aria-label="Отправить">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ===================== SERVICES ===================== -->
+    <section class="section services" id="services">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">// 01 — Услуги</span>
+          <h2>Что мы делаем.</h2>
+          <p>Шесть основных направлений. Если не нашли своё — напишите боту, обсудим.</p>
+        </div>
+
+        <div class="services-grid reveal-stagger">
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V6a3 3 0 0 1 6 0v5"/><path d="M5 11h14l-1.5 9a2 2 0 0 1-2 1.7h-7a2 2 0 0 1-2-1.7L5 11Z"/></svg>
+            </div>
+            <h3>Маникюр аппаратный</h3>
+            <p>Бережная обработка кутикулы фрезой, форма, глянцевая полировка. Без ножниц и замачивания.</p>
+            <div class="service-meta">
+              <span class="service-price">1 200 ₽</span>
+              <span class="service-time">~ 60 мин</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+            </div>
+            <h3>Гель-лак</h3>
+            <p>CND и Uno, база + топ, сушка в LED-лампе. Носится 3–4 недели без сколов.</p>
+            <div class="service-meta">
+              <span class="service-price">1 500 ₽</span>
+              <span class="service-time">~ 90 мин</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M3 13c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg>
+            </div>
+            <h3>Педикюр</h3>
+            <p>Аппаратный педикюр, обработка стопы, пальцев. Пальчики — с покрытием или без.</p>
+            <div class="service-meta">
+              <span class="service-price">1 800 ₽</span>
+              <span class="service-time">~ 75 мин</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7l14 10M5 17l14-10"/></svg>
+            </div>
+            <h3>Наращивание</h3>
+            <p>Гель или полигель. Длина, форма, укрепление натуральных ногтей. Коррекция через 3–4 недели.</p>
+            <div class="service-meta">
+              <span class="service-price">2 500 ₽</span>
+              <span class="service-time">~ 120 мин</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+            </div>
+            <h3>Дизайн</h3>
+            <p>Френч, геометрия, акварель, втирка, стемпинг, фольга. Цена за ноготь, зависит от сложности.</p>
+            <div class="service-meta">
+              <span class="service-price">200 ₽ <span>/ ноготь</span></span>
+              <span class="service-time">+ 15–45 мин</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c4-3 6 3 9 0s5-3 9 0"/><path d="M3 17c4-3 6 3 9 0s5-3 9 0"/></svg>
+            </div>
+            <h3>Снятие покрытия</h3>
+            <p>Аккуратное снятие гель-лака или наращивания аппаратом. Без повреждения ногтевой пластины.</p>
+            <div class="service-meta">
+              <span class="service-price">400 ₽</span>
+              <span class="service-time">~ 20 мин</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PORTFOLIO ===================== -->
+    <section class="section" id="portfolio">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">// 02 — Работы</span>
+          <h2>Свежее из Instagram.</h2>
+          <p>Несколько работ за последний месяц. Реальные фото и описания — в инсте салона, ссылка в подвале.</p>
+        </div>
+
+        <div class="portfolio-grid reveal-stagger">
+          <div class="work work-1" style="background: linear-gradient(135deg, oklch(96% 0.02 25), oklch(92% 0.04 35));">
+            <div class="work-nail" style="background: linear-gradient(160deg, oklch(82% 0.05 25) 0%, oklch(72% 0.08 15) 100%);"></div>
+            <span class="work-label">френч · миндаль</span>
+          </div>
+          <div class="work work-2" style="background: linear-gradient(135deg, oklch(94% 0.04 40), oklch(90% 0.06 50));">
+            <div class="work-nail" style="background: linear-gradient(160deg, oklch(88% 0.08 50) 0%, oklch(75% 0.10 45) 100%);"></div>
+            <span class="work-label">нюд · овал</span>
+          </div>
+          <div class="work work-3" style="background: linear-gradient(135deg, oklch(93% 0.03 350), oklch(89% 0.05 5));">
+            <div class="work-nail" style="background: linear-gradient(160deg, oklch(70% 0.12 5) 0%, oklch(58% 0.15 5) 100%);"></div>
+            <span class="work-label">маув · квадрат</span>
+          </div>
+          <div class="work work-4" style="background: linear-gradient(135deg, oklch(95% 0.03 60), oklch(91% 0.05 70));">
+            <div class="work-nail" style="background: linear-gradient(160deg, oklch(85% 0.10 70) 0%, oklch(72% 0.12 65) 100%);"></div>
+            <span class="work-label">графика</span>
+          </div>
+          <div class="work work-5" style="background: linear-gradient(135deg, oklch(94% 0.04 280), oklch(90% 0.05 290));">
+            <div class="work-nail" style="background: linear-gradient(160deg, oklch(75% 0.10 285) 0%, oklch(60% 0.12 280) 100%);"></div>
+            <span class="work-label">градиент</span>
+          </div>
+          <div class="work work-6" style="background: linear-gradient(135deg, oklch(93% 0.04 200), oklch(89% 0.05 220));">
+            <div class="work-nail" style="background: linear-gradient(160deg, oklch(78% 0.10 220) 0%, oklch(62% 0.12 215) 100%);"></div>
+            <span class="work-label">стемпинг</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== MASTERS ===================== -->
+    <section class="section" id="masters">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">// 03 — Мастера</span>
+          <h2>Кто будет делать ваши ногти.</h2>
+          <p>Все мастера с медицинским образованием и опытом от 5 лет. Записываясь через бота, можно выбрать конкретного мастера.</p>
+        </div>
+
+        <div class="masters-grid reveal-stagger">
+          <article class="master-card">
+            <div class="master-avatar master-1">А</div>
+            <h3>Анна</h3>
+            <p class="master-role">Старший мастер · аппаратный маникюр, гель-лак</p>
+            <div class="master-tags">
+              <span class="master-tag">френч</span>
+              <span class="master-tag">выравнивание</span>
+              <span class="master-tag">сложные формы</span>
+            </div>
+            <div class="master-exp">опыт · 8 лет</div>
+          </article>
+
+          <article class="master-card">
+            <div class="master-avatar master-2">М</div>
+            <h3>Мария</h3>
+            <p class="master-role">Мастер · дизайн, наращивание</p>
+            <div class="master-tags">
+              <span class="master-tag">акварель</span>
+              <span class="master-tag">стемпинг</span>
+              <span class="master-tag">полигель</span>
+            </div>
+            <div class="master-exp">опыт · 6 лет</div>
+          </article>
+
+          <article class="master-card">
+            <div class="master-avatar master-3">Е</div>
+            <h3>Екатерина</h3>
+            <p class="master-role">Мастер · педикюр, уход</p>
+            <div class="master-tags">
+              <span class="master-tag">аппаратный</span>
+              <span class="master-tag">spa-уход</span>
+              <span class="master-tag">проблемные стопы</span>
+            </div>
+            <div class="master-exp">опыт · 5 лет</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PRICES ===================== -->
+    <section class="section prices" id="prices">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">// 04 — Цены</span>
+          <h2>Прайс-лист.</h2>
+          <p>Финальная цена может отличаться, если выбрать дизайн или длинное наращивание. Точную смету бот озвучит до записи.</p>
+        </div>
+
+        <div class="price-table reveal">
+          <div class="price-row header">
+            <span>Услуга</span>
+            <span style="text-align:right">Цена</span>
+            <span style="text-align:right">Время</span>
+            <span></span>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Маникюр аппаратный <span class="desc">без покрытия</span></span>
+            <span class="price-amount">1 200 ₽</span>
+            <span class="price-time">~ 60 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Маникюр + гель-лак</span>
+            <span class="price-amount">1 500 ₽</span>
+            <span class="price-time">~ 90 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Гель-лак френч</span>
+            <span class="price-amount">1 800 ₽</span>
+            <span class="price-time">~ 110 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Снятие покрытия</span>
+            <span class="price-amount">400 ₽</span>
+            <span class="price-time">~ 20 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Наращивание полигель</span>
+            <span class="price-amount">2 500 ₽</span>
+            <span class="price-time">~ 120 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Коррекция наращивания</span>
+            <span class="price-amount">1 800 ₽</span>
+            <span class="price-time">~ 90 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Педикюр аппаратный <span class="desc">с покрытием</span></span>
+            <span class="price-amount">2 200 ₽</span>
+            <span class="price-time">~ 90 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+          <div class="price-row">
+            <span class="price-name">Дизайн <span class="desc">за ноготь, от</span></span>
+            <span class="price-amount">200 ₽</span>
+            <span class="price-time">+ 15–45 мин</span>
+            <a href="#contact" class="price-cta">Записаться</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section class="section contact" id="contact">
+      <div class="container">
+        <div class="contact-card reveal">
+          <span class="eyebrow">
+            <span class="dot"></span>
+            Свободные слоты на эту неделю
+          </span>
+          <h2>Запишитесь за минуту.</h2>
+          <p>Откройте Telegram-бот, выберите услугу и время. Подтверждение придёт сразу, бот напомнит за день до визита.</p>
+          <div class="contact-actions">
+            <a href="https://t.me/nail_syzran_bot" class="btn btn-primary btn-magnetic">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+              Открыть @nail_syzran_bot
+            </a>
+            <a href="tel:+79000000000" class="btn btn-ghost">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.86 19.86 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+              Позвонить в салон
+            </a>
+          </div>
+          <div class="contact-meta">ул. Советская, 14 · Сызрань · 09:00–20:00 без выходных</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2026 Лакомка · nail-салон в Сызрани</div>
+      <div class="footer-links">
+        <a href="https://t.me/nail_syzran_bot">Telegram-бот</a>
+        <a href="https://instagram.com/lakomka_syzran">Instagram</a>
+        <a href="#contact">Контакт</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle
+    (function() {
+      const root = document.documentElement;
+      const stored = localStorage.getItem('lakomka-theme');
+      if (stored === 'dark' || stored === 'light') {
+        root.setAttribute('data-theme', stored);
+      } else {
+        root.setAttribute('data-theme', 'light');
+      }
+      const btn = document.getElementById('themeToggle');
+      const sun = btn.querySelector('.icon-sun');
+      const moon = btn.querySelector('.icon-moon');
+      function syncIcons() {
+        const t = root.getAttribute('data-theme');
+        if (t === 'dark') { sun.style.display = 'none'; moon.style.display = 'block'; }
+        else { sun.style.display = 'block'; moon.style.display = 'none'; }
+      }
+      syncIcons();
+      btn.addEventListener('click', () => {
+        const cur = root.getAttribute('data-theme');
+        const next = cur === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('lakomka-theme', next);
+        syncIcons();
+      });
+    })();
+
+    // Cursor glow
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const glow = document.getElementById('cursorGlow');
+      if (!glow) return;
+      let tx = window.innerWidth / 2, ty = window.innerHeight / 3;
+      let cx = tx, cy = ty;
+      let raf = null;
+      let active = false;
+      function loop() {
+        cx += (tx - cx) * 0.12;
+        cy += (ty - cy) * 0.12;
+        glow.style.left = cx + 'px';
+        glow.style.top = cy + 'px';
+        raf = requestAnimationFrame(loop);
+      }
+      window.addEventListener('mousemove', (e) => {
+        tx = e.clientX; ty = e.clientY;
+        if (!active) { active = true; glow.classList.add('is-active'); raf = requestAnimationFrame(loop); }
+      }, { passive: true });
+      window.addEventListener('mouseleave', () => {
+        active = false;
+        glow.classList.remove('is-active');
+        if (raf) cancelAnimationFrame(raf);
+      });
+    })();
+
+    // Chat mockup typing animation
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const typing = document.getElementById('chatTyping');
+        if (typing) typing.style.display = 'none';
+        return;
+      }
+      const body = document.querySelector('.chat-body');
+      const userMsg = body && body.querySelector('.msg.user');
+      const typing  = document.getElementById('chatTyping');
+      const botMsg  = document.getElementById('msgBot2');
+      if (!userMsg || !typing || !botMsg) return;
+
+      // Reset visibility for animation
+      userMsg.style.opacity = '0';
+      userMsg.style.animation = 'none';
+      typing.style.display = 'none';
+      botMsg.style.opacity = '0';
+      botMsg.style.animation = 'none';
+
+      // After first user msg lands, show typing, then bot2
+      setTimeout(() => {
+        userMsg.style.animation = '';
+      }, 1200);
+
+      setTimeout(() => { typing.style.display = 'flex'; }, 1700);
+
+      setTimeout(() => {
+        typing.style.display = 'none';
+        botMsg.style.animation = '';
+      }, 2900);
+    })();
+
+    // Magnetic primary CTA
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.querySelectorAll('.btn-magnetic').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          btn.style.transform = `translate(${x * 0.18}px, ${y * 0.22}px)`;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+        });
+      });
+    })();
+
+    // 3D tilt on service & master cards
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const max = 4;
+      document.querySelectorAll('.service-card, .master-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          const rx = (py - 0.5) * -max;
+          const ry = (px - 0.5) * max;
+          card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = '';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Боты Андрея — Добби представляет</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e, #3a1c5e);
+    background-size: 400% 400%;
+    animation: bgShift 15s ease infinite;
+    overflow-x: hidden;
+    color: #fff;
+  }
+
+  @keyframes bgShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ── Движущаяся сетка ── */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  /* ── Плавающие blob'ы ── */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .blob-1 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, #ff006e, transparent 70%);
+    top: -100px; left: -100px;
+    animation: float1 25s ease-in-out infinite;
+  }
+  .blob-2 {
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, #00f5ff, transparent 70%);
+    bottom: -80px; right: -80px;
+    animation: float2 30s ease-in-out infinite;
+  }
+  .blob-3 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, #ffbe0b, transparent 70%);
+    top: 40%; left: 45%;
+    animation: float3 28s ease-in-out infinite;
+  }
+  @keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(120px, 80px); } }
+  @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-90px, -100px); } }
+  @keyframes float3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px, -70px); } }
+
+  /* ── Контейнер ── */
+  .container {
+    position: relative;
+    z-index: 10;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 20px 40px;
+  }
+
+  /* ── Заголовок ── */
+  header { text-align: center; margin-bottom: 48px; }
+  header h1 {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 800;
+    background: linear-gradient(90deg, #00f5ff, #ff006e, #ffbe0b, #00ff64, #00f5ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 6s linear infinite;
+    margin-bottom: 10px;
+  }
+  @keyframes shine {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  header p { font-size: clamp(0.95rem, 2vw, 1.15rem); opacity: 0.7; }
+
+  /* ── Сетка карточек ── */
+  .bots-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    perspective: 1200px;
+  }
+
+  /* ── Базовая карточка: прожектор (radial-gradient) ── */
+  .bot-card {
+    flex: 1 1 280px;
+    max-width: 340px;
+    min-height: 440px;
+    position: relative;
+    border-radius: 20px;
+    padding: 30px 24px;
+    overflow: hidden;
+    cursor: default;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+    background: radial-gradient(circle at 50% 0%, var(--card-light), var(--card-dark));
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── ВАЖНО: 3D наклон + цветная тень В ОДНОМ правиле :hover ── */
+  .bot-card:hover {
+    transform: perspective(1000px) rotateX(8deg) rotateY(-8deg) scale(1.06);
+    box-shadow: 0 25px 60px var(--bot-shadow), 0 0 40px var(--bot-glow);
+  }
+
+  /* ── Блик (glare animation) — ::before ── */
+  .bot-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: skewX(-20deg);
+    animation: glare 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+  }
+  @keyframes glare {
+    0%   { left: -150%; }
+    40%, 100% { left: 150%; }
+  }
+
+  /* ── Светящаяся рамка (mask) — ::after ── */
+  .bot-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--bot-glow1), var(--bot-glow2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* ── Цвета ботов ── */
+  .bot-dealbot {
+    --card-light: #1a3a5c; --card-dark: #0d1b2a;
+    --bot-shadow: rgba(0, 200, 255, 0.5); --bot-glow: rgba(0, 200, 255, 0.4);
+    --bot-glow1: #00d4ff; --bot-glow2: #0066ff; --bot-accent: #00d4ff;
+  }
+  .bot-glambot {
+    --card-light: #4a1a3c; --card-dark: #2a0a20;
+    --bot-shadow: rgba(255, 0, 110, 0.5); --bot-glow: rgba(255, 0, 110, 0.4);
+    --bot-glow1: #ff006e; --bot-glow2: #ff4081; --bot-accent: #ff4081;
+  }
+  .bot-botforge {
+    --card-light: #4a2a0a; --card-dark: #2a1a05;
+    --bot-shadow: rgba(255, 150, 0, 0.5); --bot-glow: rgba(255, 150, 0, 0.4);
+    --bot-glow1: #ff8c00; --bot-glow2: #ffbe0b; --bot-accent: #ffbe0b;
+  }
+  .bot-debihack {
+    --card-light: #0a3a1a; --card-dark: #052a0d;
+    --bot-shadow: rgba(0, 255, 100, 0.5); --bot-glow: rgba(0, 255, 100, 0.4);
+    --bot-glow1: #00ff64; --bot-glow2: #00cc44; --bot-accent: #00ff64;
+  }
+
+  /* ── Контент карточки ── */
+  .bot-icon { font-size: 3rem; margin-bottom: 14px; display: block; line-height: 1; }
+  .bot-card h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; color: var(--bot-accent); }
+  .bot-tagline { font-size: 0.82rem; opacity: 0.6; margin-bottom: 16px; letter-spacing: 0.5px; }
+  .bot-card .desc { font-size: 0.92rem; line-height: 1.5; opacity: 0.85; margin-bottom: 14px; }
+
+  .bot-features { list-style: none; margin-bottom: 18px; flex: 1; }
+  .bot-features li {
+    font-size: 0.84rem; padding: 3px 0; opacity: 0.8;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .bot-features li::before { content: '▸'; color: var(--bot-accent); font-weight: bold; }
+
+  .bot-link {
+    display: inline-block; align-self: flex-start;
+    padding: 9px 18px;
+    background: var(--bot-accent);
+    color: #0d1b2a;
+    border-radius: 10px;
+    font-weight: 700; font-size: 0.85rem;
+    text-decoration: none;
+    transition: filter 0.3s, transform 0.2s;
+  }
+  .bot-link:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+  /* ── Статистика ── */
+  .stats { display:flex; gap:14px; margin:0 auto 40px; flex-wrap:wrap; justify-content:center; }
+  .stat { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px 32px; text-align:center; min-width:130px; backdrop-filter:blur(8px); }
+  .stat-num { font-size:1.7rem; font-weight:700; background:linear-gradient(135deg,#a78bfa,#22d3ee); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .stat-label { font-size:0.7rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.06em; margin-top:4px; }
+  .bot-stack { display:flex; gap:5px; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.06); }
+  .stack-tag { font-size:0.64rem; color:rgba(255,255,255,0.5); background:rgba(255,255,255,0.03); padding:3px 7px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); }
+  .tariffs { display:flex; gap:6px; margin-bottom:14px; }
+  .tariff { flex:1; text-align:center; padding:6px 4px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); font-size:0.7rem; }
+  .tariff.free { background:rgba(255,255,255,0.03); }
+  .tariff.prem { background:rgba(167,139,250,0.08); border-color:rgba(167,139,250,0.25); }
+  .tariff.vip { background:rgba(34,211,238,0.08); border-color:rgba(34,211,238,0.25); }
+  .tariff .t-name { font-weight:700; color:#fff; display:block; }
+  .tariff .t-info { color:rgba(255,255,255,0.5); font-size:0.66rem; }
+  .footer-contacts { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
+  .footer-contact { display:inline-flex; gap:6px; align-items:center; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:8px 16px; border-radius:10px; font-size:0.8rem; color:#fff; text-decoration:none; }
+  .footer-contact:hover { border-color:rgba(167,139,250,0.3); color:#a78bfa; }
+
+  /* ── Футер ── */
+  .bot-footer {
+    text-align: center; margin-top: 48px;
+    opacity: 0.5; font-size: 0.85rem;
+  }
+
+  /* ── Адаптив ── */
+  @media (max-width: 1000px) {
+    .bots-grid { flex-direction: column; align-items: center; }
+    .bot-card { max-width: 420px; width: 100%; }
+  }
+</style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="container">
+    <header>
+      <h1>⚡ Боты Андрея</h1>
+      <p>Добби представляет — 4 бота из Сызрани 🧝</p>
+    </header>
+
+    <div class="stats">
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Бота</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Тарифа</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Команд</div></div>
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Дашборд</div></div>
+  </div>
+
+  <div class="bots-grid">
+
+      <!-- 1. DealBot63 -->
+      <div class="bot-card bot-dealbot">
+        <span class="bot-icon">🛒</span>
+        <h2>DealBot63</h2>
+        <div class="bot-tagline">Цены Ozon · Free / Premium / VIP</div>
+        <p>Парсинг цен и аналитика с Ozon. Три тарифа под любые задачи.</p>
+
+        <div class="tariffs">
+          <div class="tariff free"><span class="t-name">Free</span><span class="t-info">3 тов · 3ч</span></div>
+          <div class="tariff prem"><span class="t-name">Premium</span><span class="t-info">20 · 30м</span></div>
+          <div class="tariff vip"><span class="t-name">VIP</span><span class="t-info">100 · 10м</span></div>
+        </div>
+        <ul class="bot-features">
+          <li>/parse — парсинг товаров</li>
+          <li>/prices — актуальные цены</li>
+          <li>/stats — статистика и графики</li>
+          <li>/export — экспорт данных</li>
+          <li>/tariff — управление тарифом</li>
+          <li>/admin — админ-панель</li>
+        </ul>
+        <a class="bot-link" href="https://t.me/DealBot63_bot" target="_blank">Открыть →</a>
+        <div class="bot-stack"><span class="stack-tag">Python</span><span class="stack-tag">Docker</span><span class="stack-tag">SQLite</span></div>
+      </div>
+
+      <!-- 2. GlamBot -->
+      <div class="bot-card bot-glambot">
+        <span class="bot-icon">💅</span>
+        <h2>GlamBot</h2>
+        <div class="bot-tagline">@nail163_bot · Салон красоты</div>
+        <p class="desc">AI-ассистент салона красоты. Генерация картинок, запись онлайн.</p>
+        <ul class="bot-features">
+          <li>AI-ассистент для клиентов</li>
+          <li>Генерация изображений</li>
+          <li>Запись на услуги онлайн</li>
+          <li>Каталог услуг и цен</li>
+        </ul>
+        <a class="bot-link" href="https://t.me/nail163_bot" target="_blank">@nail163_bot →</a>
+        <div class="bot-stack"><span class="stack-tag">Python</span><span class="stack-tag">AI</span><span class="stack-tag">Image Gen</span><span class="stack-tag">client.py</span><span class="stack-tag">admin.py</span></div>
+      </div>
+
+      <!-- 3. BotForge -->
+      <div class="bot-card bot-botforge">
+        <span class="bot-icon">⚙️</span>
+        <h2>BotForge</h2>
+        <div class="bot-tagline">localhost:8080 · Управление ботами</div>
+        <p class="desc">Локальная админка для управления ботами. SQLite, zero deps.</p>
+        <ul class="bot-features">
+          <li>SQLite — встроенное хранилище</li>
+          <li>Zero dependencies — без зависимостей</li>
+          <li>Админ-панель управления</li>
+          <li>localhost:8080 — локальный доступ</li>
+        </ul>
+        <a class="bot-link" href="http://localhost:8080" target="_blank">Открыть →</a>
+        <div class="bot-stack"><span class="stack-tag">Python</span><span class="stack-tag">SQLite</span><span class="stack-tag">Web UI</span><span class="stack-tag">0 deps</span></div>
+      </div>
+
+      <!-- 4. DebiHackBot -->
+      <div class="bot-card bot-debihack">
+        <span class="bot-icon">💀</span>
+        <h2>DebiHackBot</h2>
+        <div class="bot-tagline">AI · MiniMax TTS · Хакерский стиль</div>
+        <p class="desc">AI-бот с хакерским стилем. Синтез речи через MiniMax TTS.</p>
+        <ul class="bot-features">
+          <li>AI-движок диалогов</li>
+          <li>MiniMax TTS — голосовые ответы</li>
+          <li>Хакерский визуальный стиль</li>
+          <li>Генерация речи в реальном времени</li>
+        </ul>
+        <a class="bot-link" href="https://t.me/DebiHackBot" target="_blank">Открыть →</a>
+        <div class="bot-stack"><span class="stack-tag">Python</span><span class="stack-tag">AI</span><span class="stack-tag">TTS</span><span class="stack-tag">MiniMax</span></div>
+      </div>
+
+    </div>
+
+    <footer class="bot-footer">
+      <div class="footer-contacts">
+        <a class="footer-contact" href="https://t.me/DealBot63_bot" target="_blank">💬 DealBot63</a>
+        <a class="footer-contact" href="https://t.me/nail163_bot" target="_blank">💅 GlamBot</a>
+        <a class="footer-contact" href="http://localhost:8080" target="_blank">⚡ BotForge</a>
+        <a class="footer-contact" href="https://t.me/DebiHackBot" target="_blank">🤖 DebiHackBot</a>
+      </div>
+      <p>🧝 Добби — домовой эльф · Андрей, Сызрань · Сделано с любовью ❤</p>
+    </footer>
+  </div>
+</body>
+</html>

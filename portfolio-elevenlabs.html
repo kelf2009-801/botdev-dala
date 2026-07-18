@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Андрей — Разработчик ботов и AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ============================
+       RESET & BASE
+       ============================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #ffffff;
+      color: #000000;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ============================
+       CUSTOM PROPERTIES
+       ============================ */
+    :root {
+      --color-bg: #ffffff;
+      --color-surface: #f5f5f5;
+      --color-warm: rgba(245, 242, 239, 0.8);
+      --color-text: #000000;
+      --color-text-secondary: #4e4e4e;
+      --color-text-muted: #777169;
+      --color-border: #e5e5e5;
+      --color-border-subtle: rgba(0,0,0,0.05);
+
+      --shadow-inset: rgba(0,0,0,0.075) 0px 0px 0px 0.5px inset;
+      --shadow-outline: rgba(0,0,0,0.06) 0px 0px 0px 1px;
+      --shadow-elevation: rgba(0,0,0,0.04) 0px 4px 4px;
+      --shadow-card: rgba(0,0,0,0.4) 0px 0px 1px, rgba(0,0,0,0.04) 0px 4px 4px;
+      --shadow-warm: rgba(78,50,23,0.04) 0px 6px 16px;
+      --shadow-edge: rgba(0,0,0,0.08) 0px 0px 0px 0.5px;
+
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --radius-pill: 9999px;
+      --radius-warm: 30px;
+
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* ============================
+       ANIMATIONS — PREFERS REDUCED MOTION
+       ============================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ============================
+       PARTICLES CANVAS
+       ============================ */
+    #particles-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ============================
+       CURSOR GLOW
+       ============================ */
+    #cursor-glow {
+      position: fixed;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,163,115,0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      transition: left 0.2s ease-out, top 0.2s ease-out;
+    }
+
+    /* ============================
+       NAVIGATION
+       ============================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border-subtle);
+      animation: navSlideIn 0.8s ease-out;
+    }
+    @keyframes navSlideIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 20px;
+      letter-spacing: -0.3px;
+      color: #000;
+    }
+    .nav-logo span {
+      color: var(--color-text-muted);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.15px;
+      color: var(--color-text-secondary);
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1.5px;
+      background: #000;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: #000; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #000;
+      color: #fff;
+      padding: 0 18px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      transition: all 0.25s;
+    }
+    .nav-cta:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    /* Burger */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 8px;
+    }
+    .burger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: #000;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* ============================
+       MAIN WRAPPER
+       ============================ */
+    .main {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ============================
+       HERO
+       ============================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 28px 80px;
+      position: relative;
+      background: #ffffff;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: var(--color-warm);
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      box-shadow: var(--shadow-warm);
+      margin-bottom: 32px;
+      animation: floatUp 4s ease-in-out infinite;
+    }
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -0.96px;
+      color: #000;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, #4e4e4e, #777169, #4e4e4e);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 5s ease-in-out infinite;
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .hero p {
+      font-family: var(--font-body);
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: 0.18px;
+      color: var(--color-text-secondary);
+      max-width: 640px;
+      margin-bottom: 40px;
+    }
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #000;
+      color: #fff;
+      padding: 0 24px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary:hover {
+      opacity: 0.88;
+      transform: translateY(-2px);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      transition: left 0.5s;
+    }
+    .btn-primary:hover::before { left: 100%; }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-warm);
+      color: #000;
+      padding: 0 24px;
+      height: 44px;
+      border-radius: var(--radius-warm);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow-warm);
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-secondary:hover {
+      background: rgba(245,242,239,1);
+      transform: translateY(-2px);
+    }
+    .btn-secondary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.03), transparent);
+      transition: left 0.5s;
+    }
+    .btn-secondary:hover::before { left: 100%; }
+
+    /* ============================
+       SECTION COMMON
+       ============================ */
+    section {
+      padding: 100px 28px;
+    }
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(28px, 3.5vw, 40px);
+      line-height: 1.17;
+      letter-spacing: -0.5px;
+      color: #000;
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-family: var(--font-body);
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: 0.16px;
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    /* ============================
+       BOTS SECTION
+       ============================ */
+    .bots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .bot-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-outline), var(--shadow-elevation);
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .bot-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: var(--shadow-inset);
+      pointer-events: none;
+    }
+    .bot-card::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(212,163,115,0.05), transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+    .bot-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-outline), rgba(0,0,0,0.06) 0px 8px 16px;
+    }
+    .bot-card:hover::after { opacity: 1; }
+    .bot-card-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--color-warm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-edge);
+    }
+    .bot-card h3 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 22px;
+      line-height: 1.13;
+      letter-spacing: -0.3px;
+      color: #000;
+      margin-bottom: 8px;
+    }
+    .bot-card .bot-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      background: var(--color-surface);
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .bot-card p {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: 0.14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 20px;
+    }
+    .bot-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      color: #000;
+      padding: 8px 20px;
+      border-radius: var(--radius-pill);
+      background: var(--color-warm);
+      box-shadow: var(--shadow-warm);
+      transition: all 0.25s;
+    }
+    .bot-link:hover {
+      background: rgba(245,242,239,1);
+      transform: translateY(-2px);
+    }
+    .bot-link svg {
+      width: 14px; height: 14px;
+      transition: transform 0.2s;
+    }
+    .bot-link:hover svg {
+      transform: translateX(2px);
+    }
+
+    /* ============================
+       TECH STACK
+       ============================ */
+    .tech-section {
+      background: var(--color-surface);
+    }
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    .tech-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #fff;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.14px;
+      color: #000;
+      box-shadow: var(--shadow-outline), var(--shadow-elevation);
+      transition: all 0.25s;
+    }
+    .tech-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+    .tech-item .tech-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #000;
+      opacity: 0.15;
+    }
+
+    /* ============================
+       CONTACT / CTA
+       ============================ */
+    .contact-section {
+      text-align: center;
+      background: #ffffff;
+    }
+    .contact-block {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 56px 48px;
+      background: var(--color-warm);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-warm), var(--shadow-inset);
+    }
+    .contact-block h2 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 32px;
+      line-height: 1.13;
+      letter-spacing: -0.5px;
+      color: #000;
+      margin-bottom: 12px;
+    }
+    .contact-block p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: 0.16px;
+      color: var(--color-text-secondary);
+      margin-bottom: 32px;
+    }
+    .contact-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #fff;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      color: #000;
+      box-shadow: var(--shadow-card);
+      transition: all 0.25s;
+    }
+    .contact-link:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-warm);
+    }
+
+    /* ============================
+       FOOTER
+       ============================ */
+    footer {
+      text-align: center;
+      padding: 32px 28px;
+      border-top: 1px solid var(--color-border-subtle);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.14px;
+      color: var(--color-text-muted);
+    }
+    footer a {
+      color: var(--color-text-secondary);
+      transition: color 0.2s;
+    }
+    footer a:hover { color: #000; }
+
+    /* ============================
+       REVEAL ANIMATION
+       ============================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+    /* ============================
+       RESPONSIVE
+       ============================ */
+    @media (max-width: 1024px) {
+      .nav-links {
+        position: fixed;
+        top: 64px; left: 0; right: 0;
+        background: rgba(255,255,255,0.98);
+        backdrop-filter: blur(12px);
+        flex-direction: column;
+        padding: 24px 28px;
+        gap: 20px;
+        border-bottom: 1px solid var(--color-border-subtle);
+        transform: translateY(-120%);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        pointer-events: none;
+      }
+      .nav-links.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .burger { display: flex; }
+      .nav-cta { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      section { padding: 72px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 16px; }
+      .hero-cta { flex-direction: column; width: 100%; }
+      .hero-cta .btn-primary,
+      .hero-cta .btn-secondary { width: 100%; justify-content: center; }
+      .bots-grid { grid-template-columns: 1fr; }
+      .contact-block { padding: 40px 24px; }
+      .contact-links { flex-direction: column; }
+      .contact-link { width: 100%; justify-content: center; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 28px; }
+      .section-title { font-size: 24px; }
+      .bot-card { padding: 24px; }
+      .bot-card h3 { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================================
+       PARTICLES CANVAS
+       ================================ -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ================================
+       CURSOR GLOW
+       ================================ -->
+  <div id="cursor-glow"></div>
+
+  <!-- ================================
+       NAVIGATION
+       ================================ -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Андрей<span>.</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#bots">Боты</a></li>
+        <li><a href="#tech">Стек</a></li>
+        <li><a href="#contact">Контакты</a></li>
+        <li><a href="https://github.com/kelf2009-801" target="_blank" class="nav-cta">GitHub</a></li>
+      </ul>
+      <a href="https://github.com/kelf2009-801" target="_blank" class="nav-cta" style="margin-left:auto;">GitHub</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ================================
+       MAIN
+       ================================ -->
+  <div class="main">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Доступен для проектов
+      </div>
+      <h1>
+        Разработчик ботов<br>
+        <span class="gradient-text">и AI-решений</span>
+      </h1>
+      <p>
+        Привет! Я Андрей из Сызрани. Создаю Telegram-ботов, AI-ассистентов и
+        веб-сервисы на Python. Мои проекты помогают бизнесу автоматизировать
+        продажи, отслеживать цены и управлять финансами.
+      </p>
+      <div class="hero-cta">
+        <a href="#bots" class="btn-primary">Смотреть проекты</a>
+        <a href="tg://resolve?domain=Vandrey63" class="btn-secondary">Написать в Telegram</a>
+      </div>
+    </section>
+
+    <!-- ===== BOTS ===== -->
+    <section id="bots" style="background:var(--color-surface);">
+      <div class="section-inner">
+        <div class="section-label reveal">Проекты</div>
+        <h2 class="section-title reveal">Мои боты</h2>
+        <p class="section-desc reveal">
+          Пять работающих Telegram-ботов — от AI-ассистента до трекера цен на Ozon.
+          Каждый проект решает конкретную задачу.
+        </p>
+
+        <div class="bots-grid">
+
+          <!-- DealBot63 -->
+          <div class="bot-card reveal" style="transition-delay:0.05s">
+            <div class="bot-card-icon">📊</div>
+            <h3>DealBot63</h3>
+            <div class="bot-tag">@DealBot63_bot</div>
+            <p>Ozon price tracker — отслеживание и мониторинг цен на Ozon. Автоматические уведомления о снижении цены.</p>
+            <a href="tg://resolve?domain=DealBot63_bot" class="bot-link" target="_blank">
+              Открыть в Telegram
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+
+          <!-- GlamBot -->
+          <div class="bot-card reveal" style="transition-delay:0.1s">
+            <div class="bot-card-icon">💅</div>
+            <h3>GlamBot</h3>
+            <div class="bot-tag">@nail163_bot</div>
+            <p>Запись на ногтевой сервис. Онлайн-бронирование, расписание мастера, напоминания о записи.</p>
+            <a href="tg://resolve?domain=nail163_bot" class="bot-link" target="_blank">
+              Открыть в Telegram
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+
+          <!-- BeautyBot -->
+          <div class="bot-card reveal" style="transition-delay:0.15s">
+            <div class="bot-card-icon">✨</div>
+            <h3>BeautyBot</h3>
+            <div class="bot-tag">@Nailselegantstudio_bot</div>
+            <p>Бьюти-услуги: полный каталог, онлайн-запись, прайс-лист и автоматические уведомления клиентов.</p>
+            <a href="tg://resolve?domain=Nailselegantstudio_bot" class="bot-link" target="_blank">
+              Открыть в Telegram
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+
+          <!-- FinBot -->
+          <div class="bot-card reveal" style="transition-delay:0.2s">
+            <div class="bot-card-icon">💰</div>
+            <h3>FinBot</h3>
+            <div class="bot-tag">@finpro63_bot</div>
+            <p>Финансовый ассистент: учёт расходов, аналитика, бюджеты, категории трат и отчёты.</p>
+            <a href="tg://resolve?domain=finpro63_bot" class="bot-link" target="_blank">
+              Открыть в Telegram
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+
+          <!-- DebiHackBot -->
+          <div class="bot-card reveal" style="transition-delay:0.25s">
+            <div class="bot-card-icon">🤖</div>
+            <h3>DebiHackBot</h3>
+            <div class="bot-tag">@Vandrey63</div>
+            <p>AI-ассистент на базе Hermes Agent. Умный помощник с интеграцией нейросетей и мульти-агентной архитектурой.</p>
+            <a href="tg://resolve?domain=Vandrey63" class="bot-link" target="_blank">
+              Открыть в Telegram
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TECH STACK ===== -->
+    <section id="tech" class="tech-section">
+      <div class="section-inner" style="text-align:center;">
+        <div class="section-label reveal">Технологии</div>
+        <h2 class="section-title reveal">Стек инструментов</h2>
+        <p class="section-desc reveal" style="margin:0 auto 48px;">
+          Современный Python-стек для разработки ботов, AI-решений и веб-сервисов.
+        </p>
+        <div class="tech-grid reveal">
+          <span class="tech-item"><span class="tech-dot"></span>Python</span>
+          <span class="tech-item"><span class="tech-dot"></span>aiogram</span>
+          <span class="tech-item"><span class="tech-dot"></span>Flask</span>
+          <span class="tech-item"><span class="tech-dot"></span>Docker</span>
+          <span class="tech-item"><span class="tech-dot"></span>OmniRoute</span>
+          <span class="tech-item"><span class="tech-dot"></span>Hermes</span>
+          <span class="tech-item"><span class="tech-dot"></span>HTML/CSS</span>
+          <span class="tech-item"><span class="tech-dot"></span>DashScope</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact" class="contact-section">
+      <div class="section-inner">
+        <div class="contact-block reveal-scale">
+          <h2>Давайте создадим что-то крутое</h2>
+          <p>
+            Открыт к предложениям и сотрудничеству. Пишите в Telegram —
+            обсудим ваш проект, придумаем архитектуру и реализуем.
+          </p>
+          <div class="contact-links">
+            <a href="tg://resolve?domain=Vandrey63" class="contact-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2z"/></svg>
+              @Vandrey63
+            </a>
+            <a href="https://github.com/kelf2009-801" target="_blank" class="contact-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              kelf2009-801
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================================
+       FOOTER
+       ================================ -->
+  <footer>
+    <p>&copy; 2026 Андрей — <a href="tg://resolve?domain=Vandrey63">@Vandrey63</a> · Сызрань</p>
+  </footer>
+
+  <!-- ================================
+       JAVASCRIPT
+       ================================ -->
+  <script>
+    (() => {
+
+      /* ============================
+         PARTICLES CANVAS
+         ============================ */
+      const canvas = document.getElementById('particles-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let mouseX = -1000, mouseY = -1000;
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      class Particle {
+        constructor() {
+          this.reset();
+        }
+        reset() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 2 + 0.5;
+          this.speedX = (Math.random() - 0.5) * 0.25;
+          this.speedY = (Math.random() - 0.5) * 0.25;
+          this.opacity = Math.random() * 0.25 + 0.05;
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          const dx = mouseX - this.x;
+          const dy = mouseY - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            const force = ((150 - dist) / 150) * 0.3;
+            this.x -= (dx / dist) * force;
+            this.y -= (dy / dist) * force;
+          }
+          if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+            this.reset();
+          }
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(200, 190, 180, ' + this.opacity + ')';
+          ctx.fill();
+        }
+      }
+
+      const count = Math.min(Math.floor(canvas.width * canvas.height / 15000), 80);
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 180) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = 'rgba(200, 190, 180, ' + ((1 - dist / 180) * 0.08) + ')';
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animateParticles);
+      }
+      animateParticles();
+
+      document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+      /* ============================
+         CURSOR GLOW
+         ============================ */
+      const cursorGlow = document.getElementById('cursor-glow');
+      document.addEventListener('mousemove', e => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+      });
+
+      /* ============================
+         SCROLL REVEAL
+         ============================ */
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal, .reveal-scale').forEach(el => revealObserver.observe(el));
+
+      /* ============================
+         FEATURE CARD LIGHT TRACKING
+         ============================ */
+      document.querySelectorAll('.bot-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+          card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+        });
+      });
+
+      /* ============================
+         BURGER MENU
+         ============================ */
+      const burgerBtn = document.getElementById('burgerBtn');
+      const navLinks = document.getElementById('navLinks');
+
+      burgerBtn.addEventListener('click', () => {
+        burgerBtn.classList.toggle('active');
+        navLinks.classList.toggle('open');
+      });
+
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          burgerBtn.classList.remove('active');
+          navLinks.classList.remove('open');
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

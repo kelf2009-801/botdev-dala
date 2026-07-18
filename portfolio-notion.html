@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Андрей — разработчик из Сызрани</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  color:rgba(0,0,0,0.95);background:#fff;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  line-height:1.5;overflow-x:hidden
+}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+::selection{background:#0075de22;color:rgba(0,0,0,0.95)}
+
+/* ===== NOTION CUSTOM PROPERTIES ===== */
+:root{
+  --bg:#fff;--bg-warm:#f6f5f4;--text:rgba(0,0,0,0.95);
+  --text-secondary:#615d59;--text-muted:#a39e98;
+  --blue:#0075de;--blue-hover:#005bab;--blue-active:#004d96;
+  --badge-bg:#f2f9ff;--badge-text:#097fe8;
+  --border:1px solid rgba(0,0,0,0.1);
+  --radius-sm:4px;--radius-card:12px;--radius-pill:9999px;
+  --shadow-card:rgba(0,0,0,0.04) 0px 4px 18px,rgba(0,0,0,0.027) 0px 2.025px 7.84688px,rgba(0,0,0,0.02) 0px 0.8px 2.925px,rgba(0,0,0,0.01) 0px 0.175px 1.04062px;
+  --shadow-deep:rgba(0,0,0,0.01) 0px 1px 3px,rgba(0,0,0,0.02) 0px 3px 7px,rgba(0,0,0,0.02) 0px 7px 15px,rgba(0,0,0,0.04) 0px 14px 28px,rgba(0,0,0,0.05) 0px 23px 52px;
+  --max-w:1200px;--section-pad:96px 0;
+  --nav-h:64px;
+}
+
+/* ===== NAV (slide-in animation) ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:var(--nav-h);background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:var(--border);
+  transform:translateY(-100%);animation:navSlideIn 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
+  will-change:transform;
+}
+@keyframes navSlideIn{to{transform:translateY(0)}}
+.nav-inner{
+  max-width:var(--max-w);margin:0 auto;padding:0 32px;
+  height:100%;display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  font-size:17px;font-weight:600;letter-spacing:-0.3px;
+  display:flex;align-items:center;gap:10px;
+}
+.nav-logo-icon{
+  width:28px;height:28px;border-radius:6px;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:700;
+}
+.nav-links{display:flex;align-items:center;gap:24px;list-style:none}
+.nav-links a{
+  font-size:15px;font-weight:500;color:var(--text-secondary);
+  transition:color 0.2s;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;
+  background:var(--blue);transform:scaleX(0);transition:transform 0.25s ease;
+  transform-origin:right;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+.nav-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--blue);color:#fff;font-size:14px;font-weight:600;
+  padding:7px 16px;border-radius:var(--radius-sm);border:1px solid transparent;
+  transition:background 0.2s,transform 0.15s;
+}
+.nav-cta:hover{background:var(--blue-hover);transform:scale(1.03)}
+.nav-cta:active{transform:scale(0.95);background:var(--blue-active)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:0.3s}
+
+/* ===== PARTICLES CANVAS ===== */
+#particles-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;opacity:0.5;
+}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;z-index:1;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:120px 32px 80px;max-width:var(--max-w);margin:0 auto;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--badge-bg);color:var(--badge-text);
+  font-size:12px;font-weight:600;letter-spacing:0.125px;
+  padding:4px 10px;border-radius:var(--radius-pill);margin-bottom:24px;
+  width:fit-content;animation:fadeUp 0.8s ease 0.5s both;
+}
+.hero h1{
+  font-size:64px;font-weight:700;line-height:1.00;letter-spacing:-2.125px;
+  margin-bottom:20px;max-width:750px;
+  background:linear-gradient(135deg,var(--text) 0%,rgba(0,0,0,0.7) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:fadeUp 0.8s ease 0.6s both;
+}
+.hero p{
+  font-size:20px;font-weight:400;line-height:1.5;color:var(--text-secondary);
+  max-width:600px;margin-bottom:36px;
+  animation:fadeUp 0.8s ease 0.7s both;
+}
+.hero-actions{
+  display:flex;gap:12px;flex-wrap:wrap;
+  animation:fadeUp 0.8s ease 0.8s both;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--blue);color:#fff;font-size:15px;font-weight:600;
+  padding:10px 22px;border-radius:var(--radius-sm);border:1px solid transparent;
+  transition:background 0.2s,transform 0.15s;
+  position:relative;overflow:hidden;
+}
+.btn-primary::after{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,0.15) 50%,transparent 60%);
+  transform:translateX(-100%) rotate(25deg);transition:0.6s;
+}
+.btn-primary:hover{background:var(--blue-hover);transform:scale(1.03)}
+.btn-primary:hover::after{transform:translateX(100%) rotate(25deg)}
+.btn-primary:active{transform:scale(0.95);background:var(--blue-active)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,0,0,0.05);color:var(--text);font-size:15px;font-weight:500;
+  padding:10px 22px;border-radius:var(--radius-sm);border:1px solid transparent;
+  transition:background 0.2s,transform 0.15s;
+}
+.btn-ghost:hover{background:rgba(0,0,0,0.08);transform:scale(1.03)}
+.btn-ghost:active{transform:scale(0.95)}
+
+/* ===== SECTIONS ===== */
+.section{padding:var(--section-pad);position:relative;z-index:1}
+.section-warm{background:var(--bg-warm)}
+.section-inner{max-width:var(--max-w);margin:0 auto;padding:0 32px}
+.section-label{
+  display:inline-block;font-size:12px;font-weight:600;letter-spacing:0.125px;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;
+}
+.section-title{
+  font-size:48px;font-weight:700;line-height:1.00;letter-spacing:-1.5px;
+  margin-bottom:16px;
+}
+.section-desc{
+  font-size:18px;color:var(--text-secondary);max-width:560px;margin-bottom:48px;
+  line-height:1.5;
+}
+
+/* ===== BOT CARDS ===== */
+.bots-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;
+}
+.bot-card{
+  background:#fff;border:var(--border);border-radius:var(--radius-card);
+  padding:24px;box-shadow:var(--shadow-card);
+  transition:box-shadow 0.3s,transform 0.3s;
+  cursor:default;position:relative;overflow:hidden;
+  transform:translateY(30px);opacity:0;
+}
+.bot-card.revealed{transform:translateY(0);opacity:1;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1),opacity 0.6s ease,box-shadow 0.3s;}
+.bot-card:hover{box-shadow:var(--shadow-deep);transform:translateY(-2px)}
+.bot-card-header{
+  display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;
+}
+.bot-card-name{
+  font-size:18px;font-weight:700;letter-spacing:-0.25px;line-height:1.27;
+}
+.bot-card-pill{
+  display:inline-flex;align-items:center;
+  background:var(--badge-bg);color:var(--badge-text);
+  font-size:11px;font-weight:600;letter-spacing:0.125px;
+  padding:3px 8px;border-radius:var(--radius-pill);white-space:nowrap;
+}
+.bot-card-desc{
+  font-size:14px;color:var(--text-secondary);line-height:1.5;margin-bottom:16px;
+}
+.bot-card-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:14px;font-weight:500;color:var(--blue);
+  transition:color 0.2s;position:relative;
+}
+.bot-card-link::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:var(--blue);transform:scaleX(0);transition:transform 0.25s ease;
+  transform-origin:right;
+}
+.bot-card-link:hover{color:var(--blue-hover)}
+.bot-card-link:hover::after{transform:scaleX(1);transform-origin:left}
+.bot-card-icon{
+  width:36px;height:36px;border-radius:var(--radius-sm);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;
+}
+.icon-deal{background:#0075de}
+.icon-glam{background:#dd5b00}
+.icon-beauty{background:#ff64c8}
+.icon-fin{background:#2a9d99}
+.icon-debi{background:#391c57}
+
+/* ===== STACK ===== */
+.stack-grid{
+  display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;
+}
+.stack-item{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,0,0,0.04);border:var(--border);
+  padding:8px 16px;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:500;transition:background 0.2s,transform 0.2s;
+  transform:translateY(20px);opacity:0;
+}
+.stack-item.revealed{transform:translateY(0);opacity:1;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),opacity 0.5s ease,background 0.2s;}
+.stack-item:hover{background:rgba(0,0,0,0.07);transform:translateY(-1px)}
+.stack-item .stack-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+
+/* ===== CONTACTS ===== */
+.contacts-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+}
+.contact-card{
+  background:#fff;border:var(--border);border-radius:var(--radius-card);
+  padding:24px;box-shadow:var(--shadow-card);
+  transition:box-shadow 0.3s,transform 0.3s;
+  text-decoration:none;display:flex;align-items:center;gap:16px;
+  transform:translateY(20px);opacity:0;
+}
+.contact-card.revealed{transform:translateY(0);opacity:1;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),opacity 0.5s ease,box-shadow 0.3s;}
+.contact-card:hover{box-shadow:var(--shadow-deep);transform:translateY(-2px)}
+.contact-icon{
+  width:44px;height:44px;border-radius:var(--radius-sm);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;background:rgba(0,0,0,0.04);border:var(--border);
+}
+.contact-info{}
+.contact-info h4{font-size:16px;font-weight:600;margin-bottom:2px}
+.contact-info p{font-size:14px;color:var(--text-secondary)}
+
+/* ===== FOOTER ===== */
+footer{
+  border-top:var(--border);padding:40px 32px;text-align:center;
+  font-size:14px;color:var(--text-muted);position:relative;z-index:1;
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== CURSOR GLOW ===== */
+#cursor-glow{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:9999;
+  background:radial-gradient(600px circle at 0 0, rgba(0,117,222,0.04), transparent 70%);
+  transition:background 0.1s ease;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1080px){
+  .hero h1{font-size:48px;letter-spacing:-1.5px}
+  .section-title{font-size:40px;letter-spacing:-1.2px}
+}
+@media(max-width:768px){
+  .hero{padding:100px 24px 60px}
+  .hero h1{font-size:36px;letter-spacing:-1px}
+  .hero p{font-size:18px}
+  .section{padding:64px 0}
+  .section-inner{padding:0 24px}
+  .section-title{font-size:32px;letter-spacing:-0.8px}
+  .bots-grid{grid-template-columns:1fr}
+  .contacts-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:var(--nav-h);left:0;right:0;background:rgba(255,255,255,0.98);backdrop-filter:blur(12px);padding:16px 24px;gap:16px;border-bottom:var(--border)}
+}
+@media(max-width:480px){
+  .hero h1{font-size:28px;letter-spacing:-0.5px}
+  .hero p{font-size:16px}
+  .hero-actions{flex-direction:column}
+  .hero-actions .btn-primary,.hero-actions .btn-ghost{width:100%;justify-content:center}
+  .section-title{font-size:26px;letter-spacing:-0.4px}
+  .section-desc{font-size:16px}
+  .nav-inner{padding:0 16px}
+  .bot-card{padding:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+  .bot-card,.stack-item,.contact-card{transform:none!important;opacity:1!important}
+  nav{transform:translateY(0)!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor Glow -->
+<div id="cursor-glow"></div>
+
+<!-- Particles Canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-icon">A</span>
+      Андрей
+    </a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#bots">Боты</a></li>
+      <li><a href="#stack">Стек</a></li>
+      <li><a href="#contacts">Контакты</a></li>
+      <li><a href="#bots" class="nav-cta">Проекты</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✦ Разработчик из Сызрани</div>
+  <h1>Создаю Telegram-ботов, которые решают задачи</h1>
+  <p>Андрей — Python-разработчик. Специализируюсь на aiogram-ботах, веб-сервисах и инфраструктуре. Превращаю идеи в работающие продукты.</p>
+  <div class="hero-actions">
+    <a href="#bots" class="btn-primary">Посмотреть проекты →</a>
+    <a href="#contacts" class="btn-ghost">Связаться</a>
+  </div>
+</section>
+
+<!-- BOTS -->
+<section class="section section-warm" id="bots">
+  <div class="section-inner">
+    <span class="section-label">Проекты</span>
+    <h2 class="section-title">Telegram-боты</h2>
+    <p class="section-desc">Пять работающих проектов — от деловых инструментов до сервисов красоты. Каждый бот решает конкретную задачу и помогает пользователям.</p>
+    <div class="bots-grid">
+
+      <div class="bot-card" data-delay="0">
+        <div class="bot-card-icon icon-deal">D</div>
+        <div class="bot-card-header">
+          <span class="bot-card-name">DealBot63</span>
+          <span class="bot-card-pill">Бизнес</span>
+        </div>
+        <div class="bot-card-desc">Умный бот для сделок и задач. Помогает вести переговоры, фиксировать договорённости и управлять проектами прямо в Telegram.</div>
+        <a href="https://t.me/DealBot63_bot" target="_blank" rel="noopener" class="bot-card-link">@DealBot63_bot →</a>
+      </div>
+
+      <div class="bot-card" data-delay="100">
+        <div class="bot-card-icon icon-glam">G</div>
+        <div class="bot-card-header">
+          <span class="bot-card-name">GlamBot</span>
+          <span class="bot-card-pill">Красота</span>
+        </div>
+        <div class="bot-card-desc">Бот для записи в салон красоты. Онлайн-бронирование, каталог услуг, напоминания о визите — всё для удобства клиентов и мастеров.</div>
+        <a href="https://t.me/nail163_bot" target="_blank" rel="noopener" class="bot-card-link">@nail163_bot →</a>
+      </div>
+
+      <div class="bot-card" data-delay="200">
+        <div class="bot-card-icon icon-beauty">B</div>
+        <div class="bot-card-header">
+          <span class="bot-card-name">BeautyBot</span>
+          <span class="bot-card-pill">Красота</span>
+        </div>
+        <div class="bot-card-desc">Студия красоты в Telegram: витрина услуг, портфолио работ, онлайн-запись и автоматические уведомления для клиентов.</div>
+        <a href="https://t.me/Nailselegantstudio_bot" target="_blank" rel="noopener" class="bot-card-link">@Nailselegantstudio_bot →</a>
+      </div>
+
+      <div class="bot-card" data-delay="300">
+        <div class="bot-card-icon icon-fin">F</div>
+        <div class="bot-card-header">
+          <span class="bot-card-name">FinBot</span>
+          <span class="bot-card-pill">Финансы</span>
+        </div>
+        <div class="bot-card-desc">Финансовый помощник: учёт доходов и расходов, бюджеты, аналитика трат. Держит личные финансы под контролем.</div>
+        <a href="https://t.me/finpro63_bot" target="_blank" rel="noopener" class="bot-card-link">@finpro63_bot →</a>
+      </div>
+
+      <div class="bot-card" data-delay="400">
+        <div class="bot-card-icon icon-debi">H</div>
+        <div class="bot-card-header">
+          <span class="bot-card-name">DebiHackBot</span>
+          <span class="bot-card-pill">Инструменты</span>
+        </div>
+        <div class="bot-card-desc">Хакинг-инструментарий для этичного тестирования. Набор утилит для проверки безопасности и пентеста в Telegram.</div>
+        <a href="tg://resolve?domain=Vandrey63" class="bot-card-link">@Vandrey63 →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="section" id="stack">
+  <div class="section-inner">
+    <span class="section-label">Технологии</span>
+    <h2 class="section-title">Стек</h2>
+    <p class="section-desc">Инструменты и технологии, которые я использую в работе. От бэкенда до деплоя — полный цикл разработки.</p>
+    <div class="stack-grid">
+      <div class="stack-item" data-delay="0"><span class="stack-dot" style="background:#0075de"></span>Python</div>
+      <div class="stack-item" data-delay="50"><span class="stack-dot" style="background:#2a9d99"></span>aiogram</div>
+      <div class="stack-item" data-delay="100"><span class="stack-dot" style="background:#dd5b00"></span>Flask</div>
+      <div class="stack-item" data-delay="150"><span class="stack-dot" style="background:#097fe8"></span>Docker</div>
+      <div class="stack-item" data-delay="200"><span class="stack-dot" style="background:#391c57"></span>OmniRoute</div>
+      <div class="stack-item" data-delay="250"><span class="stack-dot" style="background:#ff64c8"></span>Hermes</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTS -->
+<section class="section section-warm" id="contacts">
+  <div class="section-inner">
+    <span class="section-label">Связь</span>
+    <h2 class="section-title">Контакты</h2>
+    <p class="section-desc">Готов к новым проектам и сотрудничеству. Пишите — обсудим идею.</p>
+    <div class="contacts-grid">
+      <a href="tg://resolve?domain=Vandrey63" target="_blank" rel="noopener" class="contact-card" data-delay="0">
+        <div class="contact-icon">✈</div>
+        <div class="contact-info">
+          <h4>Telegram</h4>
+          <p>@Vandrey63</p>
+        </div>
+      </a>
+      <a href="mailto:andrey@example.com" target="_blank" rel="noopener" class="contact-card" data-delay="100">
+        <div class="contact-icon">✉</div>
+        <div class="contact-info">
+          <h4>Email</h4>
+          <p>andrey@example.com</p>
+        </div>
+      </a>
+      <a href="https://github.com/kelf2009-801" target="_blank" rel="noopener" class="contact-card" data-delay="200">
+        <div class="contact-icon">⌘</div>
+        <div class="contact-info">
+          <h4>GitHub</h4>
+          <p>kelf2009-801</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Андрей — разработчик из Сызрани · 2026</p>
+</footer>
+
+<script>
+(()=>{
+'use strict';
+
+// ===== PARTICLES =====
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouse = {x:null,y:null};
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+
+const PARTICLE_COUNT = Math.min(Math.floor(window.innerWidth * window.innerHeight / 12000), 80);
+const CONNECTION_DIST = 150;
+const PARTICLE_SPEED = 0.4;
+
+class Particle{
+  constructor(){
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * PARTICLE_SPEED;
+    this.vy = (Math.random() - 0.5) * PARTICLE_SPEED;
+    this.radius = Math.random() * 2 + 1;
+    this.opacity = Math.random() * 0.4 + 0.1;
+  }
+  update(){
+    this.x += this.vx;
+    this.y += this.vy;
+    if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    // mouse repulsion
+    if(mouse.x !== null && mouse.y !== null){
+      const dx = this.x - mouse.x;
+      const dy = this.y - mouse.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 180 && dist > 0){
+        const force = (180 - dist) / 180 * 1.5;
+        this.x += (dx / dist) * force;
+        this.y += (dy / dist) * force;
+      }
+    }
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(0,117,222,${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+for(let i=0;i<PARTICLE_COUNT;i++) particles.push(new Particle());
+
+function drawConnections(){
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < CONNECTION_DIST){
+        const opacity = (1 - dist/CONNECTION_DIST) * 0.15;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,117,222,${opacity})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw()});
+  drawConnections();
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+document.addEventListener('mouseleave',()=>{mouse.x=null;mouse.y=null});
+
+// ===== CURSOR GLOW =====
+const glow = document.getElementById('cursor-glow');
+document.addEventListener('mousemove',e=>{
+  glow.style.background = `radial-gradient(600px circle at ${e.clientX}px ${e.clientY}px, rgba(0,117,222,0.05), transparent 70%)`;
+});
+
+// ===== SCROLL REVEAL (IntersectionObserver) =====
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el = entry.target;
+      const delay = parseInt(el.dataset.delay) || 0;
+      setTimeout(()=>{el.classList.add('revealed')}, delay);
+      observer.unobserve(el);
+    }
+  });
+}, {rootMargin:'0px 0px -60px 0px',threshold:0.1});
+
+document.querySelectorAll('.bot-card, .stack-item, .contact-card').forEach(el=>observer.observe(el));
+
+// ===== HAMBURGER =====
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click',()=>{navLinks.classList.toggle('open')});
+navLinks.querySelectorAll('a').forEach(a=>{a.addEventListener('click',()=>{navLinks.classList.remove('open')})});
+
+// ===== STATS COUNTER (optional, for future use) =====
+// ===== SMOOTH ANCHOR SCROLL (fallback) =====
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const href = a.getAttribute('href');
+    if(href==='#') return;
+    const target = document.querySelector(href);
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+});
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Елена | Nail Art — Санкт-Петербург</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Rajdhani', 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #ff00c8; border-radius: 3px; box-shadow: 0 0 10px #ff00c8; }
+
+    /* ========== SCANLINES ========== */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 255, 0.015) 2px,
+        rgba(0, 255, 255, 0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ========== NEON TEXT MIXIN ========== */
+    .neon-cyan {
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff66;
+    }
+    .neon-pink {
+      color: #ff00c8;
+      text-shadow: 0 0 5px #ff00c8, 0 0 10px #ff00c8, 0 0 20px #ff00c8, 0 0 40px #ff00c866;
+    }
+    .neon-purple {
+      color: #b300ff;
+      text-shadow: 0 0 5px #b300ff, 0 0 10px #b300ff, 0 0 20px #b300ff, 0 0 40px #b300ff66;
+    }
+
+    /* ========== GRID BG ========== */
+    #bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== HEADER ========== */
+    header {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1rem;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 0, 200, 0.05) 0%, transparent 40%);
+      animation: hueRotate 15s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes hueRotate {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .glitch-wrapper {
+      position: relative;
+      z-index: 2;
+    }
+
+    .glitch {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      position: relative;
+      color: #00ffff;
+      text-shadow:
+        0 0 5px #00ffff,
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 40px #00ffff88;
+      animation: glitch 3s infinite;
+    }
+
+    .glitch span {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .glitch span:first-child {
+      color: #ff00c8;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+      transform: translate(-2px, -2px);
+      animation: glitchTop 3s infinite;
+      text-shadow: 0 0 5px #ff00c8, 0 0 10px #ff00c8;
+    }
+    .glitch span:last-child {
+      color: #00ffff;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+      transform: translate(2px, 2px);
+      animation: glitchBottom 3s infinite;
+      text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% { transform: translate(0); }
+      92% { transform: translate(-2px); }
+      94% { transform: translate(2px); }
+      96% { transform: translate(-1px); }
+    }
+    @keyframes glitchTop {
+      0%, 90%, 100% { transform: translate(-2px, -2px); }
+      92% { transform: translate(3px, -1px); }
+      94% { transform: translate(-3px, 1px); }
+      96% { transform: translate(2px, -2px); }
+    }
+    @keyframes glitchBottom {
+      0%, 90%, 100% { transform: translate(2px, 2px); }
+      92% { transform: translate(-3px, 1px); }
+      94% { transform: translate(3px, -1px); }
+      96% { transform: translate(-2px, 2px); }
+    }
+
+    .subtitle {
+      position: relative;
+      z-index: 2;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 400;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin-top: 1rem;
+      color: #ff00c8;
+      text-shadow: 0 0 5px #ff00c8, 0 0 15px #ff00c866;
+    }
+
+    .city-line {
+      position: relative;
+      z-index: 2;
+      font-size: 1.1rem;
+      letter-spacing: 3px;
+      color: #888;
+      margin-top: 0.5rem;
+    }
+    .city-line i {
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+
+    .scroll-down {
+      position: absolute;
+      bottom: 2rem;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: #00ffff;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+      animation: bounce 2s infinite;
+    }
+    .scroll-down:hover { opacity: 1; }
+    .scroll-down .arrow {
+      width: 20px; height: 20px;
+      border-right: 2px solid #00ffff;
+      border-bottom: 2px solid #00ffff;
+      transform: rotate(45deg);
+      filter: drop-shadow(0 0 5px #00ffff);
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* ========== NAV ========== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+      transition: 0.3s;
+    }
+    nav .logo {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #00ffff;
+      text-shadow: 0 0 8px #00ffff;
+      text-decoration: none;
+    }
+    nav .logo span { color: #ff00c8; text-shadow: 0 0 8px #ff00c8; }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul li a {
+      color: #aaa;
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
+      transition: 0.3s;
+      position: relative;
+    }
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: #ff00c8;
+      box-shadow: 0 0 8px #ff00c8;
+      transition: width 0.3s;
+    }
+    nav ul li a:hover { color: #fff; }
+    nav ul li a:hover::after { width: 100%; }
+
+    /* ========== SECTIONS COMMON ========== */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 6rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      letter-spacing: 4px;
+    }
+    .section-title .neon-cyan { display: block; }
+    .section-title .neon-pink { display: block; font-size: 0.6em; margin-top: 0.3rem; letter-spacing: 8px; }
+
+    /* ========== ABOUT ========== */
+    #about {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3rem;
+    }
+    #about .about-img {
+      flex: 1 1 300px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.15), inset 0 0 20px rgba(0, 255, 255, 0.05);
+      transition: 0.4s;
+    }
+    #about .about-img:hover {
+      border-color: #ff00c8;
+      box-shadow: 0 0 30px rgba(255, 0, 200, 0.25);
+    }
+    #about .about-img img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.1) contrast(1.05);
+    }
+    #about .about-text {
+      flex: 1 1 400px;
+    }
+    #about .about-text h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    #about .about-text .tagline {
+      color: #ff00c8;
+      text-shadow: 0 0 5px #ff00c8;
+      font-weight: 600;
+      letter-spacing: 2px;
+      margin-bottom: 1.5rem;
+    }
+    #about .about-text p {
+      color: #bbb;
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-item .num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #00ffff;
+      text-shadow: 0 0 8px #00ffff;
+    }
+    .stat-item .label {
+      font-size: 0.8rem;
+      color: #666;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ========== SERVICES ========== */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    .service-card {
+      background: linear-gradient(145deg, rgba(20, 20, 30, 0.8), rgba(10, 10, 20, 0.9));
+      border: 1px solid rgba(0, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px;
+      right: -2px; bottom: -2px;
+      border-radius: 13px;
+      background: linear-gradient(45deg, #00ffff, #ff00c8, #b300ff, #00ffff);
+      background-size: 400% 400%;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.4s;
+      animation: gradientBorder 4s linear infinite;
+    }
+    @keyframes gradientBorder {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .service-card:hover::before { opacity: 1; }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+    }
+
+    .service-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .service-card h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff66;
+    }
+    .service-card p {
+      color: #999;
+      font-size: 0.95rem;
+    }
+    .service-card .price {
+      display: inline-block;
+      margin-top: 1rem;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #ff00c8;
+      text-shadow: 0 0 5px #ff00c866;
+      border: 1px solid rgba(255, 0, 200, 0.3);
+      padding: 0.3rem 1.2rem;
+      border-radius: 20px;
+    }
+
+    /* ========== PORTFOLIO GALLERY ========== */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.2rem;
+    }
+    .gallery-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(255, 0, 200, 0.15);
+      transition: 0.4s;
+      aspect-ratio: 1 / 1;
+    }
+    .gallery-item:hover {
+      border-color: #ff00c8;
+      box-shadow: 0 0 25px rgba(255, 0, 200, 0.25);
+      transform: scale(1.02);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.1) contrast(1.05);
+    }
+    .gallery-item .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+      opacity: 0;
+      transition: 0.3s;
+    }
+    .gallery-item:hover .overlay { opacity: 1; }
+    .gallery-item .overlay span {
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+
+    /* ========== REVIEWS ========== */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .review-card {
+      background: rgba(20, 20, 30, 0.6);
+      border: 1px solid rgba(0, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: 0.3s;
+    }
+    .review-card:hover {
+      border-color: rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+    }
+    .review-card .stars {
+      color: #ff00c8;
+      text-shadow: 0 0 5px #ff00c8;
+      font-size: 1.1rem;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+    }
+    .review-card blockquote {
+      color: #bbb;
+      font-style: italic;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    .review-card .author {
+      color: #00ffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .review-card .author small {
+      color: #666;
+      font-weight: 400;
+    }
+
+    /* ========== CONTACT ========== */
+    #contact {
+      text-align: center;
+    }
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-size: 1rem;
+      transition: 0.3s;
+      border: 1px solid;
+    }
+    .contact-btn.telegram {
+      border-color: #00ffff;
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.05);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+    }
+    .contact-btn.telegram:hover {
+      background: rgba(0, 255, 255, 0.15);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+    }
+    .contact-btn.instagram {
+      border-color: #ff00c8;
+      color: #ff00c8;
+      background: rgba(255, 0, 200, 0.05);
+      box-shadow: 0 0 10px rgba(255, 0, 200, 0.1);
+    }
+    .contact-btn.instagram:hover {
+      background: rgba(255, 0, 200, 0.15);
+      box-shadow: 0 0 25px rgba(255, 0, 200, 0.3);
+    }
+    .contact-btn.phone {
+      border-color: #b300ff;
+      color: #b300ff;
+      background: rgba(179, 0, 255, 0.05);
+      box-shadow: 0 0 10px rgba(179, 0, 255, 0.1);
+    }
+    .contact-btn.phone:hover {
+      background: rgba(179, 0, 255, 0.15);
+      box-shadow: 0 0 25px rgba(179, 0, 255, 0.3);
+    }
+
+    .contact-info {
+      margin-top: 2.5rem;
+      color: #888;
+      font-size: 0.95rem;
+    }
+    .contact-info i {
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid rgba(0, 255, 255, 0.08);
+      color: #444;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+    footer .neon-cyan { font-size: 0.9rem; }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      nav ul { gap: 1rem; }
+      nav ul li a { font-size: 0.8rem; }
+      section { padding: 4rem 1rem; }
+      #about { flex-direction: column; }
+      #about .about-img img { height: 300px; }
+      .stats { justify-content: center; }
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    }
+    @media (max-width: 480px) {
+      nav { padding: 0.6rem 1rem; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+      nav ul { gap: 0.6rem; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+      .contact-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grid overlay -->
+  <div id="bg-grid"></div>
+
+  <!-- ===== NAV ===== -->
+  <nav>
+    <a href="#" class="logo">✧ NAIL<span>//</span>ELENA</a>
+    <ul>
+      <li><a href="#about">Обo мне</a></li>
+      <li><a href="#services">Услуги</a></li>
+      <li><a href="#gallery">Работы</a></li>
+      <li><a href="#reviews">Отзывы</a></li>
+      <li><a href="#contact">Контакты</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header id="hero">
+    <div class="glitch-wrapper">
+      <h1 class="glitch" data-text="ELENA">
+        ELENA
+        <span>ELENA</span>
+        <span>ELENA</span>
+      </h1>
+    </div>
+    <p class="subtitle">✦ Nail-мастер ✦</p>
+    <p class="city-line"><i>✦</i> Санкт-Петербург <i>✦</i></p>
+    <a href="#about" class="scroll-down">
+      <span>Листай</span>
+      <div class="arrow"></div>
+    </a>
+  </header>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about">
+    <div class="about-img">
+      <img
+        src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&fit=crop"
+        alt="Елена — нейл-мастер"
+        loading="lazy"
+      >
+    </div>
+    <div class="about-text">
+      <h2 class="neon-cyan">Привет, я Елена</h2>
+      <p class="tagline">▸ digital nail artist &amp; design visionary</p>
+      <p>
+        Создаю <strong>нейл-арт</strong> на стыке эстетики и киберпанка.
+        Каждый дизайн — это история, рассказанная через цвет, текстуру и форму.
+        Работаю с гель-лаками, акрилом, слайдерами и 3D-элементами.
+      </p>
+      <p>
+        Моя студия находится в самом сердце Санкт-Петербурга.
+        Здесь хай-тек встречается с уютом, а каждый визит превращается
+        в маленькое путешествие в мир неоновых огней и безупречного стиля.
+      </p>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="num">7+</div>
+          <div class="label">лет опыта</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">500+</div>
+          <div class="label">дизайнов</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">∞</div>
+          <div class="label">вдохновения</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section id="services">
+    <h2 class="section-title">
+      <span class="neon-cyan">Услуги</span>
+      <span class="neon-pink">// PRICE LIST</span>
+    </h2>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="icon">💅</div>
+        <h3>Маникюр</h3>
+        <p>
+          Классический, аппаратный, комбинированный.
+          Укрепление, покрытие гель-лаком, дизайн любой сложности.
+        </p>
+        <span class="price">от 2 500 ₽</span>
+      </div>
+      <div class="service-card">
+        <div class="icon">🦶</div>
+        <h3>Педикюр</h3>
+        <p>
+          Комплексный уход за стопами. Аппаратная техника,
+          покрытие, дизайн. Релакс и эстетика в одном флаконе.
+        </p>
+        <span class="price">от 3 000 ₽</span>
+      </div>
+      <div class="service-card">
+        <div class="icon">🎨</div>
+        <h3>Дизайн</h3>
+        <p>
+          Авторские работы: градиенты, слайдеры, втирки,
+          стемпинг, 3D-лепка, фольга, кристаллы — всё, что ты захочешь.
+        </p>
+        <span class="price">от 800 ₽</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GALLERY ===== -->
+  <section id="gallery">
+    <h2 class="section-title">
+      <span class="neon-cyan">Портфолио</span>
+      <span class="neon-pink">// GALLERY</span>
+    </h2>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80&fit=crop" alt="Neon nail design 1" loading="lazy">
+        <div class="overlay"><span>✦ Neon Cyber</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1610992015732-2449b76344bc?w=400&q=80&fit=crop" alt="Neon nail design 2" loading="lazy">
+        <div class="overlay"><span>✦ Pink Haze</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=400&q=80&fit=crop" alt="Neon nail design 3" loading="lazy">
+        <div class="overlay"><span>✦ Electric Dreams</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=400&q=80&fit=crop" alt="Neon nail design 4" loading="lazy">
+        <div class="overlay"><span>✦ UV Glow</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=400&q=80&fit=crop" alt="Neon nail design 5" loading="lazy">
+        <div class="overlay"><span>✦ Cyber Pink</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80&fit=crop" alt="Neon nail design 6" loading="lazy">
+        <div class="overlay"><span>✦ Matrix Green</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1610992015732-2449b76344bc?w=400&q=80&fit=crop" alt="Neon nail design 7" loading="lazy">
+        <div class="overlay"><span>✦ Chroma</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=400&q=80&fit=crop" alt="Neon nail design 8" loading="lazy">
+        <div class="overlay"><span>✦ Acid Wash</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== REVIEWS ===== -->
+  <section id="reviews">
+    <h2 class="section-title">
+      <span class="neon-cyan">Отзывы</span>
+      <span class="neon-pink">// REVIEWS</span>
+    </h2>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>
+          «Елена — настоящий художник! Ногти получаются невероятно красивыми,
+          держатся долго. Особенно люблю её неоновые дизайны — они светятся в
+          клубе просто космос!»
+        </blockquote>
+        <p class="author">Алина <small>— @alina_cyber</small></p>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>
+          «Хожу к Елене уже два года. Качество всегда на высоте,
+          стерильность идеальная, а дизайны — это просто вау.
+          Мастер с большой буквы!»
+        </blockquote>
+        <p class="author">Мария <small>— @maria_style</small></p>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>
+          «Сделала педикюр с дизайном — результат превзошёл ожидания.
+          Елена учла все пожелания и добавила свои фишки.
+          Очень рекомендую!»
+        </blockquote>
+        <p class="author">Ксения <small>— @kseniya_spb</small></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact">
+    <h2 class="section-title">
+      <span class="neon-cyan">Контакты</span>
+      <span class="neon-pink">// LET'S CONNECT</span>
+    </h2>
+    <p style="color:#999; font-size:1.05rem; max-width:500px; margin:0 auto;">
+      Записывайся прямо сейчас — и твои ногти засияют неоном!<br>
+      Работаю в центре Санкт-Петербурга.
+    </p>
+    <div class="contact-links">
+      <a href="#" class="contact-btn telegram">
+        <span>✈</span> Telegram
+      </a>
+      <a href="#" class="contact-btn instagram">
+        <span>📷</span> Instagram
+      </a>
+      <a href="#" class="contact-btn phone">
+        <span>📞</span> +7 (999) 123-45-67
+      </a>
+    </div>
+    <div class="contact-info">
+      <i>✦</i> Санкт-Петербург, м. Невский Проспект <i>✦</i>
+      <br>
+      Пн–Сб 10:00 – 21:00
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>
+      <span class="neon-cyan">✧</span> 2025 — Елена Nail-мастер <span class="neon-cyan">✧</span>
+    </p>
+    <p style="margin-top:0.3rem;">Санкт-Петербург • Neon Nail Art</p>
+  </footer>
+
+  <!-- ===== SMOOTH NAV SCROLL ===== -->
+  <script>
+    document.querySelectorAll('nav a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+    // Scroll-down arrow
+    document.querySelector('.scroll-down')?.addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

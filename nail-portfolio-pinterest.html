@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Елена — Nail-арт СПб</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #fdfaf7;
+  color: #2d2416;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===== FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ===== VARIABLES ===== */
+:root {
+  --pink: #e8b4b8;
+  --pink-light: #f2d5d8;
+  --pink-dark: #d4949a;
+  --cream: #fdf8f3;
+  --cream-dark: #f5ede4;
+  --rose: #c98a8f;
+  --rose-gold: #d4a0a5;
+  --text-main: #2d2416;
+  --text-secondary: #7a6b5e;
+  --text-muted: #b5a89a;
+  --bg: #fdfaf7;
+  --card-bg: #ffffff;
+  --shadow: 0 2px 12px rgba(180, 140, 140, 0.10);
+  --shadow-hover: 0 8px 30px rgba(180, 140, 140, 0.18);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+}
+
+/* ===== HEADER ===== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(253, 250, 247, 0.92);
+  border-bottom: 1px solid rgba(232, 180, 184, 0.15);
+  transition: background 0.3s;
+}
+.header-logo {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--pink-dark);
+  letter-spacing: 0.5px;
+}
+.header-logo span {
+  color: var(--text-main);
+}
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.header-nav a {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+  position: relative;
+}
+.header-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--pink);
+  transition: width 0.3s;
+  border-radius: 1px;
+}
+.header-nav a:hover {
+  color: var(--pink-dark);
+}
+.header-nav a:hover::after {
+  width: 100%;
+}
+.header-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  color: #fff;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+.header-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(212, 148, 154, 0.35);
+}
+
+/* ===== HERO ===== */
+.hero {
+  padding: 140px 40px 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  min-height: 100vh;
+}
+.hero-content h1 {
+  font-family: var(--font-serif);
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+.hero-content h1 span {
+  background: linear-gradient(135deg, var(--pink-dark), var(--rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+}
+.hero-city {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--rose);
+  margin-bottom: 28px;
+  padding: 6px 14px;
+  background: rgba(232, 180, 184, 0.12);
+  border-radius: 50px;
+}
+.hero-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 480px;
+}
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.hero-btn-primary {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  color: #fff;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: var(--font-sans);
+}
+.hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 148, 154, 0.35);
+}
+.hero-btn-secondary {
+  padding: 14px 32px;
+  border: 1.5px solid var(--pink-light);
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--pink-dark);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+.hero-btn-secondary:hover {
+  background: var(--pink-light);
+  border-color: var(--pink);
+}
+.hero-stats {
+  display: flex;
+  gap: 36px;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(232, 180, 184, 0.15);
+}
+.hero-stat-item {
+  text-align: center;
+}
+.hero-stat-num {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--pink-dark);
+}
+.hero-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Hero Image */
+.hero-image {
+  position: relative;
+}
+.hero-image-wrap {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--pink-light), var(--cream));
+  box-shadow: 0 20px 60px rgba(180, 140, 140, 0.15);
+}
+.hero-image-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.hero-image-badge {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hero-badge-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.hero-badge-info h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.hero-badge-info p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ===== SECTION COMMON ===== */
+.section {
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.section-header h2 {
+  font-family: var(--font-serif);
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+.section-header h2 span {
+  color: var(--pink-dark);
+}
+.section-header p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ===== SERVICES ===== */
+.services {
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.service-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 1px solid rgba(232, 180, 184, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink-light), var(--pink), var(--pink-dark));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+.service-card:hover::before {
+  opacity: 1;
+}
+.service-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  background: rgba(232, 180, 184, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.service-card h3 {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+.service-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.service-price {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--pink-dark);
+}
+
+/* ===== MASONRY PORTFOLIO ===== */
+.portfolio {
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.masonry {
+  columns: 3;
+  column-gap: 20px;
+}
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.masonry-item:hover {
+  transform: scale(1.02);
+}
+.masonry-item-inner {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+}
+.masonry-item-inner svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.masonry-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(45,36,22,0.5), transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+}
+.masonry-item:hover .masonry-overlay {
+  opacity: 1;
+}
+.masonry-overlay-text {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ===== MASTER ABOUT ===== */
+.about {
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.about-image {
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--pink-light), var(--cream));
+  box-shadow: 0 20px 60px rgba(180, 140, 140, 0.12);
+}
+.about-image svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.about-content h2 {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+.about-content .about-tag {
+  font-size: 14px;
+  color: var(--rose);
+  margin-bottom: 20px;
+  display: block;
+}
+.about-content p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.about-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+.about-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-main);
+}
+.about-feature .check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(232, 180, 184, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--pink-dark);
+  flex-shrink: 0;
+}
+
+/* ===== PRICE ===== */
+.price {
+  padding: 80px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.price-panel {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(232, 180, 184, 0.08);
+}
+.price-rows {
+  display: flex;
+  flex-direction: column;
+}
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(232, 180, 184, 0.08);
+}
+.price-row:last-child {
+  border-bottom: none;
+}
+.price-name {
+  font-size: 15px;
+  color: var(--text-main);
+  font-weight: 400;
+}
+.price-val {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--pink-dark);
+  white-space: nowrap;
+}
+.price-category {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-main);
+  padding: 20px 0 10px;
+  border-bottom: 2px solid var(--pink-light);
+  margin-bottom: 4px;
+}
+.price-category:first-of-type {
+  padding-top: 0;
+}
+
+/* ===== REVIEWS ===== */
+.reviews {
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.review-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(232, 180, 184, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+.review-stars {
+  color: #f0c060;
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.review-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.review-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink-light), var(--pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.review-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+.review-service {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===== CONTACT ===== */
+.contact {
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.contact-info h3 {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+.contact-info > p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+.contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.contact-item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(232, 180, 184, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.contact-item-text strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text-main);
+  font-weight: 500;
+}
+.contact-item-text span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.contact-form {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 36px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(232, 180, 184, 0.08);
+}
+.contact-form h4 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-main);
+}
+.contact-form > p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border: 1.5px solid rgba(232, 180, 184, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text-main);
+  transition: border-color 0.2s;
+  outline: none;
+}
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: var(--pink);
+}
+.contact-form textarea {
+  height: 80px;
+  resize: vertical;
+}
+.contact-form button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: var(--font-sans);
+}
+.contact-form button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(212, 148, 154, 0.3);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #2d2416;
+  color: #d4c8b8;
+  padding: 40px 40px 24px;
+  margin-top: 60px;
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+.footer-brand h4 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: #f5ede4;
+  margin-bottom: 8px;
+}
+.footer-brand p {
+  font-size: 13px;
+  color: #b5a89a;
+  line-height: 1.6;
+  max-width: 280px;
+}
+.footer-col h5 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f5ede4;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.footer-col a {
+  display: block;
+  font-size: 13px;
+  color: #b5a89a;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+.footer-col a:hover {
+  color: var(--pink-light);
+}
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 32px;
+  padding-top: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: #8a7e72;
+}
+
+/* ===== DECORATIVE ELEMENTS ===== */
+.decor-circle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.3;
+}
+.decor-1 {
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(232,180,184,0.15), transparent 70%);
+}
+.decor-2 {
+  width: 300px;
+  height: 300px;
+  bottom: 200px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(242,213,216,0.12), transparent 70%);
+}
+.decor-3 {
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  right: 10%;
+  background: radial-gradient(circle, rgba(232,180,184,0.08), transparent 70%);
+}
+
+/* ===== FLOATING HEARTS (CSS-only) ===== */
+.hearts-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.heart {
+  position: absolute;
+  font-size: 14px;
+  opacity: 0;
+  animation: floatHeart linear infinite;
+}
+@keyframes floatHeart {
+  0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+  10% { opacity: 0.15; }
+  90% { opacity: 0.1; }
+  100% { transform: translateY(-10vh) rotate(720deg) scale(1); opacity: 0; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; gap: 40px; padding: 120px 24px 60px; }
+  .hero-image { max-width: 500px; margin: 0 auto; }
+  .masonry { columns: 2; }
+  .about { grid-template-columns: 1fr; gap: 40px; }
+  .about-image { max-width: 500px; margin: 0 auto; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .header { padding: 12px 20px; }
+  .header-nav { display: none; }
+  .hero { padding: 100px 20px 40px; min-height: auto; }
+  .hero-content h1 { font-size: 34px; }
+  .hero-stats { gap: 20px; }
+  .section { padding: 50px 20px; }
+  .services { padding: 50px 20px; }
+  .services-grid { grid-template-columns: 1fr; }
+  .portfolio { padding: 50px 20px; }
+  .masonry { columns: 2; column-gap: 12px; }
+  .masonry-item { margin-bottom: 12px; }
+  .about { padding: 50px 20px; }
+  .price { padding: 50px 20px; }
+  .price-panel { padding: 24px; }
+  .reviews { padding: 50px 20px; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .contact { padding: 50px 20px; grid-template-columns: 1fr; }
+  .section-header h2 { font-size: 26px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+  .footer { padding: 32px 20px 20px; }
+}
+@media (max-width: 480px) {
+  .masonry { columns: 1; }
+  .hero-content h1 { font-size: 28px; }
+  .hero-actions { flex-direction: column; }
+  .hero-btn-primary, .hero-btn-secondary { text-align: center; }
+  .about-features { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Decorative -->
+<div class="decor-circle decor-1"></div>
+<div class="decor-circle decor-2"></div>
+<div class="decor-circle decor-3"></div>
+
+<div class="hearts-container" aria-hidden="true">
+  <div class="heart" style="left:5%; animation-duration:18s; animation-delay:0s;">✦</div>
+  <div class="heart" style="left:15%; animation-duration:22s; animation-delay:3s;">♡</div>
+  <div class="heart" style="left:25%; animation-duration:20s; animation-delay:6s;">✦</div>
+  <div class="heart" style="left:35%; animation-duration:24s; animation-delay:1s;">♡</div>
+  <div class="heart" style="left:45%; animation-duration:19s; animation-delay:5s;">✦</div>
+  <div class="heart" style="left:55%; animation-duration:21s; animation-delay:8s;">♡</div>
+  <div class="heart" style="left:65%; animation-duration:23s; animation-delay:2s;">✦</div>
+  <div class="heart" style="left:75%; animation-duration:17s; animation-delay:7s;">♡</div>
+  <div class="heart" style="left:85%; animation-duration:20s; animation-delay:4s;">✦</div>
+  <div class="heart" style="left:92%; animation-duration:25s; animation-delay:9s;">♡</div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-logo">Elena <span>Nail</span></div>
+  <nav class="header-nav">
+    <a href="#services">Услуги</a>
+    <a href="#portfolio">Работы</a>
+    <a href="#about">Обо мне</a>
+    <a href="#price">Цены</a>
+    <a href="#reviews">Отзывы</a>
+    <a href="#contact">Контакты</a>
+    <a class="header-btn" href="#contact">Записаться</a>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Елена <span>Nail</span></h1>
+    <div class="hero-subtitle">Мастер маникюра и педикюра</div>
+    <div class="hero-city">📍 Санкт-Петербург</div>
+    <p class="hero-desc">
+      Создаю нежный и стильный nail-дизайн, который подчеркнёт твою индивидуальность.
+      Работаю с премиальными материалами и современными техниками.
+    </p>
+    <div class="hero-actions">
+      <a class="hero-btn-primary" href="#contact">Записаться ✨</a>
+      <a class="hero-btn-secondary" href="#portfolio">Смотреть работы</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat-item">
+        <div class="hero-stat-num">5+</div>
+        <div class="hero-stat-label">Лет опыта</div>
+      </div>
+      <div class="hero-stat-item">
+        <div class="hero-stat-num">800+</div>
+        <div class="hero-stat-label">Клиентов</div>
+      </div>
+      <div class="hero-stat-item">
+        <div class="hero-stat-num">50+</div>
+        <div class="hero-stat-label">Курсов</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="hero-image-wrap">
+      <svg viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bgHero" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f2d5d8"/>
+            <stop offset="1" stop-color="#fdf8f3"/>
+          </linearGradient>
+          <linearGradient id="pinkGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#e8b4b8"/>
+            <stop offset="1" stop-color="#d4949a"/>
+          </linearGradient>
+        </defs>
+        <rect fill="url(#bgHero)" width="600" height="700" rx="24"/>
+        <!-- Large decorative circle -->
+        <circle cx="300" cy="320" r="180" fill="rgba(232,180,184,0.08)"/>
+        <circle cx="300" cy="320" r="140" fill="rgba(232,180,184,0.06)"/>
+        <!-- Hand silhouette -->
+        <path d="M250 520 C240 450 220 380 230 340 C235 315 250 305 260 315 C265 325 260 345 255 365 C260 340 275 310 285 315 C295 320 290 345 280 375 C285 345 300 315 315 320 C325 325 320 355 305 390 C300 410 290 445 285 480 L280 520 Z" fill="rgba(212,148,154,0.12)" stroke="rgba(212,148,154,0.25)" stroke-width="1.5"/>
+        <!-- Nail polish bottle -->
+        <rect x="340" y="155" width="55" height="75" rx="8" fill="rgba(232,180,184,0.12)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+        <rect x="348" y="130" width="38" height="30" rx="5" fill="rgba(232,180,184,0.18)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+        <rect x="356" y="108" width="22" height="27" rx="4" fill="rgba(232,180,184,0.22)" stroke="rgba(212,148,154,0.35)" stroke-width="1.5"/>
+        <rect x="361" y="85" width="12" height="25" rx="3" fill="url(#pinkGrad)" opacity="0.5"/>
+        <!-- Nail polish drops -->
+        <circle cx="380" cy="245" r="7" fill="rgba(232,180,184,0.25)"/>
+        <circle cx="392" cy="255" r="4" fill="rgba(232,180,184,0.15)"/>
+        <!-- Nail file -->
+        <rect x="160" y="200" width="110" height="14" rx="7" fill="rgba(232,180,184,0.1)" stroke="rgba(212,148,154,0.2)" stroke-width="1"/>
+        <rect x="160" y="200" width="55" height="14" rx="7" fill="rgba(232,180,184,0.15)"/>
+        <!-- Decorative dots -->
+        <circle cx="130" cy="165" r="5" fill="url(#pinkGrad)" opacity="0.3"/>
+        <circle cx="148" cy="155" r="3" fill="url(#pinkGrad)" opacity="0.2"/>
+        <circle cx="120" cy="178" r="3" fill="url(#pinkGrad)" opacity="0.15"/>
+        <circle cx="470" cy="280" r="4" fill="url(#pinkGrad)" opacity="0.25"/>
+        <circle cx="485" cy="270" r="3" fill="url(#pinkGrad)" opacity="0.15"/>
+        <!-- Small stars -->
+        <text x="140" y="140" font-size="12" fill="#d4949a" opacity="0.3">✦</text>
+        <text x="470" y="260" font-size="10" fill="#d4949a" opacity="0.25">✦</text>
+        <text x="480" y="300" font-size="8" fill="#d4949a" opacity="0.2">✦</text>
+        <!-- Nail designs at bottom -->
+        <ellipse cx="190" cy="450" rx="12" ry="16" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.2)" stroke-width="1"/>
+        <ellipse cx="220" cy="455" rx="12" ry="16" fill="rgba(232,180,184,0.12)" stroke="rgba(212,148,154,0.2)" stroke-width="1"/>
+        <ellipse cx="250" cy="458" rx="12" ry="16" fill="rgba(232,180,184,0.18)" stroke="rgba(212,148,154,0.2)" stroke-width="1"/>
+        <ellipse cx="280" cy="460" rx="12" ry="16" fill="rgba(232,180,184,0.1)" stroke="rgba(212,148,154,0.2)" stroke-width="1"/>
+        <!-- Tiny flowers on nails -->
+        <circle cx="190" cy="448" r="3" fill="rgba(232,180,184,0.3)"/>
+        <circle cx="220" cy="453" r="2.5" fill="rgba(232,180,184,0.25)"/>
+        <circle cx="250" cy="456" r="3" fill="rgba(232,180,184,0.35)"/>
+        <circle cx="280" cy="458" r="2.5" fill="rgba(232,180,184,0.2)"/>
+      </svg>
+      <div class="hero-image-badge">
+        <div class="hero-badge-avatar">Е</div>
+        <div class="hero-badge-info">
+          <h4>Елена</h4>
+          <p>Мастер nail-арта · СПб</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section class="services" id="services">
+  <div class="section-header">
+    <h2>Мои <span>услуги</span></h2>
+    <p>Качественный маникюр и педикюр с использованием премиальных материалов</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">💅</div>
+      <h3>Маникюр</h3>
+      <p>Классический, аппаратный, комбинированный. Уход за кутикулой и придание формы.</p>
+      <div class="service-price">от 1 500 ₽</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🦶</div>
+      <h3>Педикюр</h3>
+      <p>Комплексный уход за стопами. Аппаратный педикюр с профессиональным покрытием.</p>
+      <div class="service-price">от 2 000 ₽</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🎨</div>
+      <h3>Дизайн ногтей</h3>
+      <p>Френч, градиент, стразы, втирка, слайдеры, ручная роспись — любой дизайн.</p>
+      <div class="service-price">от 500 ₽</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">💎</div>
+      <h3>Наращивание</h3>
+      <p>Красивое и аккуратное наращивание ногтей любой длины и формы.</p>
+      <div class="service-price">от 2 500 ₽</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">✨</div>
+      <h3>Покрытие гель-лак</h3>
+      <p>Стойкое покрытие премиальными гель-лаками. Держится до 3-4 недель.</p>
+      <div class="service-price">от 1 800 ₽</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🌿</div>
+      <h3>SPA-уход</h3>
+      <p>Парафинотерапия, массаж, масла и увлажнение для нежности рук и ног.</p>
+      <div class="service-price">от 800 ₽</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MASONRY PORTFOLIO ===== -->
+<section class="portfolio" id="portfolio">
+  <div class="section-header">
+    <h2>Мои <span>работы</span></h2>
+    <p>Нежный дизайн, аккуратное исполнение, индивидуальный подход</p>
+  </div>
+  <div class="masonry">
+    <!-- Item 1 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="500" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="60" width="240" height="340" rx="20" opacity="0.5"/>
+          <!-- Nail shape -->
+          <ellipse cx="200" cy="180" rx="35" ry="60" fill="rgba(232,180,184,0.2)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <ellipse cx="200" cy="180" rx="28" ry="50" fill="rgba(232,180,184,0.15)"/>
+          <!-- Flower design -->
+          <circle cx="200" cy="170" r="8" fill="rgba(232,180,184,0.4)"/>
+          <circle cx="192" cy="162" r="5" fill="rgba(232,180,184,0.3)"/>
+          <circle cx="208" cy="162" r="5" fill="rgba(232,180,184,0.3)"/>
+          <circle cx="192" cy="178" r="5" fill="rgba(232,180,184,0.3)"/>
+          <circle cx="208" cy="178" r="5" fill="rgba(232,180,184,0.3)"/>
+          <circle cx="200" cy="170" r="4" fill="#fff" opacity="0.6"/>
+          <text x="200" y="440" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Нежный флоральный дизайн</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">🌸 Нежный флоральный дизайн</span>
+        </div>
+      </div>
+    </div>
+    <!-- Item 2 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="360" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="40" width="240" height="240" rx="20" opacity="0.4"/>
+          <ellipse cx="130" cy="160" rx="22" ry="45" fill="rgba(232,180,184,0.2)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <ellipse cx="200" cy="160" rx="22" ry="45" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.25)" stroke-width="1.5"/>
+          <ellipse cx="270" cy="160" rx="22" ry="45" fill="rgba(232,180,184,0.2)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <!-- French tips -->
+          <path d="M108 140 Q130 130 152 140" fill="none" stroke="rgba(212,148,154,0.4)" stroke-width="2"/>
+          <path d="M178 140 Q200 130 222 140" fill="none" stroke="rgba(212,148,154,0.35)" stroke-width="2"/>
+          <path d="M248 140 Q270 130 292 140" fill="none" stroke="rgba(212,148,154,0.4)" stroke-width="2"/>
+          <text x="200" y="300" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Френч 3D</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">🤍 Френч с 3D-эффектом</span>
+        </div>
+      </div>
+    </div>
+    <!-- Item 3 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="420" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="40" width="240" height="320" rx="20" opacity="0.45"/>
+          <ellipse cx="200" cy="160" rx="30" ry="55" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <!-- Gradient effect -->
+          <ellipse cx="200" cy="160" rx="24" ry="45" fill="url(#pinkGrad)" opacity="0.2"/>
+          <!-- Sparkles -->
+          <circle cx="185" cy="145" r="5" fill="#fff" opacity="0.5"/>
+          <circle cx="215" cy="155" r="3" fill="#fff" opacity="0.4"/>
+          <circle cx="195" cy="170" r="4" fill="#fff" opacity="0.35"/>
+          <circle cx="210" cy="140" r="2" fill="#fff" opacity="0.45"/>
+          <text x="200" y="370" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Градиент с шиммером</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">✨ Градиент с шиммером</span>
+        </div>
+      </div>
+    </div>
+    <!-- Item 4 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 480" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="480" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="40" width="240" height="360" rx="20" opacity="0.5"/>
+          <ellipse cx="200" cy="180" rx="32" ry="58" fill="rgba(232,180,184,0.18)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <!-- Marble/abstract design -->
+          <path d="M170 160 Q190 145 210 160 Q230 175 250 165" fill="none" stroke="rgba(212,148,154,0.25)" stroke-width="2"/>
+          <path d="M165 180 Q185 195 205 180 Q225 165 245 180" fill="none" stroke="rgba(212,148,154,0.2)" stroke-width="1.5"/>
+          <circle cx="180" cy="170" r="3" fill="rgba(212,148,154,0.3)"/>
+          <circle cx="220" cy="175" r="2.5" fill="rgba(212,148,154,0.25)"/>
+          <text x="200" y="430" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Мраморный дизайн</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">🫧 Мраморный дизайн</span>
+        </div>
+      </div>
+    </div>
+    <!-- Item 5 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 340" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="340" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="30" width="240" height="240" rx="20" opacity="0.4"/>
+          <ellipse cx="170" cy="150" rx="20" ry="40" fill="rgba(232,180,184,0.2)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <ellipse cx="230" cy="150" rx="20" ry="40" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.25)" stroke-width="1.5"/>
+          <!-- Minimalist line art -->
+          <line x1="170" y1="130" x2="170" y2="170" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <line x1="230" y1="130" x2="230" y2="170" stroke="rgba(212,148,154,0.25)" stroke-width="1.5"/>
+          <circle cx="170" cy="130" r="2" fill="rgba(212,148,154,0.3)"/>
+          <circle cx="230" cy="130" r="2" fill="rgba(212,148,154,0.25)"/>
+          <text x="200" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Минимализм</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">➖ Минималистичный дизайн</span>
+        </div>
+      </div>
+    </div>
+    <!-- Item 6 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="460" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="40" width="240" height="340" rx="20" opacity="0.5"/>
+          <ellipse cx="200" cy="170" rx="30" ry="55" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <!-- Strawberry design -->
+          <circle cx="200" cy="165" r="10" fill="rgba(232,180,184,0.35)"/>
+          <circle cx="200" cy="165" r="6" fill="rgba(232,180,184,0.2)"/>
+          <circle cx="196" cy="160" r="2" fill="rgba(232,180,184,0.4)"/>
+          <circle cx="204" cy="162" r="2" fill="rgba(232,180,184,0.4)"/>
+          <circle cx="200" cy="168" r="2" fill="rgba(232,180,184,0.4)"/>
+          <text x="200" y="410" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Ягодный дизайн</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">🍓 Ягодный дизайн</span>
+        </div>
+      </div>
+    </div>
+    <!-- Item 7 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="380" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="30" width="240" height="280" rx="20" opacity="0.45"/>
+          <ellipse cx="200" cy="150" rx="25" ry="50" fill="rgba(232,180,184,0.18)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <!-- Butterfly design -->
+          <path d="M180 140 Q170 130 175 120 Q180 115 190 125 Q195 130 190 140 Z" fill="rgba(232,180,184,0.3)"/>
+          <path d="M220 140 Q230 130 225 120 Q220 115 210 125 Q205 130 210 140 Z" fill="rgba(232,180,184,0.3)"/>
+          <path d="M190 145 L200 150 L210 145" fill="none" stroke="rgba(212,148,154,0.2)" stroke-width="1"/>
+          <text x="200" y="320" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Бабочки</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">🦋 Дизайн с бабочками</span>
+        </div>
+      </div>
+    </div>
+    <!-- Item 8 -->
+    <div class="masonry-item">
+      <div class="masonry-item-inner">
+        <svg viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#fdf8f3" width="400" height="440" rx="16"/>
+          <rect fill="#f2d5d8" x="80" y="40" width="240" height="320" rx="20" opacity="0.5"/>
+          <ellipse cx="200" cy="170" rx="32" ry="55" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+          <!-- Ombre effect -->
+          <ellipse cx="200" cy="160" rx="26" ry="45" fill="url(#pinkGrad)" opacity="0.15"/>
+          <ellipse cx="200" cy="150" rx="26" ry="35" fill="url(#pinkGrad)" opacity="0.1"/>
+          <text x="200" y="390" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#d4949a" opacity="0.6">Омбре с золотом</text>
+        </svg>
+        <div class="masonry-overlay">
+          <span class="masonry-overlay-text">🌟 Омбре с золотыми вкраплениями</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="about" id="about">
+  <div class="about-image">
+    <svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bgAbout" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f2d5d8"/>
+          <stop offset="1" stop-color="#fdf8f3"/>
+        </linearGradient>
+      </defs>
+      <rect fill="url(#bgAbout)" width="500" height="600" rx="24"/>
+      <!-- Decorative circles -->
+      <circle cx="250" cy="230" r="150" fill="rgba(232,180,184,0.08)"/>
+      <circle cx="250" cy="230" r="110" fill="rgba(232,180,184,0.06)"/>
+      <!-- 4 nail polish bottles -->
+      <rect x="110" y="120" width="45" height="65" rx="8" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="117" y="100" width="31" height="26" rx="5" fill="rgba(232,180,184,0.2)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="124" y="82" width="18" height="22" rx="4" fill="rgba(232,180,184,0.25)" stroke="rgba(212,148,154,0.35)" stroke-width="1.5"/>
+      <rect x="128" y="65" width="10" height="20" rx="3" fill="url(#pinkGrad)" opacity="0.5"/>
+      <!-- Bottle 2 -->
+      <rect x="195" y="110" width="40" height="60" rx="8" fill="rgba(232,180,184,0.12)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="201" y="92" width="28" height="24" rx="5" fill="rgba(232,180,184,0.18)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="207" y="76" width="16" height="20" rx="4" fill="rgba(232,180,184,0.22)" stroke="rgba(212,148,154,0.35)" stroke-width="1.5"/>
+      <rect x="211" y="60" width="9" height="18" rx="3" fill="url(#pinkGrad)" opacity="0.4"/>
+      <!-- Bottle 3 -->
+      <rect x="280" y="130" width="48" height="68" rx="8" fill="rgba(232,180,184,0.15)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="287" y="110" width="34" height="26" rx="5" fill="rgba(232,180,184,0.2)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="293" y="92" width="20" height="22" rx="4" fill="rgba(232,180,184,0.25)" stroke="rgba(212,148,154,0.35)" stroke-width="1.5"/>
+      <rect x="297" y="75" width="11" height="20" rx="3" fill="url(#pinkGrad)" opacity="0.55"/>
+      <!-- Bottle 4 -->
+      <rect x="360" y="115" width="42" height="62" rx="8" fill="rgba(232,180,184,0.12)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="366" y="96" width="30" height="25" rx="5" fill="rgba(232,180,184,0.18)" stroke="rgba(212,148,154,0.3)" stroke-width="1.5"/>
+      <rect x="372" y="78" width="18" height="22" rx="4" fill="rgba(232,180,184,0.22)" stroke="rgba(212,148,154,0.35)" stroke-width="1.5"/>
+      <rect x="376" y="62" width="10" height="18" rx="3" fill="url(#pinkGrad)" opacity="0.45"/>
+      <!-- Hand silhouette -->
+      <path d="M220 520 C210 450 195 380 200 340 C205 315 215 310 225 318 C230 328 225 348 220 368 C225 345 235 320 245 324 C255 328 250 350 242 378 C247 350 258 325 268 330 C278 335 273 360 260 395 C255 415 248 448 242 480 L238 520 Z" fill="rgba(212,148,154,0.1)" stroke="rgba(212,148,154,0.2)" stroke-width="1.5"/>
+      <!-- Nail file -->
+      <rect x="320" y="280" width="120" height="16" rx="8" fill="rgba(232,180,184,0.1)" stroke="rgba(212,148,154,0.2)" stroke-width="1"/>
+      <rect x="320" y="280" width="60" height="16" rx="8" fill="rgba(232,180,184,0.15)"/>
+      <!-- Sparkles -->
+      <text x="145" y="280" font-size="14" fill="#d4949a" opacity="0.25">✦</text>
+      <text x="420" y="250" font-size="12" fill="#d4949a" opacity="0.2">✦</text>
+      <text x="435" y="270" font-size="10" fill="#d4949a" opacity="0.15">✦</text>
+      <!-- Text -->
+      <text x="250" y="550" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#d4949a">Елена</text>
+      <text x="250" y="572" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#b5a89a">Мастер nail-арта</text>
+    </svg>
+  </div>
+  <div class="about-content">
+    <h2>Привет, я Елена</h2>
+    <span class="about-tag">Мастер маникюра и педикюра · Санкт-Петербург</span>
+    <p>
+      Я занимаюсь nail-дизайном уже более 5 лет. Моя страсть — создавать красивые,
+      аккуратные и долговечные покрытия, которые радуют моих клиенток каждый день.
+    </p>
+    <p>
+      Постоянно учусь новому, прохожу курсы и мастер-классы, чтобы быть в курсе
+      последних трендов. Использую только премиальные материалы мировых брендов.
+    </p>
+    <div class="about-features">
+      <div class="about-feature">
+        <span class="check">✓</span> Индивидуальный подход
+      </div>
+      <div class="about-feature">
+        <span class="check">✓</span> Стерильность инструментов
+      </div>
+      <div class="about-feature">
+        <span class="check">✓</span> Премиальные материалы
+      </div>
+      <div class="about-feature">
+        <span class="check">✓</span> Любой дизайн
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICE ===== -->
+<section class="price" id="price">
+  <div class="section-header">
+    <h2>Цены на <span>услуги</span></h2>
+    <p>Прозрачные цены без скрытых доплат</p>
+  </div>
+  <div class="price-panel">
+    <div class="price-rows">
+      <div class="price-category">💅 Маникюр</div>
+      <div class="price-row"><span class="price-name">Классический маникюр</span><span class="price-val">1 500 ₽</span></div>
+      <div class="price-row"><span class="price-name">Аппаратный маникюр</span><span class="price-val">1 700 ₽</span></div>
+      <div class="price-row"><span class="price-name">Комбинированный маникюр</span><span class="price-val">1 800 ₽</span></div>
+      <div class="price-row"><span class="price-name">Маникюр + покрытие гель-лак</span><span class="price-val">2 000 ₽</span></div>
+
+      <div class="price-category">🦶 Педикюр</div>
+      <div class="price-row"><span class="price-name">Аппаратный педикюр</span><span class="price-val">2 000 ₽</span></div>
+      <div class="price-row"><span class="price-name">Педикюр + покрытие гель-лак</span><span class="price-val">2 500 ₽</span></div>
+      <div class="price-row"><span class="price-name">Комплекс (руки + ноги)</span><span class="price-val">3 800 ₽</span></div>
+
+      <div class="price-category">🎨 Дизайн</div>
+      <div class="price-row"><span class="price-name">Простой дизайн (френч, лунки)</span><span class="price-val">500 ₽</span></div>
+      <div class="price-row"><span class="price-name">Сложный дизайн (градиент, роспись)</span><span class="price-val">800 ₽</span></div>
+      <div class="price-row"><span class="price-name">Стразы / инкрустация</span><span class="price-val">от 300 ₽</span></div>
+      <div class="price-row"><span class="price-name">Наращивание 1 ноготь</span><span class="price-val">300 ₽</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REVIEWS ===== -->
+<section class="reviews" id="reviews">
+  <div class="section-header">
+    <h2>Отзывы <span>клиентов</span></h2>
+    <p>Более 800 довольных клиенток за 5 лет работы</p>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">«Елена — настоящий профессионал! Маникюр держится 3 недели, дизайн аккуратнейший. Очень уютно и приятно находиться у неё в гостях. Рекомендую всем!»</p>
+      <div class="review-author">
+        <div class="review-avatar">А</div>
+        <div>
+          <div class="review-name">Анна</div>
+          <div class="review-service">Маникюр + дизайн</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">«Хожу к Елене уже год, и каждый раз в восторге! Она всегда предлагает что-то новое и стильное. Педикюр делает просто идеально. Спасибо за твоё мастерство!»</p>
+      <div class="review-author">
+        <div class="review-avatar">М</div>
+        <div>
+          <div class="review-name">Мария</div>
+          <div class="review-service">Педикюр + покрытие</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">«Очень понравился дизайн с бабочками — сделала в точности как я хотела, даже лучше! Елена чуткая, внимательная, учла все пожелания. Обязательно вернусь!»</p>
+      <div class="review-author">
+        <div class="review-avatar">К</div>
+        <div>
+          <div class="review-name">Ксения</div>
+          <div class="review-service">Дизайн ногтей</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="contact" id="contact">
+  <div class="contact-info">
+    <h3>Записаться</h3>
+    <p>Заполни форму или напиши мне в мессенджер — я отвечу в течение часа</p>
+    <div class="contact-items">
+      <div class="contact-item">
+        <div class="contact-item-icon">📍</div>
+        <div class="contact-item-text">
+          <strong>Санкт-Петербург</strong>
+          <span>м. Невский проспект, центр города</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">📱</div>
+        <div class="contact-item-text">
+          <strong>+7 (999) 123-45-67</strong>
+          <span>Звонки и WhatsApp</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">✉️</div>
+        <div class="contact-item-text">
+          <strong>@elena_nail</strong>
+          <span>Telegram / Instagram</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">🕐</div>
+        <div class="contact-item-text">
+          <strong>Пн–Сб: 10:00 – 20:00</strong>
+          <span>Вс: по записи</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form class="contact-form" onsubmit="event.preventDefault(); alert('Спасибо за заявку! Я свяжусь с вами в ближайшее время ❤️');">
+    <h4>Оставь заявку</h4>
+    <p>Заполни форму — я перезвоню в течение часа</p>
+    <input type="text" placeholder="Твоё имя" required>
+    <input type="tel" placeholder="Номер телефона" required>
+    <select>
+      <option>Выбери услугу</option>
+      <option>Классический маникюр</option>
+      <option>Аппаратный маникюр</option>
+      <option>Маникюр + покрытие</option>
+      <option>Педикюр</option>
+      <option>Педикюр + покрытие</option>
+      <option>Комплекс (руки + ноги)</option>
+      <option>Дизайн ногтей</option>
+      <option>Наращивание</option>
+    </select>
+    <textarea placeholder="Удобное время и дата..."></textarea>
+    <button type="submit">Отправить заявку ✨</button>
+  </form>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h4>Elena Nail</h4>
+      <p>Создаю нежный и стильный nail-дизайн в Санкт-Петербурге. Премиальные материалы, индивидуальный подход, более 5 лет опыта.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Услуги</h5>
+      <a href="#services">Маникюр</a>
+      <a href="#services">Педикюр</a>
+      <a href="#services">Дизайн</a>
+      <a href="#services">Наращивание</a>
+    </div>
+    <div class="footer-col">
+      <h5>Инфо</h5>
+      <a href="#about">Обо мне</a>
+      <a href="#price">Цены</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#portfolio">Работы</a>
+    </div>
+    <div class="footer-col">
+      <h5>Контакты</h5>
+      <a href="#">+7 (999) 123-45-67</a>
+      <a href="#">Telegram</a>
+      <a href="#">Instagram</a>
+      <a href="#">WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2025 Elena Nail · Санкт-Петербург · Сделано с ❤️
+  </div>
+</footer>
+
+</body>
+</html>

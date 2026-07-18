@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Андрей — Разработчик ботов и AI-решений</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #1c1915;
+  color: #d4cfc8;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+::selection { background: rgba(201, 169, 97, 0.35); color: #fff; }
+a { color: #c9a961; text-decoration: none; transition: color 0.3s; }
+a:hover { color: #e2c57e; }
+img { max-width: 100%; display: block; }
+
+/* ========== ANIMATED BACKGROUND ========== */
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+.bg-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(201, 169, 97, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 70%, rgba(201, 169, 97, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(28, 25, 21, 0.6) 0%, #1c1915 100%);
+}
+
+/* floating grid */
+.grid-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(201, 169, 97, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 169, 97, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridDrift 20s linear infinite;
+}
+@keyframes gridDrift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(60px, 60px); }
+}
+
+/* floating blob */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.15;
+  animation: blobFloat 18s ease-in-out infinite alternate;
+}
+.blob-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #c9a961, transparent);
+  top: -10%; left: -5%;
+  animation-duration: 22s;
+}
+.blob-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #b98a5e, transparent);
+  bottom: -5%; right: -5%;
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+.blob-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #e2c57e, transparent);
+  top: 50%; left: 50%;
+  animation-duration: 20s;
+  animation-delay: -14s;
+}
+@keyframes blobFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(60px, -40px) scale(1.1); }
+  66% { transform: translate(-30px, 50px) scale(0.9); }
+  100% { transform: translate(40px, -20px) scale(1.05); }
+}
+
+/* ========== PETALS / PARTICLES ========== */
+.petal-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.petal {
+  position: absolute;
+  top: -40px;
+  width: 14px; height: 14px;
+  background: radial-gradient(ellipse at 30% 30%, #e2c57e, #c9a961);
+  border-radius: 50% 0 50% 0;
+  opacity: 0;
+  animation: petalFall linear infinite;
+}
+.petal:nth-child(1)  { left: 5%;   width: 10px; height: 10px; animation-duration: 14s; animation-delay: 0s;   opacity: 0.3; }
+.petal:nth-child(2)  { left: 15%;  width: 16px; height: 16px; animation-duration: 18s; animation-delay: 2s;   opacity: 0.25; }
+.petal:nth-child(3)  { left: 25%;  width: 8px;  height: 8px;  animation-duration: 12s; animation-delay: 5s;   opacity: 0.35; }
+.petal:nth-child(4)  { left: 35%;  width: 13px; height: 13px; animation-duration: 20s; animation-delay: 1s;   opacity: 0.2; }
+.petal:nth-child(5)  { left: 45%;  width: 11px; height: 11px; animation-duration: 16s; animation-delay: 7s;   opacity: 0.3; }
+.petal:nth-child(6)  { left: 55%;  width: 9px;  height: 9px;  animation-duration: 15s; animation-delay: 3s;   opacity: 0.25; }
+.petal:nth-child(7)  { left: 65%;  width: 15px; height: 15px; animation-duration: 19s; animation-delay: 9s;   opacity: 0.2; }
+.petal:nth-child(8)  { left: 75%;  width: 7px;  height: 7px;  animation-duration: 11s; animation-delay: 4s;   opacity: 0.35; }
+.petal:nth-child(9)  { left: 85%;  width: 12px; height: 12px; animation-duration: 17s; animation-delay: 6s;   opacity: 0.25; }
+.petal:nth-child(10) { left: 92%;  width: 10px; height: 10px; animation-duration: 13s; animation-delay: 8s;   opacity: 0.3; }
+.petal:nth-child(11) { left: 10%;  width: 6px;  height: 6px;  animation-duration: 22s; animation-delay: 1.5s; opacity: 0.4; }
+.petal:nth-child(12) { left: 50%;  width: 18px; height: 18px; animation-duration: 24s; animation-delay: 10s;  opacity: 0.15; }
+
+@keyframes petalFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--petal-opacity, 0.3);
+  }
+  90% {
+    opacity: var(--petal-opacity, 0.3);
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ========== LAYOUT ========== */
+.container {
+  position: relative;
+  z-index: 3;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.section {
+  padding: 100px 0;
+  position: relative;
+}
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c9a961;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 169, 97, 0.4), transparent);
+  max-width: 80px;
+}
+
+/* ========== HERO ========== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 120px 0 80px;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-content { position: relative; }
+.hero-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #c9a961;
+  border: 1px solid rgba(201, 169, 97, 0.3);
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+  background: rgba(201, 169, 97, 0.06);
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1.1;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #e2c57e 0%, #c9a961 40%, #b98a5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  color: rgba(212, 207, 200, 0.7);
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+.hero-location {
+  font-size: 0.9rem;
+  color: rgba(212, 207, 200, 0.5);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-location::before {
+  content: '✦';
+  color: #c9a961;
+  font-size: 0.7rem;
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+.hero-stat {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 169, 97, 0.12);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s;
+}
+.hero-stat:hover {
+  border-color: rgba(201, 169, 97, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+.hero-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #c9a961;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.hero-stat-label {
+  font-size: 0.75rem;
+  color: rgba(212, 207, 200, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+/* Hero right — profile image */
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.hero-frame {
+  position: relative;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(201, 169, 97, 0.25);
+  box-shadow:
+    0 0 60px rgba(201, 169, 97, 0.1),
+    inset 0 0 60px rgba(201, 169, 97, 0.05);
+}
+.hero-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-frame-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 97, 0.15);
+  animation: ringPulse 4s ease-in-out infinite;
+}
+.hero-frame-ring-2 {
+  position: absolute;
+  inset: -24px;
+  border-radius: 50%;
+  border: 1px dashed rgba(201, 169, 97, 0.08);
+  animation: ringSpin 20s linear infinite;
+}
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.5; }
+}
+@keyframes ringSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========== ABOUT ========== */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.about-text h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  color: #e8e2d8;
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+.about-text h2 em {
+  font-style: italic;
+  color: #c9a961;
+}
+.about-text p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(212, 207, 200, 0.8);
+  margin-bottom: 16px;
+}
+.about-text .highlight {
+  color: #c9a961;
+  font-weight: 500;
+}
+.about-text .journey {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  padding: 12px 20px;
+  background: rgba(201, 169, 97, 0.06);
+  border: 1px solid rgba(201, 169, 97, 0.15);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.journey-arrow {
+  color: #c9a961;
+  font-size: 1.2rem;
+}
+.about-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.about-stat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 169, 97, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s;
+}
+.about-stat-card:hover {
+  border-color: rgba(201, 169, 97, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+}
+.about-stat-card .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #c9a961;
+  line-height: 1;
+}
+.about-stat-card .label {
+  font-size: 0.85rem;
+  color: rgba(212, 207, 200, 0.6);
+  margin-top: 4px;
+}
+.about-stat-card .desc {
+  font-size: 0.8rem;
+  color: rgba(212, 207, 200, 0.4);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ========== BOTS ========== */
+.bots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.bot-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 169, 97, 0.1);
+  border-radius: 20px;
+  padding: 32px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.bot-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c9a961, transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.bot-card:hover::before { opacity: 1; }
+.bot-card:hover {
+  border-color: rgba(201, 169, 97, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+.bot-card.hit {
+  border-color: rgba(201, 169, 97, 0.3);
+  background: rgba(201, 169, 97, 0.05);
+}
+.bot-card.hit .bot-badge {
+  background: #c9a961;
+  color: #1c1915;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+.bot-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+.bot-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  background: rgba(201, 169, 97, 0.1);
+  border: 1px solid rgba(201, 169, 97, 0.15);
+}
+.bot-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #e8e2d8;
+  margin-bottom: 2px;
+}
+.bot-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(201, 169, 97, 0.7);
+}
+.bot-desc {
+  font-size: 0.9rem;
+  color: rgba(212, 207, 200, 0.7);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex: 1;
+}
+.bot-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1px solid rgba(201, 169, 97, 0.25);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #c9a961;
+  background: transparent;
+  transition: all 0.3s;
+  width: fit-content;
+  cursor: pointer;
+}
+.bot-btn:hover {
+  background: rgba(201, 169, 97, 0.1);
+  border-color: #c9a961;
+  color: #e2c57e;
+}
+.bot-btn-hit {
+  background: rgba(201, 169, 97, 0.15);
+  border-color: #c9a961;
+  color: #e2c57e;
+}
+.bot-btn-hit:hover {
+  background: rgba(201, 169, 97, 0.25);
+}
+
+/* ========== SKILLS ========== */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+.skill-chip {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 169, 97, 0.1);
+  border-radius: 12px;
+  padding: 18px 16px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s;
+  cursor: default;
+}
+.skill-chip:hover {
+  border-color: rgba(201, 169, 97, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+.skill-chip .icon {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  display: block;
+}
+.skill-chip .name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(212, 207, 200, 0.85);
+}
+.skill-chip .name.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+}
+
+/* ========== CONTACTS ========== */
+.contacts-section {
+  padding-bottom: 60px;
+}
+.contacts-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.contacts-text h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: #e8e2d8;
+  margin-bottom: 16px;
+}
+.contacts-text p {
+  color: rgba(212, 207, 200, 0.6);
+  margin-bottom: 32px;
+  font-size: 0.95rem;
+}
+.contacts-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 169, 97, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s;
+  color: rgba(212, 207, 200, 0.8);
+  font-size: 0.9rem;
+}
+.contact-item:hover {
+  border-color: rgba(201, 169, 97, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2c57e;
+}
+.contact-item .icon {
+  font-size: 1.2rem;
+  width: 32px;
+  text-align: center;
+  color: #c9a961;
+}
+.contact-item .label {
+  font-size: 0.75rem;
+  color: rgba(212, 207, 200, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.contact-item .value {
+  font-weight: 500;
+}
+.contacts-callout {
+  position: relative;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 169, 97, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-align: center;
+}
+.contacts-callout .big-icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+.contacts-callout h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: #e8e2d8;
+  margin-bottom: 8px;
+}
+.contacts-callout p {
+  font-size: 0.9rem;
+  color: rgba(212, 207, 200, 0.6);
+  margin-bottom: 20px;
+}
+.contacts-callout .city-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #c9a961;
+  border: 1px solid rgba(201, 169, 97, 0.2);
+  padding: 6px 16px;
+  border-radius: 100px;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+  border-top: 1px solid rgba(201, 169, 97, 0.08);
+  padding: 32px 0;
+  text-align: center;
+  position: relative;
+  z-index: 3;
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  color: rgba(212, 207, 200, 0.5);
+}
+.footer-name span { color: #c9a961; }
+.footer-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.footer-links a {
+  font-size: 0.8rem;
+  color: rgba(212, 207, 200, 0.4);
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: #c9a961; }
+.footer-city {
+  font-size: 0.75rem;
+  color: rgba(212, 207, 200, 0.3);
+}
+
+/* ========== MODAL ========== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal {
+  background: #25211c;
+  border: 1px solid rgba(201, 169, 97, 0.15);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  animation: modalIn 0.3s ease-out;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 97, 0.15);
+  background: transparent;
+  color: rgba(212, 207, 200, 0.5);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.modal-close:hover {
+  border-color: #c9a961;
+  color: #c9a961;
+  background: rgba(201, 169, 97, 0.1);
+}
+.modal h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: #e8e2d8;
+  margin-bottom: 8px;
+}
+.modal .modal-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(201, 169, 97, 0.7);
+  margin-bottom: 16px;
+}
+.modal p {
+  color: rgba(212, 207, 200, 0.7);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.modal .modal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(201, 169, 97, 0.1);
+  border: 1px solid #c9a961;
+  border-radius: 100px;
+  color: #e2c57e;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.modal .modal-btn:hover {
+  background: rgba(201, 169, 97, 0.2);
+  color: #fff;
+}
+
+/* ========== SCROLL INDICATOR ========== */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(212, 207, 200, 0.3);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+.scroll-indicator .line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, rgba(201, 169, 97, 0.3), transparent);
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  .hero-location { justify-content: center; }
+  .hero-visual { order: -1; }
+  .hero-frame { width: 220px; height: 220px; }
+  .hero-frame-ring, .hero-frame-ring-2 { display: none; }
+  .hero-stats { justify-content: center; }
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .contacts-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+@media (max-width: 768px) {
+  .section { padding: 60px 0; }
+  .hero { padding: 100px 0 60px; min-height: auto; }
+  .hero-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .hero-stat { padding: 14px 10px; }
+  .hero-stat-num { font-size: 1.4rem; }
+  .bots-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: repeat(3, 1fr); }
+  .footer-inner { flex-direction: column; text-align: center; }
+  .footer-links { display: none; }
+  .contacts-callout { padding: 30px 20px; }
+  .scroll-indicator { display: none; }
+}
+@media (max-width: 480px) {
+  .skills-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-stat { padding: 10px 8px; }
+  .hero-stat-num { font-size: 1.2rem; }
+  .hero-stat-label { font-size: 0.65rem; }
+  .container { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== ANIMATED BACKGROUND ===== -->
+<div class="bg-overlay"></div>
+<div class="grid-bg"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div class="petal-container">
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge">Портфолио</div>
+        <h1>Андрей</h1>
+        <p class="hero-subtitle">Разработчик ботов и AI-решений</p>
+        <p class="hero-location">Сызрань, Россия</p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-num" data-count="5">5+</div>
+            <div class="hero-stat-label">Ботов</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num" data-count="3">3+</div>
+            <div class="hero-stat-label">Года опыта</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num" data-count="500">500+</div>
+            <div class="hero-stat-label">Пользователей</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-frame">
+          <img src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop" alt="Андрей — разработчик ботов" loading="lazy">
+          <div class="hero-frame-ring"></div>
+          <div class="hero-frame-ring-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Листай</span>
+    <div class="line"></div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="section-label">Обо мне</div>
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>Из водительского кресла —<br>в <em>мир разработки</em></h2>
+        <p>
+          Меня зовут Андрей. Я из Сызрани. До того как стать разработчиком, 
+          я работал водителем автобуса — маршруты, графики, люди. 
+          Но тянуло к технологиям. Начал изучать Python самостоятельно, 
+          по вечерам, собирая первых простых ботов.
+        </p>
+        <p>
+          Со временем хобби переросло в профессию. Сегодня я разрабатываю 
+          Telegram-ботов и AI-решения, которые решают реальные задачи — 
+          от отслеживания цен до записи на услуги. 
+          <span class="highlight">Самоучка</span>, и этим горжусь.
+        </p>
+        <div class="journey">
+          <span>🚌 Водитель автобуса</span>
+          <span class="journey-arrow">→</span>
+          <span>💻 Разработчик</span>
+        </div>
+        <p>
+          Каждый новый проект — это вызов и возможность сделать 
+          что-то полезное. Я верю в простые, надёжные решения 
+          и чистый код.
+        </p>
+      </div>
+      <div class="about-side">
+        <div class="about-stat-card">
+          <div class="num">5+</div>
+          <div class="label">Telegram-ботов в продакшене</div>
+          <div class="desc">От простых утилит до AI-ассистентов</div>
+        </div>
+        <div class="about-stat-card">
+          <div class="num">3+</div>
+          <div class="label">Года в разработке</div>
+          <div class="desc">С нуля до коммерческих проектов</div>
+        </div>
+        <div class="about-stat-card">
+          <div class="num">500+</div>
+          <div class="label">Активных пользователей</div>
+          <div class="desc">По всем ботам суммарно</div>
+        </div>
+        <div class="about-stat-card">
+          <div class="num">100%</div>
+          <div class="label">Самоучка</div>
+          <div class="desc">Никаких курсов — только практика и документация</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BOTS ===== -->
+<section class="section" id="bots">
+  <div class="container">
+    <div class="section-label">Проекты</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#e8e2d8;margin-bottom:40px;line-height:1.2;">
+      Мои боты
+    </h2>
+    <div class="bots-grid">
+
+      <!-- DealBot63 -->
+      <div class="bot-card">
+        <div class="bot-card-header">
+          <div class="bot-icon">📦</div>
+        </div>
+        <div class="bot-name">DealBot63</div>
+        <div class="bot-tag">@DealBot63_bot</div>
+        <p class="bot-desc">Отслеживание цен на Ozon. Мониторинг скидок, история изменений, уведомления о снижении цены на выбранные товары.</p>
+        <a href="tg://resolve?domain=DealBot63_bot" class="bot-btn">Открыть в Telegram →</a>
+      </div>
+
+      <!-- GlamBot -->
+      <div class="bot-card">
+        <div class="bot-card-header">
+          <div class="bot-icon">💅</div>
+        </div>
+        <div class="bot-name">GlamBot</div>
+        <div class="bot-tag">@nail163_bot</div>
+        <p class="bot-desc">Запись на маникюр. Онлайн-календарь, выбор мастера, напоминания о записи и каталог услуг.</p>
+        <a href="tg://resolve?domain=nail163_bot" class="bot-btn">Открыть в Telegram →</a>
+      </div>
+
+      <!-- BeautyBot -->
+      <div class="bot-card">
+        <div class="bot-card-header">
+          <div class="bot-icon">🌸</div>
+        </div>
+        <div class="bot-name">BeautyBot</div>
+        <div class="bot-tag">@Nailselegantstudio_bot</div>
+        <p class="bot-desc">Бьюти-услуги. Запись к стилистам, визажистам, бровистам. Управление расписанием и клиентской базой.</p>
+        <a href="tg://resolve?domain=Nailselegantstudio_bot" class="bot-btn">Открыть в Telegram →</a>
+      </div>
+
+      <!-- FinBot -->
+      <div class="bot-card">
+        <div class="bot-card-header">
+          <div class="bot-icon">💰</div>
+        </div>
+        <div class="bot-name">FinBot</div>
+        <div class="bot-tag">@finpro63_bot</div>
+        <p class="bot-desc">Финансовый помощник. Учёт расходов, категории транзакций, статистика по месяцам, экспорт данных.</p>
+        <a href="tg://resolve?domain=finpro63_bot" class="bot-btn">Открыть в Telegram →</a>
+      </div>
+
+      <!-- DebiHackBot (ХИТ!) -->
+      <div class="bot-card hit">
+        <div class="bot-card-header">
+          <div class="bot-icon">🤖</div>
+          <span class="bot-badge">ХИТ!</span>
+        </div>
+        <div class="bot-name">DebiHackBot</div>
+        <div class="bot-tag">@DebiHackBot</div>
+        <p class="bot-desc">AI-ассистент на базе Hermes. Отвечает на вопросы, помогает с задачами, генерирует тексты и код. Самый популярный бот в портфолио.</p>
+        <a href="tg://resolve?domain=DebiHackBot" class="bot-btn bot-btn-hit">Открыть в Telegram →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== SKILLS ===== -->
+<section class="section" id="skills">
+  <div class="container">
+    <div class="section-label">Навыки</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#e8e2d8;margin-bottom:40px;line-height:1.2;">
+      Технологии и инструменты
+    </h2>
+    <div class="skills-grid">
+      <div class="skill-chip"><span class="icon">🐍</span><span class="name">Python</span></div>
+      <div class="skill-chip"><span class="icon">⚡</span><span class="name mono">aiogram</span></div>
+      <div class="skill-chip"><span class="icon">🌐</span><span class="name mono">Flask</span></div>
+      <div class="skill-chip"><span class="icon">🐳</span><span class="name mono">Docker</span></div>
+      <div class="skill-chip"><span class="icon">🔄</span><span class="name mono">OmniRoute</span></div>
+      <div class="skill-chip"><span class="icon">🧠</span><span class="name mono">Hermes</span></div>
+      <div class="skill-chip"><span class="icon">🎨</span><span class="name">HTML/CSS</span></div>
+      <div class="skill-chip"><span class="icon">🔮</span><span class="name mono">DashScope API</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACTS ===== -->
+<section class="section contacts-section" id="contacts">
+  <div class="container">
+    <div class="section-label">Контакты</div>
+    <div class="contacts-content">
+      <div class="contacts-text">
+        <h2>Давайте работать вместе</h2>
+        <p>Открыт к предложениям, сотрудничеству и новым проектам. Пишите в Telegram или на GitHub.</p>
+        <div class="contacts-links">
+          <a href="https://t.me/Vandrey63" target="_blank" rel="noopener" class="contact-item">
+            <span class="icon">✈️</span>
+            <div>
+              <div class="label">Telegram</div>
+              <div class="value">@Vandrey63</div>
+            </div>
+          </a>
+          <a href="https://github.com/kelf2009-801" target="_blank" rel="noopener" class="contact-item">
+            <span class="icon">💻</span>
+            <div>
+              <div class="label">GitHub</div>
+              <div class="value">kelf2009-801</div>
+            </div>
+          </a>
+          <div class="contact-item" style="cursor:default;">
+            <span class="icon">📍</span>
+            <div>
+              <div class="label">Город</div>
+              <div class="value">Сызрань, Россия</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contacts-callout">
+        <div class="big-icon">🛠️</div>
+        <h3>Работаю над проектом?</h3>
+        <p>Расскажите о своей задаче — я помогу подобрать решение и реализовать его.</p>
+        <a href="https://t.me/Vandrey63" target="_blank" rel="noopener" class="bot-btn" style="margin:0 auto;">Написать в Telegram</a>
+        <div style="margin-top:20px;">
+          <span class="city-tag">📍 Сызрань</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-name">
+        © 2026 <span>Андрей</span> — Разработчик ботов и AI-решений
+      </div>
+      <div class="footer-links">
+        <a href="https://t.me/Vandrey63" target="_blank" rel="noopener">Telegram</a>
+        <a href="https://github.com/kelf2009-801" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="footer-city">Сызрань</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modal-title">Название бота</h3>
+    <div class="modal-tag" id="modal-tag">@username</div>
+    <p id="modal-desc">Описание бота.</p>
+    <a href="#" id="modal-link" class="modal-btn" target="_blank" rel="noopener">Открыть в Telegram →</a>
+  </div>
+</div>
+
+<!-- ===== JS ===== -->
+<script>
+// Counter animation
+function animateCounters() {
+  const counters = document.querySelectorAll('.hero-stat-num[data-count]');
+  counters.forEach(el => {
+    const target = parseInt(el.dataset.count);
+    const text = el.textContent;
+    const suffix = text.replace(/[\d]/g, '');
+    let current = 0;
+    const step = Math.max(1, Math.floor(target / 30));
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(interval);
+      }
+      el.textContent = current + suffix;
+    }, 40);
+  });
+}
+
+// Intersection Observer for counters
+const heroObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounters();
+      heroObserver.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+
+const heroStats = document.querySelector('.hero-stats');
+if (heroStats) heroObserver.observe(heroStats);
+
+// Modal functions
+function openModal(name, tag, desc, link) {
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-tag').textContent = tag;
+  document.getElementById('modal-desc').textContent = desc;
+  document.getElementById('modal-link').href = link;
+  document.getElementById('modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Smooth reveal for cards on scroll
+const revealElements = document.querySelectorAll('.bot-card, .about-stat-card, .skill-chip, .contact-item, .contacts-callout');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+  revealObserver.observe(el);
+});
+
+// Parallax blob effect on mouse move
+document.addEventListener('mousemove', function(e) {
+  const x = e.clientX / window.innerWidth;
+  const y = e.clientY / window.innerHeight;
+  const blobs = document.querySelectorAll('.blob');
+  blobs.forEach((blob, i) => {
+    const speed = 15 + i * 5;
+    const moveX = (x - 0.5) * speed;
+    const moveY = (y - 0.5) * speed;
+    blob.style.transform = `translate(${moveX}px, ${moveY}px)`;
+  });
+});
+
+// Console greeting
+console.log('%c👋 Привет!', 'font-size:24px; color:#c9a961;');
+console.log('%cСпасибо, что заглянули в портфолио Андрея.', 'font-size:14px; color:#d4cfc8;');
+console.log('%cПо вопросам: @Vandrey63', 'font-size:14px; color:#c9a961;');
+</script>
+</body>
+</html>

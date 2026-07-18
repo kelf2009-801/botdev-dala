@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BotForge — Платформа управления Telegram-ботами</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   BotForge — Enterprise SaaS для управления Telegram-ботами
+   Палитра: Тёмный графит / Уголь — Акценты cyan/blue/teal
+   Без фиолетового. Без неона. Без glassmorphism.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg-deep:        #0B0F14;
+  --bg-base:        #10151C;
+  --bg-panel:       #131A22;
+  --bg-elevated:    #171F29;
+  --bg-hover:       #1C2632;
+  --bg-input:       #0D1318;
+  --text-primary:   #E8EDF2;
+  --text-secondary:  #9BA8B5;
+  --text-muted:      #6B7785;
+  --text-faint:      #4A5563;
+  --accent-cyan:     #22D3EE;
+  --accent-blue:     #3B82F6;
+  --accent-teal:     #2DD4BF;
+  --accent-emerald:  #34D399;
+  --accent-amber:    #FBBF24;
+  --status-online:  #34D399;
+  --status-offline:  #6B7785;
+  --status-error:   #EF4444;
+  --status-warning: #FBBF24;
+  --status-info:    #3B82F6;
+  --danger:  #EF4444;
+  --danger-bg: rgba(239,68,68,0.1);
+  --success:  #22C55E;
+  --success-bg: rgba(34,197,94,0.1);
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-standard: rgba(255,255,255,0.09);
+  --border-strong: rgba(255,255,255,0.14);
+  --border-accent: rgba(34,211,238,0.3);
+  --r-sm: 4px; --r-md: 6px; --r-lg: 8px; --r-xl: 12px; --r-2xl: 16px; --r-full: 9999px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+  --shadow-glow-cyan: 0 0 12px rgba(34,211,238,0.15);
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --t-fast: 120ms ease; --t-med: 200ms ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: var(--font-sans); background: var(--bg-deep); color: var(--text-primary); line-height: 1.5; -webkit-font-smoothing: antialiased; overflow: hidden; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+svg { display: block; }
+
+/* ── LAYOUT ── */
+.app { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; grid-template-areas: "sidebar topbar" "sidebar main"; height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar { grid-area: sidebar; background: var(--bg-base); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-logo { height: 56px; display: flex; align-items: center; gap: 10px; padding: 0 18px; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0; }
+.sidebar-logo .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--bg-deep); }
+.sidebar-logo .logo-text { font-weight: 600; font-size: 15px; letter-spacing: -0.3px; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: var(--border-standard); border-radius: 4px; }
+.nav-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-faint); padding: 12px 18px 4px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 18px; margin: 1px 8px; border-radius: var(--r-md); color: var(--text-secondary); font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--t-fast); position: relative; }
+.nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-item.active { background: var(--bg-elevated); color: var(--accent-cyan); }
+.nav-item.active::before { content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--accent-cyan); border-radius: 0 3px 3px 0; }
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: var(--r-full); background: rgba(34,211,238,0.12); color: var(--accent-cyan); }
+.nav-badge.danger { background: rgba(239,68,68,0.12); color: var(--danger); }
+.sidebar-user { padding: 12px 18px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; transition: background var(--t-fast); }
+.sidebar-user:hover { background: var(--bg-hover); }
+.user-avatar { width: 32px; height: 32px; border-radius: var(--r-full); background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal)); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; color: white; flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.user-role { font-size: 11px; color: var(--text-muted); }
+
+/* ── TOPBAR ── */
+.topbar { grid-area: topbar; background: var(--bg-base); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; padding: 0 20px; gap: 16px; flex-shrink: 0; }
+.topbar-search { display: flex; align-items: center; gap: 8px; background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 0 12px; height: 34px; width: 320px; transition: border-color var(--t-fast); }
+.topbar-search:focus-within { border-color: var(--border-accent); }
+.topbar-search svg { width: 15px; height: 15px; color: var(--text-muted); flex-shrink: 0; }
+.topbar-search input { background: none; border: none; outline: none; flex: 1; font-size: 13px; color: var(--text-primary); }
+.topbar-search input::placeholder { color: var(--text-muted); }
+.topbar-search kbd { font-family: var(--font-mono); font-size: 10px; padding: 1px 5px; border-radius: var(--r-sm); background: var(--bg-elevated); border: 1px solid var(--border-standard); color: var(--text-muted); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.topbar-btn { width: 34px; height: 34px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: all var(--t-fast); position: relative; }
+.topbar-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.topbar-btn svg { width: 17px; height: 17px; }
+.topbar-btn .dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: var(--accent-amber); border-radius: var(--r-full); border: 2px solid var(--bg-base); }
+.topbar-divider { width: 1px; height: 24px; background: var(--border-subtle); margin: 0 4px; }
+
+/* ── MAIN ── */
+.main { grid-area: main; overflow-y: auto; background: var(--bg-deep); }
+.main::-webkit-scrollbar { width: 6px; }
+.main::-webkit-scrollbar-thumb { background: var(--border-standard); border-radius: 6px; }
+.main::-webkit-scrollbar-track { background: transparent; }
+.screen { display: none; padding: 24px 28px; }
+.screen.active { display: block; }
+
+/* ── PAGE HEADER ── */
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; gap: 16px; }
+.page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; color: var(--text-primary); }
+.page-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+.page-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; height: 34px; border-radius: var(--r-md); font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--t-fast); white-space: nowrap; border: 1px solid transparent; }
+.btn svg { width: 15px; height: 15px; }
+.btn-primary { background: var(--accent-cyan); color: var(--bg-deep); font-weight: 600; }
+.btn-primary:hover { background: #06B6D4; }
+.btn-secondary { background: var(--bg-elevated); color: var(--text-primary); border-color: var(--border-standard); }
+.btn-secondary:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.btn-ghost { color: var(--text-secondary); }
+.btn-ghost:hover { color: var(--text-primary); background: var(--bg-hover); }
+.btn-danger { background: var(--danger-bg); color: var(--danger); border-color: rgba(239,68,68,0.25); }
+.btn-danger:hover { background: rgba(239,68,68,0.18); }
+.btn-sm { height: 28px; font-size: 12px; padding: 0 10px; }
+.btn-icon { width: 34px; height: 34px; padding: 0; justify-content: center; }
+.btn-icon.sm { width: 28px; height: 28px; }
+.btn-icon.sm svg { width: 14px; height: 14px; }
+
+/* ── CARDS ── */
+.card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--r-xl); overflow: hidden; }
+.card-header { padding: 14px 18px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.card-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.card-body { padding: 18px; }
+
+/* ── METRIC CARDS ── */
+.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.metric-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--r-xl); padding: 18px; position: relative; overflow: hidden; }
+.metric-card:hover { border-color: var(--border-standard); }
+.metric-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric-value { font-size: 28px; font-weight: 700; color: var(--text-primary); margin-top: 6px; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+.metric-delta { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 500; margin-top: 6px; padding: 2px 7px; border-radius: var(--r-sm); }
+.metric-delta.up { color: var(--success); background: var(--success-bg); }
+.metric-delta.down { color: var(--danger); background: var(--danger-bg); }
+.metric-delta svg { width: 12px; height: 12px; }
+.metric-icon { position: absolute; top: 18px; right: 18px; width: 36px; height: 36px; border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center; }
+.metric-icon svg { width: 18px; height: 18px; }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: var(--r-full); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.badge-online { background: rgba(52,211,153,0.12); color: var(--status-online); }
+.badge-offline { background: rgba(107,119,133,0.15); color: var(--text-muted); }
+.badge-error { background: rgba(239,68,68,0.12); color: var(--danger); }
+.badge-warning { background: rgba(251,191,36,0.12); color: var(--status-warning); }
+.badge-info { background: rgba(59,130,246,0.12); color: var(--accent-blue); }
+.badge-dot { width: 6px; height: 6px; border-radius: var(--r-full); flex-shrink: 0; }
+.badge-online .badge-dot { background: var(--status-online); box-shadow: 0 0 6px var(--status-online); }
+.badge-offline .badge-dot { background: var(--text-muted); }
+.badge-error .badge-dot { background: var(--danger); }
+.badge-warning .badge-dot { background: var(--status-warning); }
+.badge-neutral { background: var(--bg-elevated); color: var(--text-secondary); }
+
+/* ── TABLES ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { text-align: left; font-weight: 500; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); white-space: nowrap; }
+tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); vertical-align: middle; }
+tbody tr { transition: background var(--t-fast); }
+tbody tr:hover { background: var(--bg-hover); }
+tbody tr:last-child td { border-bottom: none; }
+td .cell-primary { color: var(--text-primary); font-weight: 500; }
+td .cell-muted { color: var(--text-muted); font-size: 12px; }
+td .cell-mono { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
+
+/* ── BOT CELL ── */
+.bot-cell { display: flex; align-items: center; gap: 10px; }
+.bot-avatar { width: 32px; height: 32px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; flex-shrink: 0; }
+.bot-avatar.cyan { background: rgba(34,211,238,0.12); color: var(--accent-cyan); }
+.bot-avatar.blue { background: rgba(59,130,246,0.12); color: var(--accent-blue); }
+.bot-avatar.teal { background: rgba(45,212,191,0.12); color: var(--accent-teal); }
+.bot-avatar.emerald { background: rgba(52,211,153,0.12); color: var(--accent-emerald); }
+.bot-avatar.amber { background: rgba(251,191,36,0.12); color: var(--accent-amber); }
+.bot-name { font-weight: 500; color: var(--text-primary); font-size: 13px; }
+.bot-username { font-size: 12px; color: var(--text-muted); }
+
+/* ── ROW ACTIONS ── */
+.row-actions { display: flex; gap: 4px; justify-content: flex-end; }
+.row-action { width: 28px; height: 28px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; transition: all var(--t-fast); }
+.row-action:hover { background: var(--bg-hover); color: var(--text-primary); }
+.row-action.danger:hover { color: var(--danger); background: var(--danger-bg); }
+.row-action svg { width: 15px; height: 15px; }
+
+/* ── TOGGLE ── */
+.toggle { width: 36px; height: 20px; background: var(--bg-input); border: 1px solid var(--border-standard); border-radius: var(--r-full); position: relative; cursor: pointer; transition: all var(--t-med); flex-shrink: 0; }
+.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: var(--text-muted); border-radius: var(--r-full); transition: all var(--t-med); }
+.toggle.on { background: var(--accent-cyan); border-color: var(--accent-cyan); }
+.toggle.on::after { left: 18px; background: var(--bg-deep); }
+
+/* ── INPUTS ── */
+.field-group { margin-bottom: 18px; }
+.field-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+.field-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.input, .select, .textarea { width: 100%; background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 0 12px; height: 36px; font-size: 13px; color: var(--text-primary); outline: none; transition: border-color var(--t-fast); }
+.input:focus, .select:focus, .textarea:focus { border-color: var(--border-accent); }
+.textarea { padding: 10px 12px; height: auto; min-height: 80px; resize: vertical; line-height: 1.5; }
+.input::placeholder, .textarea::placeholder { color: var(--text-muted); }
+.input.mono { font-family: var(--font-mono); font-size: 12px; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 20px; }
+.tab { padding: 10px 16px; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all var(--t-fast); position: relative; bottom: -1px; }
+.tab:hover { color: var(--text-primary); }
+.tab.active { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 24px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg-panel); border: 1px solid var(--border-standard); border-radius: var(--r-2xl); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+.modal-header { padding: 18px 22px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: 16px; font-weight: 600; }
+.modal-close { width: 30px; height: 30px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; }
+.modal-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+.modal-body { padding: 22px; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 8px; }
+
+/* ── TOAST ── */
+.toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 2000; }
+.toast { display: flex; align-items: center; gap: 10px; background: var(--bg-elevated); border: 1px solid var(--border-standard); border-radius: var(--r-md); padding: 12px 16px; min-width: 300px; max-width: 400px; box-shadow: var(--shadow-md); animation: toastIn 200ms ease; }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } }
+.toast.removing { animation: toastOut 200ms ease forwards; }
+@keyframes toastOut { to { transform: translateX(100%); opacity: 0; } }
+.toast-icon { width: 20px; height: 20px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.toast-icon svg { width: 14px; height: 14px; }
+.toast.success .toast-icon { background: var(--success-bg); color: var(--success); }
+.toast.error .toast-icon { background: var(--danger-bg); color: var(--danger); }
+.toast.info .toast-icon { background: rgba(59,130,246,0.12); color: var(--accent-blue); }
+.toast.warning .toast-icon { background: rgba(251,191,36,0.12); color: var(--status-warning); }
+.toast-text { font-size: 13px; color: var(--text-primary); flex: 1; }
+.toast-text .toast-title { font-weight: 600; }
+.toast-text .toast-msg { color: var(--text-secondary); font-size: 12px; margin-top: 1px; }
+
+/* ── EMPTY STATE ── */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; }
+.empty-icon { width: 56px; height: 56px; border-radius: var(--r-xl); background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.empty-icon svg { width: 26px; height: 26px; color: var(--text-muted); }
+.empty-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.empty-desc { font-size: 13px; color: var(--text-muted); max-width: 340px; margin-bottom: 16px; }
+
+/* ── SKELETON ── */
+.skeleton { background: linear-gradient(90deg, var(--bg-panel) 0%, var(--bg-elevated) 50%, var(--bg-panel) 100%); background-size: 200% 100%; border-radius: var(--r-sm); animation: shimmer 1.5s infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.skeleton-line { height: 12px; margin-bottom: 8px; }
+.skeleton-line.w-60 { width: 60%; } .skeleton-line.w-40 { width: 40%; } .skeleton-line.w-80 { width: 80%; }
+
+/* ── PROGRESS ── */
+.progress-bar { height: 6px; background: var(--bg-input); border-radius: var(--r-full); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: var(--r-full); transition: width 300ms ease; }
+
+/* ── CHART BARS ── */
+.chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 160px; padding-top: 12px; }
+.chart-bar { flex: 1; background: var(--bg-elevated); border-radius: var(--r-sm) var(--r-sm) 0 0; position: relative; min-height: 4px; transition: height 300ms ease; }
+.chart-bar .bar-fill { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, var(--accent-cyan), rgba(34,211,238,0.3)); border-radius: var(--r-sm) var(--r-sm) 0 0; }
+.chart-bar:hover .bar-fill { background: linear-gradient(180deg, var(--accent-blue), rgba(59,130,246,0.3)); }
+.chart-labels { display: flex; gap: 6px; margin-top: 8px; }
+.chart-label { flex: 1; text-align: center; font-size: 10px; color: var(--text-muted); }
+
+/* ── ACTIVITY FEED ── */
+.activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+.activity-item:last-child { border-bottom: none; }
+.activity-dot { width: 8px; height: 8px; border-radius: var(--r-full); margin-top: 6px; flex-shrink: 0; }
+.activity-text { font-size: 13px; color: var(--text-secondary); flex: 1; }
+.activity-text .highlight { color: var(--text-primary); font-weight: 500; }
+.activity-time { font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+
+/* ── GRIDS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
+.row-gap { margin-bottom: 16px; }
+
+/* ── TOKEN MASKED ── */
+.token-masked { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: var(--bg-input); padding: 3px 8px; border-radius: var(--r-sm); border: 1px solid var(--border-subtle); }
+.token-masked .reveal-btn { color: var(--text-muted); cursor: pointer; transition: color var(--t-fast); }
+.token-masked .reveal-btn:hover { color: var(--accent-cyan); }
+
+/* ── CODE BLOCK ── */
+.code-block { background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 14px 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; color: var(--text-secondary); overflow-x: auto; }
+.code-block .kw { color: var(--accent-cyan); } .code-block .str { color: var(--accent-emerald); } .code-block .num { color: var(--accent-amber); } .code-block .cmt { color: var(--text-faint); }
+
+/* ── INTEGRATION CARD ── */
+.integration-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--r-xl); padding: 18px; transition: all var(--t-fast); cursor: pointer; }
+.integration-card:hover { border-color: var(--border-standard); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.integration-icon { width: 40px; height: 40px; border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.integration-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.integration-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; margin-bottom: 12px; }
+
+/* ── ROLE MATRIX ── */
+.role-matrix th, .role-matrix td { text-align: center; }
+.role-matrix th:first-child, .role-matrix td:first-child { text-align: left; }
+
+/* ── ONBOARDING ── */
+.onboarding-overlay { position: fixed; inset: 0; background: rgba(11,15,20,0.92); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 3000; }
+.onboarding-overlay.open { display: flex; }
+.onboarding-card { background: var(--bg-panel); border: 1px solid var(--border-standard); border-radius: var(--r-2xl); width: 100%; max-width: 520px; padding: 32px; box-shadow: var(--shadow-lg); text-align: center; }
+.onboarding-icon { width: 64px; height: 64px; margin: 0 auto 20px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); border-radius: var(--r-xl); display: flex; align-items: center; justify-content: center; }
+.onboarding-icon svg { width: 30px; height: 30px; color: var(--bg-deep); }
+.onboarding-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+.onboarding-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+.onboarding-steps { display: flex; justify-content: center; gap: 6px; margin-bottom: 24px; }
+.onboarding-step { width: 24px; height: 4px; border-radius: var(--r-full); background: var(--bg-elevated); transition: background var(--t-med); }
+.onboarding-step.active { background: var(--accent-cyan); }
+.onboarding-step.done { background: var(--accent-teal); }
+
+/* ── MISC ── */
+.divider { height: 1px; background: var(--border-subtle); margin: 16px 0; }
+.flex { display: flex; } .flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; } .justify-between { justify-content: space-between; }
+.gap-8 { gap: 8px; } .gap-12 { gap: 12px; } .gap-16 { gap: 16px; }
+.mt-8 { margin-top: 8px; } .mt-16 { margin-top: 16px; } .mb-16 { margin-bottom: 16px; }
+.text-muted { color: var(--text-muted); } .text-sm { font-size: 12px; } .text-xs { font-size: 11px; }
+.font-mono { font-family: var(--font-mono); } .font-600 { font-weight: 600; }
+.nowrap { white-space: nowrap; } .flex-1 { flex: 1; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1200px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } .grid-2, .grid-3, .grid-2-1, .grid-1-2 { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .app { grid-template-columns: 1fr; grid-template-areas: "topbar" "main"; } .sidebar { display: none; } .topbar-search { width: auto; flex: 1; } .metric-grid { grid-template-columns: 1fr; } .screen { padding: 16px; } }
+
+/* ── TOOLTIP ── */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-standard); padding: 4px 8px; border-radius: var(--r-sm); font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity var(--t-fast); z-index: 100; }
+[data-tooltip]:hover::after { opacity: 1; }
+
+/* ── SELECT ── */
+.select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7785' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; padding-right: 32px; cursor: pointer; }
+.select option { background: var(--bg-panel); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">B</div>
+      <div class="logo-text">BotForge</div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <div class="nav-section-label">Управление</div>
+      <div class="nav-item active" data-screen="dashboard" data-tooltip="Обзор">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Обзор
+      </div>
+      <div class="nav-item" data-screen="bots">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+        Мои боты
+        <span class="nav-badge">4</span>
+      </div>
+      <div class="nav-item" data-screen="commands">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        Команды
+      </div>
+      <div class="nav-item" data-screen="broadcasts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        Рассылки
+        <span class="nav-badge danger">3</span>
+      </div>
+      <div class="nav-item" data-screen="logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+        Логи и события
+      </div>
+      <div class="nav-section-label">Аналитика</div>
+      <div class="nav-item" data-screen="analytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+        Аналитика
+      </div>
+      <div class="nav-item" data-screen="integrations">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+        Интеграции
+      </div>
+      <div class="nav-section-label">Администрирование</div>
+      <div class="nav-item" data-screen="team">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Команда и роли
+      </div>
+      <div class="nav-item" data-screen="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Настройки
+      </div>
+      <div class="nav-item" data-screen="billing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Биллинг
+      </div>
+      <div class="nav-item" data-screen="audit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Журнал аудита
+      </div>
+    </nav>
+    <div class="sidebar-user" data-tooltip="Профиль">
+      <div class="user-avatar">АК</div>
+      <div class="flex-1">
+        <div class="user-name">Андрей</div>
+        <div class="user-role">Владелец</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Поиск ботов, команд, логов..." id="globalSearch">
+      <kbd>⌘K</kbd>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-btn" data-tooltip="Добавить бота" onclick="openModal('addBotModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="topbar-btn" data-tooltip="Уведомления">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="dot"></span>
+      </div>
+      <div class="topbar-divider"></div>
+      <div class="topbar-btn" data-tooltip="Документация">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <div class="topbar-btn" data-tooltip="Настройки" onclick="switchScreen('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ════ ОБЗОР ════ -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Обзор</div>
+          <div class="page-subtitle">Все боты, активность и система в одном месте</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-secondary btn-sm" onclick="showToast('info','Экспорт','Экспорт данных начат...')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Экспорт
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addBotModal')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить бота
+          </button>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-icon" style="background:rgba(34,211,238,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg></div>
+          <div class="metric-label">Активные боты</div>
+          <div class="metric-value">4</div>
+          <div class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+1 за неделю</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:rgba(59,130,246,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="metric-label">Всего пользователей</div>
+          <div class="metric-value">3 449</div>
+          <div class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+4.2%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:rgba(45,212,191,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+          <div class="metric-label">Сообщений отправлено</div>
+          <div class="metric-value">72K</div>
+          <div class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+8.1%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:rgba(251,191,36,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="metric-label">Частота ошибок</div>
+          <div class="metric-value">0.3%</div>
+          <div class="metric-delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>-0.1%</div>
+        </div>
+      </div>
+
+      <div class="grid-2-1 row-gap">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Активность сообщений</div>
+              <div class="card-subtitle">Последние 14 дней</div>
+            </div>
+            <select class="select btn-sm" style="height:28px;width:auto">
+              <option>14 дней</option>
+              <option>30 дней</option>
+              <option>90 дней</option>
+            </select>
+          </div>
+          <div class="card-body">
+            <div class="chart-bars" id="activityChart"></div>
+            <div class="chart-labels" id="activityLabels"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Статус системы</div></div>
+          <div class="card-body">
+            <div class="flex flex-col gap-12">
+              <div class="flex items-center justify-between"><span class="text-sm text-muted">API шлюз</span><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm text-muted">Webhook сервер</span><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm text-muted">Очередь задач</span><span class="badge badge-warning"><span class="badge-dot"></span>Снижена</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm text-muted">База данных</span><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm text-muted">Redis кэш</span><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></div>
+              <div class="divider"></div>
+              <div class="flex items-center justify-between"><span class="text-sm text-muted">Аптайм</span><span class="text-sm font-600" style="color:var(--success)">99.97%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2-1 row-gap">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Недавние боты</div>
+            <button class="btn btn-ghost btn-sm" onclick="switchScreen('bots')">Все боты →</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Бот</th><th>Статус</th><th>Пользователи</th><th>Сообщения</th><th>Обновлен</th></tr></thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="switchScreen('botDetails')">
+                  <td><div class="bot-cell"><div class="bot-avatar cyan">DB</div><div><div class="bot-name">DealBot63</div><div class="bot-username">@DealBot63_bot</div></div></div></td>
+                  <td><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></td>
+                  <td><span class="cell-primary">847</span></td>
+                  <td><span class="cell-primary">12K</span></td>
+                  <td><span class="cell-muted">2 мин назад</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="switchScreen('botDetails')">
+                  <td><div class="bot-cell"><div class="bot-avatar blue">GB</div><div><div class="bot-name">GlamBot</div><div class="bot-username">@Nailselegantstudio_bot</div></div></div></td>
+                  <td><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></td>
+                  <td><span class="cell-primary">234</span></td>
+                  <td><span class="cell-primary">3.2K</span></td>
+                  <td><span class="cell-muted">5 мин назад</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="switchScreen('botDetails')">
+                  <td><div class="bot-cell"><div class="bot-avatar teal">DH</div><div><div class="bot-name">DebiHackBot</div><div class="bot-username">@DebiHackBot_bot</div></div></div></td>
+                  <td><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></td>
+                  <td><span class="cell-primary">1 847</span></td>
+                  <td><span class="cell-primary">48K</span></td>
+                  <td><span class="cell-muted">18 мин назад</span></td>
+                </tr>
+                <tr style="cursor:pointer" onclick="switchScreen('botDetails')">
+                  <td><div class="bot-cell"><div class="bot-avatar emerald">HS</div><div><div class="bot-name">HermesStudy</div><div class="bot-username">@HermesStudy_bot</div></div></div></td>
+                  <td><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></td>
+                  <td><span class="cell-primary">521</span></td>
+                  <td><span class="cell-primary">8.6K</span></td>
+                  <td><span class="cell-muted">1 час назад</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Последняя активность</div></div>
+          <div class="card-body">
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--accent-emerald)"></div>
+              <div class="activity-text"><span class="highlight">DealBot63</span> проверил цены 340 товаров на Ozon</div>
+              <div class="activity-time">2 мин</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--accent-cyan)"></div>
+              <div class="activity-text">Рассылка <span class="highlight">«Новинки месяца»</span> отправлена 234 клиентам GlamBot</div>
+              <div class="activity-time">1 час</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--accent-teal)"></div>
+              <div class="activity-text"><span class="highlight">GlamBot</span> добавлена новая команда <span style="font-family:var(--font-mono);color:var(--accent-cyan)">/запись</span></div>
+              <div class="activity-time">3 часа</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--accent-blue)"></div>
+              <div class="activity-text"><span class="highlight">HermesStudy</span> добавлен новый курс «Основы Python»</div>
+              <div class="activity-time">5 часов</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--accent-amber)"></div>
+              <div class="activity-text">Webhook для <span class="highlight">DebiHackBot</span> обновлён на новый адрес</div>
+              <div class="activity-time">1 день</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ МОИ БОТЫ ════ -->
+    <div class="screen" id="screen-bots">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Мои боты</div>
+          <div class="page-subtitle">4 бота подключено · 4 онлайн · 0 ошибок</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+            Фильтр
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addBotModal')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить бота
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Бот</th><th>Статус</th><th>Режим</th><th>Токен</th><th>Пользователи</th><th>Команды</th><th>Последняя ошибка</th><th style="text-align:right">Действия</th></tr></thead>
+            <tbody id="botsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ ДЕТАЛИ БОТА ════ -->
+    <div class="screen" id="screen-botDetails">
+      <div class="page-header">
+        <div>
+          <div class="flex items-center gap-8">
+            <button class="btn btn-ghost btn-icon" onclick="switchScreen('bots')" data-tooltip="Назад">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <div class="bot-avatar cyan" style="width:42px;height:42px;font-size:16px">DB</div>
+            <div>
+              <div class="page-title">DealBot63</div>
+              <div class="page-subtitle">@DealBot63_bot · ID: 8786036190 · режим polling</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Переподключить
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('success','Тестовое сообщение','Сообщение отправлено в чат')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Тест
+          </button>
+          <button class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2h-7l-4 4 3 3 4-4V2"/><path d="M3 12l4 4 3-3-4-4"/></svg>
+            Сменить токен
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="openModal('confirmDelete')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Отключить
+          </button>
+        </div>
+      </div>
+
+      <div class="metric-grid" style="grid-template-columns:repeat(5,1fr)">
+        <div class="metric-card" style="padding:14px 16px"><div class="metric-label">Статус</div><div class="mt-8"><span class="badge badge-online"><span class="badge-dot"></span>Онлайн</span></div></div>
+        <div class="metric-card" style="padding:14px 16px"><div class="metric-label">Пользователи</div><div class="metric-value" style="font-size:20px">847</div></div>
+        <div class="metric-card" style="padding:14px 16px"><div class="metric-label">Команды</div><div class="metric-value" style="font-size:20px">7</div></div>
+        <div class="metric-card" style="padding:14px 16px"><div class="metric-label">Группы</div><div class="metric-value" style="font-size:20px">7</div></div>
+        <div class="metric-card" style="padding:14px 16px"><div class="metric-label">Последняя ошибка</div><div class="mt-8 text-sm text-muted">Нет ошибок 24ч</div></div>
+      </div>
+
+      <div class="tabs" id="botTabs">
+        <div class="tab active" data-tab="overview">Обзор</div>
+        <div class="tab" data-tab="commands">Команды</div>
+        <div class="tab" data-tab="webhook">Webhook / Polling</div>
+        <div class="tab" data-tab="groups">Группы и чаты</div>
+        <div class="tab" data-tab="logs">Логи</div>
+        <div class="tab" data-tab="settings">Настройки</div>
+      </div>
+
+      <!-- Вкладка: Обзор -->
+      <div class="tab-content active" data-tab-content="overview">
+        <div class="grid-2-1">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Информация о боте</div></div>
+            <div class="card-body">
+              <div class="flex flex-col gap-12">
+                <div class="flex items-center justify-between"><span class="text-sm text-muted">ID бота</span><span class="cell-mono">8786036190</span></div>
+                <div class="flex items-center justify-between"><span class="text-sm text-muted">Username</span><span class="cell-mono">@DealBot63_bot</span></div>
+                <div class="flex items-center justify-between"><span class="text-sm text-muted">Имя</span><span class="text-sm font-600">DealBot63</span></div>
+                <div class="flex items-center justify-between"><span class="text-sm text-muted">Токен</span><span class="token-masked">8786036190:AAH••••••••••••••••<span class="reveal-btn" onclick="this.textContent='──────'">👁</span></span></div>
+                <div class="flex items-center justify-between"><span class="text-sm text-muted">Режим</span><span class="badge badge-neutral">Polling</span></div>
+                <div class="flex items-center justify-between"><span class="text-sm text-muted">Создан</span><span class="text-sm">27 июня 2026</span></div>
+                <div class="divider"></div>
+                <div class="flex items-center justify-between"><span class="text-sm text-muted">Права в группах</span><div class="flex gap-8"><span class="badge badge-neutral">Чтение</span><span class="badge badge-neutral">Запись</span><span class="badge badge-neutral">Админ</span></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Последние сообщения</div></div>
+            <div class="card-body">
+              <div class="flex flex-col gap-12">
+                <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--r-md)"><div class="flex justify-between mb-16"><span class="text-sm font-600">Алексей М.</span><span class="text-xs text-muted">14:32</span></div><div class="text-sm text-muted">https://ozon.ru/product/... — добавил товар</div></div>
+                <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--r-md)"><div class="flex justify-between mb-16"><span class="text-sm font-600">Ольга В.</span><span class="text-xs text-muted">14:28</span></div><div class="text-sm text-muted">/список — посмотреть мои товары</div></div>
+                <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--r-md)"><div class="flex justify-between mb-16"><span class="text-sm font-600">Дмитрий С.</span><span class="text-xs text-muted">14:15</span></div><div class="text-sm text-muted">/start</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка: Команды -->
+      <div class="tab-content" data-tab-content="commands">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Команды бота</div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('info','Новая команда','Редактор команд открыт')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Новая команда
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Команда</th><th>Описание</th><th>Тип</th><th>Включена</th><th style="text-align:right">Действия</th></tr></thead>
+              <tbody>
+                <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/start</span></td><td class="cell-primary">Приветствие + меню</td><td><span class="badge badge-info">Базовая</span></td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div></td></tr>
+                <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/добавить</span></td><td class="cell-primary">Добавить товар для отслеживания</td><td><span class="badge badge-info">Базовая</span></td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div></td></tr>
+                <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/список</span></td><td class="cell-primary">Мои товары и текущие цены</td><td><span class="badge badge-info">Базовая</span></td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div></td></tr>
+                <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/отследить</span></td><td class="cell-primary">Настроить целевую цену (сценарий)</td><td><span class="badge badge-warning">Сценарий</span></td><td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div></td></tr>
+                <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/помощь</span></td><td class="cell-primary">Справка по командам</td><td><span class="badge badge-info">Базовая</span></td><td><div class="toggle" onclick="this.classList.toggle('on')"></div></td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card mt-16">
+          <div class="card-header"><div class="card-title">Автоответы</div></div>
+          <div class="card-body">
+            <div class="flex flex-col gap-12">
+              <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle)"><div class="flex justify-between mb-16"><span class="text-sm font-600">Триггер: «скидка» | «дешевле»</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="text-sm text-muted">→ DealBot63 → уведомление о снижении цены</div></div>
+              <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle)"><div class="flex justify-between mb-16"><span class="text-sm font-600">Триггер: «записать» | «запись»</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="text-sm text-muted">→ GlamBot → сценарий /запись</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка: Webhook -->
+      <div class="tab-content" data-tab-content="webhook">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Режим работы</div></div>
+            <div class="card-body">
+              <div class="flex flex-col gap-12">
+                <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle)"><div class="flex items-center justify-between"><div><div class="text-sm font-600">Webhook</div><div class="text-xs text-muted mt-8">Неактивный (требует публичный URL)</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div></div>
+                <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-accent)"><div class="flex items-center justify-between"><div><div class="text-sm font-600" style="color:var(--accent-cyan)">Polling</div><div class="text-xs text-muted mt-8">Активный режим (long polling)</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+              </div>
+              <div class="divider"></div>
+              <div class="field-group" style="margin-bottom:0">
+                <label class="field-label">URL webhook</label>
+                <input class="input mono" value="https://api.botforge.io/webhook/8786036190" readonly>
+                <div class="field-hint">Режим polling: URL не требуется. Переключите на webhook для публичного адреса.</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Конфигурация</div></div>
+            <div class="card-body">
+              <div class="field-group"><label class="field-label">Прокси-сервер</label><input class="input mono" placeholder="socks5://user:pass@host:port" value=""><div class="field-hint">Опционально, для обхода блокировок</div></div>
+              <div class="field-group"><label class="field-label">Лимит сообщений (сообщ/сек)</label><input class="input" type="number" value="30" min="1" max="30"><div class="field-hint">Лимит Telegram: 30 сообщ/сек</div></div>
+              <div class="field-group" style="margin-bottom:0"><label class="field-label">Разрешённые обновления</label><div class="flex gap-8"><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="checkbox" checked> message</label><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="checkbox" checked> callback_query</label><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="checkbox" checked> inline_query</label></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка: Группы -->
+      <div class="tab-content" data-tab-content="groups">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Подключённые чаты и группы</div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('info','Добавить группу','Введите ID группы')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить группу</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Чат</th><th>Тип</th><th>Участников</th><th>Права бота</th><th>Приватность</th><th style="text-align:right">Действия</th></tr></thead>
+              <tbody>
+                <tr><td><div class="bot-cell"><div class="bot-avatar blue">OD</div><div><div class="bot-name">Ozon Сделки</div><div class="bot-username">-1009876543</div></div></div></td><td><span class="badge badge-info">Супергруппа</span></td><td>234</td><td><span class="badge badge-online">Админ</span></td><td><span class="badge badge-neutral">Выкл</span></td><td class="row-actions"><div class="row-action" data-tooltip="Настройки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2"/></svg></div><div class="row-action danger" data-tooltip="Покинуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div></td></tr>
+                <tr><td><div class="bot-cell"><div class="bot-avatar teal">NS</div><div><div class="bot-name">Чат студии</div><div class="bot-username">-1001234567</div></div></div></td><td><span class="badge badge-info">Канал</span></td><td>1 847</td><td><span class="badge badge-online">Админ</span></td><td><span class="badge badge-neutral">Выкл</span></td><td class="row-actions"><div class="row-action" data-tooltip="Настройки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2"/></svg></div><div class="row-action danger" data-tooltip="Покинуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div></td></tr>
+                <tr><td><div class="bot-cell"><div class="bot-avatar emerald">SG</div><div><div class="bot-name">Учебная группа</div><div class="bot-username">-1009873210</div></div></div></td><td><span class="badge badge-info">Топик-группа</span></td><td>89</td><td><span class="badge badge-warning">Участник</span></td><td><span class="badge badge-neutral">Вкл</span></td><td class="row-actions"><div class="row-action" data-tooltip="Настройки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2"/></svg></div><div class="row-action danger" data-tooltip="Покинуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка: Логи -->
+      <div class="tab-content" data-tab-content="logs">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Логи DealBot63</div><select class="select btn-sm" style="height:28px;width:auto"><option>Все уровни</option><option>Ошибка</option><option>Предупреждение</option><option>Инфо</option></select></div>
+          <div class="card-body">
+            <div class="code-block" style="max-height:400px;overflow-y:auto">
+<span class="cmt">[2026-07-11 14:32:15]</span> <span class="kw">ИНФО</span>  Polling update: update_id=982341
+<span class="cmt">[2026-07-11 14:32:15]</span> <span class="kw">ИНФО</span>  Обработка команды: <span class="str">/добавить</span> от user=847291
+<span class="cmt">[2026-07-11 14:32:16]</span> <span class="kw">ИНФО</span>  Отправлено сообщение: msg_id=1234, метод=sendMessage
+<span class="cmt">[2026-07-11 14:28:03]</span> <span class="kw">ИНФО</span>  Снижение цены: <span class="str">"iPhone 15"</span> 89990→84990₽
+<span class="cmt">[2026-07-11 14:28:04]</span> <span class="kw">ИНФО</span>  Отправлено уведомление: msg_id=1233
+<span class="cmt">[2026-07-11 14:15:22]</span> <span class="kw">ИНФО</span>  Обработка команды: <span class="str">/список</span> от user=293847
+<span class="cmt">[2026-07-11 14:10:01]</span> <span class="kw">ПРЕДУПР</span>  Camoufox: парсинг <span class="num">340</span> товаров за 18с
+<span class="cmt">[2026-07-11 13:45:33]</span> <span class="kw">ИНФО</span>  Проверка polling: OK (<span class="num">200</span>)
+<span class="cmt">[2026-07-11 13:30:00]</span> <span class="kw">ИНФО</span>  Рассылка <span class="str">"Сводка цен"</span> отправлена <span class="num">847</span> пользователям
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка: Настройки -->
+      <div class="tab-content" data-tab-content="settings">
+        <div class="card" style="max-width:600px">
+          <div class="card-header"><div class="card-title">Настройки бота</div></div>
+          <div class="card-body">
+            <div class="field-group"><label class="field-label">Отображаемое имя</label><input class="input" value="DealBot63"></div>
+            <div class="field-group"><label class="field-label">Описание</label><textarea class="textarea" placeholder="Описание бота...">Бот мониторинга цен на Ozon и Wildberries. Добавляешь товар — бот следит за ценой и уведомляет когда цена упала.</textarea></div>
+            <div class="field-group"><label class="field-label">Язык по умолчанию</label><select class="select"><option>Русский</option><option>English</option><option>Українська</option></select></div>
+            <div class="divider"></div>
+            <div class="flex items-center justify-between"><div><div class="text-sm font-600">AI автоответы</div><div class="text-xs text-muted">Использовать AI для ответов на неизвестные сообщения</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="divider"></div>
+            <div class="flex items-center justify-between"><div><div class="text-sm font-600">Инлайн кнопки</div><div class="text-xs text-muted">Показывать кнопки под сообщениями</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="divider"></div>
+            <button class="btn btn-primary" onclick="showToast('success','Сохранено','Настройки бота сохранены')">Сохранить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ КОМАНДЫ ════ -->
+    <div class="screen" id="screen-commands">
+      <div class="page-header">
+        <div><div class="page-title">Команды и автоматизация</div><div class="page-subtitle">Управление командами, сценариями и автоответами</div></div>
+        <div class="page-actions"><button class="btn btn-primary btn-sm" onclick="showToast('info','Новая команда','Редактор команд открыт')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая команда</button></div>
+      </div>
+      <div class="grid-2-1">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Сценарии</div><span class="badge badge-neutral">5 активных</span></div>
+          <div class="card-body">
+            <div class="flex flex-col gap-12">
+              <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle);cursor:pointer" onclick="showToast('info','Сценарий','Редактор сценария открыт')"><div class="flex justify-between mb-16"><div class="flex items-center gap-8"><span class="badge badge-warning">Сценарий</span><span class="text-sm font-600">Отслеживание цены</span></div><div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div></div><div class="text-xs text-muted">3 шага · <span class="cell-mono" style="color:var(--accent-cyan)">/отследить</span> · DealBot63</div></div>
+              <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle);cursor:pointer" onclick="showToast('info','Сценарий','Редактор сценария открыт')"><div class="flex justify-between mb-16"><div class="flex items-center gap-8"><span class="badge badge-warning">Сценарий</span><span class="text-sm font-600">Онлайн-запись</span></div><div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div></div><div class="text-xs text-muted">2 шага · <span class="cell-mono" style="color:var(--accent-cyan)">/запись</span> · GlamBot</div></div>
+              <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle);cursor:pointer" onclick="showToast('info','Сценарий','Редактор сценария открыт')"><div class="flex justify-between mb-16"><div class="flex items-center gap-8"><span class="badge badge-warning">Сценарий</span><span class="text-sm font-600">AI консультация</span></div><div class="toggle" onclick="event.stopPropagation();this.classList.toggle('on')"></div></div><div class="text-xs text-muted">5 шагов · <span class="cell-mono" style="color:var(--accent-cyan)">/спросить</span> · DebiHackBot</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Триггеры автоответов</div></div>
+          <div class="card-body">
+            <div class="flex flex-col gap-12">
+              <div style="padding:12px;background:var(--bg-elevated);border-radius:var(--r-md)"><div class="flex items-center gap-8 mb-16"><span class="badge badge-info">Ключевое слово</span><span class="cell-mono text-sm">«скидка» | «дешевле»</span></div><div class="text-xs text-muted">→ DealBot63 → уведомление о снижении цены</div></div>
+              <div style="padding:12px;background:var(--bg-elevated);border-radius:var(--r-md)"><div class="flex items-center gap-8 mb-16"><span class="badge badge-info">Ключевое слово</span><span class="cell-mono text-sm">«записать» | «запись»</span></div><div class="text-xs text-muted">→ GlamBot → сценарий /запись</div></div>
+              <div style="padding:12px;background:var(--bg-elevated);border-radius:var(--r-md)"><div class="flex items-center gap-8 mb-16"><span class="badge badge-info">Регулярка</span><span class="cell-mono text-sm">/^\d+\s?(₽|руб)/</span></div><div class="text-xs text-muted">→ DealBot63 → установка целевой цены</div></div>
+              <div style="padding:12px;background:var(--bg-elevated);border-radius:var(--r-md)"><div class="flex items-center gap-8 mb-16"><span class="badge badge-info">AI</span><span class="text-sm">Фоллбэк</span></div><div class="text-xs text-muted">→ DebiHackBot → AI генерация ответа</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ РАССЫЛКИ ════ -->
+    <div class="screen" id="screen-broadcasts">
+      <div class="page-header">
+        <div><div class="page-title">Рассылки</div><div class="page-subtitle">Массовые рассылки и уведомления</div></div>
+        <div class="page-actions"><button class="btn btn-primary btn-sm" onclick="showToast('info','Новая рассылка','Конструктор рассылки открыт')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая рассылка</button></div>
+      </div>
+      <div class="grid-1-2 row-gap">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Конструктор рассылки</div></div>
+          <div class="card-body">
+            <div class="field-group"><label class="field-label">Бот</label><select class="select"><option>DealBot63</option><option>GlamBot</option><option>DebiHackBot</option><option>HermesStudy</option></select></div>
+            <div class="field-group"><label class="field-label">Сегмент аудитории</label><select class="select"><option>Все пользователи (847)</option><option>Активные за 7 дней (312)</option><option>Новые за 30 дней (89)</option><option>С целевой ценой (124)</option></select></div>
+            <div class="field-group"><label class="field-label">Тип сообщения</label><div class="flex gap-8"><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="radio" name="msgtype" checked> Текст</label><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="radio" name="msgtype"> Фото</label><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="radio" name="msgtype"> Кнопки</label></div></div>
+            <div class="field-group"><label class="field-label">Текст сообщения</label><textarea class="textarea" placeholder="Введите текст рассылки..." style="min-height:100px">🔥 Цена упала! 3 ваших товара достигли целевой цены. Проверьте: /список</textarea></div>
+            <div class="field-group"><label class="field-label">Отправка</label><div class="flex gap-8"><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="radio" name="sendtype" checked> Сейчас</label><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="radio" name="sendtype"> По расписанию</label></div></div>
+            <div class="divider"></div>
+            <div class="flex items-center justify-between"><span class="text-sm text-muted">Получателей: <span class="font-600" style="color:var(--text-primary)">847</span></span><button class="btn btn-primary" onclick="showToast('success','Рассылка отправлена','Рассылка отправлена 847 пользователям')">Отправить</button></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">История рассылок</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Название</th><th>Бот</th><th>Получателей</th><th>Отправлено</th><th>Статус</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-primary">Снижение цен</td><td>DealBot63</td><td>847</td><td class="cell-muted">1 час назад</td><td><span class="badge badge-online"><span class="badge-dot"></span>Отправлено</span></td></tr>
+                <tr><td class="cell-primary">Новинки месяца</td><td>GlamBot</td><td>234</td><td class="cell-muted">6 часов назад</td><td><span class="badge badge-online"><span class="badge-dot"></span>Отправлено</span></td></tr>
+                <tr><td class="cell-primary">Новый курс: Python</td><td>HermesStudy</td><td>521</td><td class="cell-muted">1 день назад</td><td><span class="badge badge-warning"><span class="badge-dot"></span>В процессе</span></td></tr>
+                <tr><td class="cell-primary">AI обновление</td><td>DebiHackBot</td><td>1 847</td><td class="cell-muted">3 дня назад</td><td><span class="badge badge-online"><span class="badge-dot"></span>Отправлено</span></td></tr>
+                <tr><td class="cell-primary">Напоминание о записи</td><td>GlamBot</td><td>234</td><td class="cell-muted">1 неделя назад</td><td><span class="badge badge-online"><span class="badge-dot"></span>Отправлено</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ ЛОГИ И СОБЫТИЯ ════ -->
+    <div class="screen" id="screen-logs">
+      <div class="page-header">
+        <div><div class="page-title">Логи и события</div><div class="page-subtitle">Системные логи, ошибки и события</div></div>
+        <div class="page-actions"><button class="btn btn-secondary btn-sm" onclick="showToast('info','Экспорт','Логи экспортируются...')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Экспорт</button></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="flex gap-8 items-center"><select class="select btn-sm" style="height:28px;width:auto"><option>Все боты</option><option>DealBot63</option><option>GlamBot</option><option>DebiHackBot</option><option>HermesStudy</option></select><select class="select btn-sm" style="height:28px;width:auto"><option>Все уровни</option><option>Ошибка</option><option>Предупреждение</option><option>Инфо</option></select><input class="input btn-sm" style="height:28px;width:200px" placeholder="Поиск по логам..."></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Время</th><th>Уровень</th><th>Бот</th><th>Событие</th><th>Подробности</th></tr></thead>
+            <tbody id="logsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ АНАЛИТИКА ════ -->
+    <div class="screen" id="screen-analytics">
+      <div class="page-header">
+        <div><div class="page-title">Аналитика</div><div class="page-subtitle">Метрики, графики и статистика</div></div>
+        <div class="page-actions"><select class="select btn-sm" style="height:28px"><option>Последние 30 дней</option><option>Последние 90 дней</option><option>За всё время</option></select></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">Всего сообщений</div><div class="metric-value">72K</div><div class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+12.4%</div></div>
+        <div class="metric-card"><div class="metric-label">Активные пользователи</div><div class="metric-value">3 449</div><div class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+8.1%</div></div>
+        <div class="metric-card"><div class="metric-label">Команд выполнено</div><div class="metric-value">342K</div><div class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+4.3%</div></div>
+        <div class="metric-card"><div class="metric-label">Рассылок отправлено</div><div class="metric-value">47</div><div class="metric-delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>-2</div></div>
+      </div>
+      <div class="grid-2 row-gap">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Сообщения по дням</div></div>
+          <div class="card-body"><div class="chart-bars" id="analyticsChart"></div><div class="chart-labels" id="analyticsLabels"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Активность по ботам</div></div>
+          <div class="card-body">
+            <div class="flex flex-col gap-12">
+              <div><div class="flex justify-between mb-16"><span class="text-sm">DealBot63</span><span class="text-sm font-600">12K</span></div><div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--accent-cyan)"></div></div></div>
+              <div><div class="flex justify-between mb-16"><span class="text-sm">DebiHackBot</span><span class="text-sm font-600">48K</span></div><div class="progress-bar"><div class="progress-fill" style="width:60%;background:var(--accent-blue)"></div></div></div>
+              <div><div class="flex justify-between mb-16"><span class="text-sm">HermesStudy</span><span class="text-sm font-600">8.6K</span></div><div class="progress-bar"><div class="progress-fill" style="width:12%;background:var(--accent-teal)"></div></div></div>
+              <div><div class="flex justify-between mb-16"><span class="text-sm">GlamBot</span><span class="text-sm font-600">3.2K</span></div><div class="progress-bar"><div class="progress-fill" style="width:4%;background:var(--accent-emerald)"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Топ команды</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Команда</th><th>Бот</th><th>Выполнений</th><th>Уникальных юзеров</th><th>Тренд</th></tr></thead>
+            <tbody>
+              <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/start</span></td><td>DealBot63</td><td class="cell-primary">2 847</td><td class="cell-primary">847</td><td><span class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+15%</span></td></tr>
+              <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/добавить</span></td><td>DealBot63</td><td class="cell-primary">1 204</td><td class="cell-primary">312</td><td><span class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+7%</span></td></tr>
+              <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/start</span></td><td>DebiHackBot</td><td class="cell-primary">5 234</td><td class="cell-primary">1 847</td><td><span class="metric-delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>-3%</span></td></tr>
+              <tr><td><span class="cell-mono" style="color:var(--accent-cyan)">/запись</span></td><td>GlamBot</td><td class="cell-primary">623</td><td class="cell-primary">234</td><td><span class="metric-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>+12%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ ИНТЕГРАЦИИ ════ -->
+    <div class="screen" id="screen-integrations">
+      <div class="page-header"><div><div class="page-title">Интеграции</div><div class="page-subtitle">Подключённые сервисы, AI-модели и внешние API</div></div></div>
+      <div class="grid-3">
+        <div class="integration-card" onclick="showToast('info','OpenAI','Настройка интеграции с OpenAI')"><div class="integration-icon" style="background:rgba(52,211,153,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v12M6 12h12"/></svg></div><div class="integration-name">OpenAI GPT-4</div><div class="integration-desc">AI генерация ответов, суммаризация, перевод</div><div class="flex items-center justify-between"><span class="badge badge-online"><span class="badge-dot"></span>Подключено</span><span class="text-xs text-muted">1 бот</span></div></div>
+        <div class="integration-card" onclick="showToast('info','DashScope','Настройка интеграции с DashScope')"><div class="integration-icon" style="background:rgba(34,211,238,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div><div class="integration-name">DashScope</div><div class="integration-desc">Qwen, GLM модели для русскоязычных ответов</div><div class="flex items-center justify-between"><span class="badge badge-online"><span class="badge-dot"></span>Подключено</span><span class="text-xs text-muted">1 бот</span></div></div>
+        <div class="integration-card" onclick="showToast('info','Webhook','Настройка webhook интеграции')"><div class="integration-icon" style="background:rgba(59,130,246,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="integration-name">Webhook API</div><div class="integration-desc">Внешние webhook-и для автоматизации</div><div class="flex items-center justify-between"><span class="badge badge-online"><span class="badge-dot"></span>Активно</span><span class="text-xs text-muted">12 адресов</span></div></div>
+        <div class="integration-card" onclick="showToast('info','Notion','Настройка интеграции с Notion')"><div class="integration-icon" style="background:rgba(255,255,255,0.06)"><svg viewBox="0 0 24 24" fill="none" stroke="#E8EDF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg></div><div class="integration-name">Notion</div><div class="integration-desc">CRM, базы данных, экспорт лидов</div><div class="flex items-center justify-between"><span class="badge badge-online"><span class="badge-dot"></span>Подключено</span><span class="text-xs text-muted">1 база</span></div></div>
+        <div class="integration-card" onclick="showToast('info','Redis','Настройка Redis')"><div class="integration-icon" style="background:rgba(239,68,68,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div><div class="integration-name">Redis кэш</div><div class="integration-desc">Кэширование сессий и состояний ботов</div><div class="flex items-center justify-between"><span class="badge badge-online"><span class="badge-dot"></span>Активно</span><span class="text-xs text-muted">2.4МБ</span></div></div>
+        <div class="integration-card" onclick="showToast('info','Zapier','Настройка интеграции с Zapier')"><div class="integration-icon" style="background:rgba(251,191,36,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="integration-name">Zapier</div><div class="integration-desc">Автоматизация с 5000+ приложениями</div><div class="flex items-center justify-between"><span class="badge badge-offline"><span class="badge-dot"></span>Не подключено</span><span class="text-xs text-muted">—</span></div></div>
+        <div class="integration-card" onclick="showToast('info','n8n','Настройка интеграции с n8n')"><div class="integration-icon" style="background:rgba(45,212,191,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m6 0h6"/></svg></div><div class="integration-name">n8n</div><div class="integration-desc">Self-hosted автоматизация процессов</div><div class="flex items-center justify-between"><span class="badge badge-offline"><span class="badge-dot"></span>Не подключено</span><span class="text-xs text-muted">—</span></div></div>
+        <div class="integration-card" onclick="showToast('info','Grafana','Настройка интеграции с Grafana')"><div class="integration-icon" style="background:rgba(251,191,36,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 2 6-6"/></svg></div><div class="integration-name">Grafana</div><div class="integration-desc">Мониторинг и визуализация метрик</div><div class="flex items-center justify-between"><span class="badge badge-online"><span class="badge-dot"></span>Подключено</span><span class="text-xs text-muted">5 дашбордов</span></div></div>
+        <div class="integration-card" onclick="showToast('info','Sentry','Настройка интеграции с Sentry')"><div class="integration-icon" style="background:rgba(255,255,255,0.06)"><svg viewBox="0 0 24 24" fill="none" stroke="#E8EDF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 22h20L12 2z"/><path d="M12 9v4M12 17v.01"/></svg></div><div class="integration-name">Sentry</div><div class="integration-desc">Отслеживание ошибок в реальном времени</div><div class="flex items-center justify-between"><span class="badge badge-online"><span class="badge-dot"></span>Подключено</span><span class="text-xs text-muted">0 ошибок</span></div></div>
+      </div>
+    </div>
+
+    <!-- ════ КОМАНДА И РОЛИ ════ -->
+    <div class="screen" id="screen-team">
+      <div class="page-header">
+        <div><div class="page-title">Команда и роли</div><div class="page-subtitle">Управление участниками команды и правами доступа</div></div>
+        <div class="page-actions"><button class="btn btn-primary btn-sm" onclick="openModal('inviteModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Пригласить</button></div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-header"><div class="card-title">Участники команды</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Участник</th><th>Email</th><th>Роль</th><th>Доступ к ботам</th><th>Последняя активность</th><th style="text-align:right">Действия</th></tr></thead>
+            <tbody>
+              <tr><td><div class="bot-cell"><div class="user-avatar">АК</div><div><div class="bot-name">Андрей</div><div class="bot-username">Владелец</div></div></div></td><td class="cell-muted">kelf2026@ya.ru</td><td><span class="badge badge-info">Владелец</span></td><td class="cell-primary">Все (4)</td><td class="cell-muted">Сейчас</td><td class="row-actions"><div class="row-action" data-tooltip="Настройки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2"/></svg></div></td></tr>
+              <tr><td><div class="bot-cell"><div class="user-avatar" style="background:linear-gradient(135deg,var(--accent-cyan),var(--accent-teal))">Б2</div><div><div class="bot-name">Брат 2</div><div class="bot-username">Админ</div></div></div></td><td class="cell-muted">bro2@botforge.io</td><td><span class="badge badge-warning">Админ</span></td><td class="cell-primary">3 бота</td><td class="cell-muted">2 часа назад</td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg></div></td></tr>
+              <tr><td><div class="bot-cell"><div class="user-avatar" style="background:linear-gradient(135deg,var(--accent-emerald),var(--accent-teal))">Б3</div><div><div class="bot-name">Брат 3</div><div class="bot-username">Редактор</div></div></div></td><td class="cell-muted">bro3@botforge.io</td><td><span class="badge badge-neutral">Редактор</span></td><td class="cell-primary">2 бота</td><td class="cell-muted">1 день назад</td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg></div></td></tr>
+              <tr><td><div class="bot-cell"><div class="user-avatar" style="background:linear-gradient(135deg,var(--accent-amber),var(--accent-blue))">Б4</div><div><div class="bot-name">Брат 4</div><div class="bot-username">Наблюдатель</div></div></div></td><td class="cell-muted">bro4@botforge.io</td><td><span class="badge badge-neutral">Наблюдатель</span></td><td class="cell-primary">2 бота</td><td class="cell-muted">3 дня назад</td><td class="row-actions"><div class="row-action" data-tooltip="Редактировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-action danger" data-tooltip="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Матрица прав доступа</div></div>
+        <div class="table-wrap">
+          <table class="role-matrix">
+            <thead><tr><th>Разрешение</th><th>Владелец</th><th>Админ</th><th>Редактор</th><th>Наблюдатель</th></tr></thead>
+            <tbody>
+              <tr><td class="cell-primary">Просмотр обзора</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td class="cell-primary">Добавление / удаление ботов</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+              <tr><td class="cell-primary">Редактирование настроек бота</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+              <tr><td class="cell-primary">Управление командами</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+              <tr><td class="cell-primary">Отправка рассылок</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+              <tr><td class="cell-primary">Просмотр логов</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td class="cell-primary">Управление командой</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+              <tr><td class="cell-primary">Биллинг и тарифы</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+              <tr><td class="cell-primary">Журнал аудита</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+              <tr><td class="cell-primary">Смена токенов</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ НАСТРОЙКИ ════ -->
+    <div class="screen" id="screen-settings">
+      <div class="page-header"><div><div class="page-title">Настройки</div><div class="page-subtitle">Настройки аккаунта, безопасности и предпочтений</div></div></div>
+      <div class="tabs" id="settingsTabs">
+        <div class="tab active" data-stab="account">Аккаунт</div>
+        <div class="tab" data-stab="security">Безопасность</div>
+        <div class="tab" data-stab="notifications">Уведомления</div>
+        <div class="tab" data-stab="appearance">Внешний вид</div>
+        <div class="tab" data-stab="api">API ключи</div>
+      </div>
+      <div class="tab-content active" data-stab-content="account">
+        <div class="card" style="max-width:600px">
+          <div class="card-header"><div class="card-title">Профиль аккаунта</div></div>
+          <div class="card-body">
+            <div class="field-group"><label class="field-label">Имя</label><input class="input" value="Андрей"></div>
+            <div class="field-group"><label class="field-label">Email</label><input class="input" value="kelf2026@ya.ru"></div>
+            <div class="field-group"><label class="field-label">Организация</label><input class="input" value="BotForge"></div>
+            <div class="field-group" style="margin-bottom:0"><label class="field-label">Часовой пояс</label><select class="select"><option>UTC+4 (Самара)</option><option>UTC+3 (Москва)</option><option>UTC+0 (Лондон)</option></select></div>
+            <div class="divider"></div>
+            <button class="btn btn-primary" onclick="showToast('success','Сохранено','Настройки аккаунта сохранены')">Сохранить</button>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" data-stab-content="security">
+        <div class="card" style="max-width:600px">
+          <div class="card-header"><div class="card-title">Безопасность</div></div>
+          <div class="card-body">
+            <div class="field-group"><label class="field-label">Текущий пароль</label><input class="input" type="password" value="············"></div>
+            <div class="field-group"><label class="field-label">Новый пароль</label><input class="input" type="password" placeholder="Минимум 12 символов"></div>
+            <div class="divider"></div>
+            <div class="flex items-center justify-between"><div><div class="text-sm font-600">Двухфакторная аутентификация</div><div class="text-xs text-muted">TOTP через Google Authenticator</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="divider"></div>
+            <div class="flex items-center justify-between"><div><div class="text-sm font-600">Белый список IP</div><div class="text-xs text-muted">Ограничить доступ по IP-адресам</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+            <div class="divider"></div>
+            <button class="btn btn-primary">Обновить безопасность</button>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" data-stab-content="notifications">
+        <div class="card" style="max-width:600px">
+          <div class="card-header"><div class="card-title">Уведомления</div></div>
+          <div class="card-body">
+            <div class="flex items-center justify-between mb-16"><div><div class="text-sm font-600">Бот офлайн</div><div class="text-xs text-muted">Уведомлять когда бот становится недоступным</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="flex items-center justify-between mb-16"><div><div class="text-sm font-600">Рост ошибок</div><div class="text-xs text-muted">При росте ошибок выше 1%</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="flex items-center justify-between mb-16"><div><div class="text-sm font-600">Рассылка завершена</div><div class="text-xs text-muted">По завершении рассылки</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="flex items-center justify-between mb-16"><div><div class="text-sm font-600">Еженедельный отчёт</div><div class="text-xs text-muted">Еженедельный отчёт на email</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+            <div class="divider"></div>
+            <button class="btn btn-primary">Сохранить</button>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" data-stab-content="appearance">
+        <div class="card" style="max-width:600px">
+          <div class="card-header"><div class="card-title">Внешний вид</div></div>
+          <div class="card-body">
+            <div class="field-group"><label class="field-label">Тема</label><div class="flex gap-12"><div style="padding:12px;background:var(--bg-elevated);border:2px solid var(--accent-cyan);border-radius:var(--r-md);cursor:pointer;text-align:center;width:120px"><div style="height:40px;background:var(--bg-deep);border-radius:var(--r-sm);margin-bottom:8px"></div><span class="text-sm font-600">Тёмная (активна)</span></div><div style="padding:12px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--r-md);cursor:pointer;text-align:center;width:120px;opacity:0.5"><div style="height:40px;background:#f0f0f0;border-radius:var(--r-sm);margin-bottom:8px"></div><span class="text-sm">Светлая</span></div></div></div>
+            <div class="field-group"><label class="field-label">Акцентный цвет</label><div class="flex gap-8"><div style="width:32px;height:32px;background:var(--accent-cyan);border-radius:var(--r-full);border:2px solid var(--bg-deep);box-shadow:0 0 0 2px var(--accent-cyan);cursor:pointer"></div><div style="width:32px;height:32px;background:var(--accent-blue);border-radius:var(--r-full);cursor:pointer"></div><div style="width:32px;height:32px;background:var(--accent-teal);border-radius:var(--r-full);cursor:pointer"></div><div style="width:32px;height:32px;background:var(--accent-emerald);border-radius:var(--r-full);cursor:pointer"></div><div style="width:32px;height:32px;background:var(--accent-amber);border-radius:var(--r-full);cursor:pointer"></div></div></div>
+            <div class="divider"></div>
+            <button class="btn btn-primary">Применить</button>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" data-stab-content="api">
+        <div class="card" style="max-width:600px">
+          <div class="card-header"><div class="card-title">API ключи</div><button class="btn btn-primary btn-sm" onclick="showToast('success','API ключ','Новый ключ сгенерирован')">Сгенерировать</button></div>
+          <div class="card-body">
+            <div class="flex flex-col gap-12">
+              <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle)"><div class="flex justify-between mb-16"><span class="text-sm font-600">Продакшен ключ</span><span class="badge badge-online"><span class="badge-dot"></span>Активен</span></div><div class="token-masked" style="font-size:11px">bf_prod_••••••••••••••••••••••••<span class="reveal-btn">👁</span></div><div class="text-xs text-muted mt-8">Создан 27 июня 2026 · Последнее использование 5 мин назад</div></div>
+              <div style="padding:14px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-subtle)"><div class="flex justify-between mb-16"><span class="text-sm font-600">Тестовый ключ</span><span class="badge badge-warning"><span class="badge-dot"></span>Устарел</span></div><div class="token-masked" style="font-size:11px">bf_test_••••••••••••••••••••••••<span class="reveal-btn">👁</span></div><div class="text-xs text-muted mt-8">Создан 1 февраля 2026 · Истекает через 30 дней</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ БИЛЛИНГ ════ -->
+    <div class="screen" id="screen-billing">
+      <div class="page-header"><div><div class="page-title">Биллинг</div><div class="page-subtitle">Тарифный план, использование и счета</div></div></div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">Текущий план</div><div class="metric-value" style="font-size:20px">Бизнес</div><div class="text-xs text-muted mt-8">$49/мес · след. оплата 12 авг</div></div>
+        <div class="metric-card"><div class="metric-label">Активные боты</div><div class="metric-value">4<span class="text-muted" style="font-size:16px"> / 25</span></div><div class="progress-bar mt-8"><div class="progress-fill" style="width:16%;background:var(--accent-cyan)"></div></div></div>
+        <div class="metric-card"><div class="metric-label">Сообщений в месяц</div><div class="metric-value">72K<span class="text-muted" style="font-size:16px"> / 5M</span></div><div class="progress-bar mt-8"><div class="progress-fill" style="width:4%;background:var(--accent-teal)"></div></div></div>
+        <div class="metric-card"><div class="metric-label">API вызовы</div><div class="metric-value">342K<span class="text-muted" style="font-size:16px"> / 1M</span></div><div class="progress-bar mt-8"><div class="progress-fill" style="width:34%;background:var(--accent-blue)"></div></div></div>
+      </div>
+      <div class="grid-3 mb-16">
+        <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div class="text-sm text-muted">Старт</div><div class="metric-value mt-8">$9<span class="text-muted text-sm" style="font-weight:400">/мес</span></div><div class="text-xs text-muted mt-8">3 бота · 100K сообщений</div><div class="mt-16"><button class="btn btn-secondary btn-sm" style="width:100%">Текущий</button></div></div></div>
+        <div class="card" style="border-color:var(--accent-cyan);box-shadow:var(--shadow-glow-cyan)"><div class="card-body" style="text-align:center;padding:24px"><div class="text-sm" style="color:var(--accent-cyan);font-weight:600">Бизнес</div><div class="metric-value mt-8">$49<span class="text-muted text-sm" style="font-weight:400">/мес</span></div><div class="text-xs text-muted mt-8">25 ботов · 5M сообщений</div><div class="mt-16"><button class="btn btn-primary btn-sm" style="width:100%">Текущий план</button></div></div></div>
+        <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div class="text-sm text-muted">Предприятие</div><div class="metric-value mt-8">$199<span class="text-muted text-sm" style="font-weight:400">/мес</span></div><div class="text-xs text-muted mt-8">Безлимит ботов · 50M сообщений</div><div class="mt-16"><button class="btn btn-secondary btn-sm" style="width:100%" onclick="showToast('info','Переход','Переход на тариф Предприятие...')">Перейти</button></div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">История счетов</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Счёт</th><th>Дата</th><th>Сумма</th><th>Статус</th><th style="text-align:right">Действия</th></tr></thead>
+            <tbody>
+              <tr><td class="cell-mono">INV-2026-071</td><td class="cell-muted">1 июля 2026</td><td class="cell-primary">$49.00</td><td><span class="badge badge-online"><span class="badge-dot"></span>Оплачен</span></td><td class="row-actions"><div class="row-action" data-tooltip="Скачать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div></td></tr>
+              <tr><td class="cell-mono">INV-2026-070</td><td class="cell-muted">1 июня 2026</td><td class="cell-primary">$49.00</td><td><span class="badge badge-online"><span class="badge-dot"></span>Оплачен</span></td><td class="row-actions"><div class="row-action" data-tooltip="Скачать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div></td></tr>
+              <tr><td class="cell-mono">INV-2026-069</td><td class="cell-muted">1 мая 2026</td><td class="cell-primary">$49.00</td><td><span class="badge badge-online"><span class="badge-dot"></span>Оплачен</span></td><td class="row-actions"><div class="row-action" data-tooltip="Скачать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ ЖУРНАЛ АУДИТА ════ -->
+    <div class="screen" id="screen-audit">
+      <div class="page-header">
+        <div><div class="page-title">Журнал аудита</div><div class="page-subtitle">Журнал всех действий и изменений в системе</div></div>
+        <div class="page-actions"><button class="btn btn-secondary btn-sm" onclick="showToast('info','Экспорт','Журнал аудита экспортируется...')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Экспорт</button></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="flex gap-8 items-center"><input class="input btn-sm" style="height:28px;width:200px" placeholder="Поиск по журналу..."><select class="select btn-sm" style="height:28px;width:auto"><option>Все действия</option><option>Управление ботами</option><option>Команда</option><option>Биллинг</option><option>Безопасность</option></select></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Время</th><th>Пользователь</th><th>Действие</th><th>Ресурс</th><th>IP</th></tr></thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════ МОДАЛЬНЫЕ ОКНА ════ -->
+
+<!-- Добавить бота -->
+<div class="modal-overlay" id="addBotModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Добавить нового бота</div><div class="modal-close" onclick="closeModal('addBotModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Токен бота</label><input class="input mono" id="botTokenInput" placeholder="8786036190:AAHxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="font-size:11px"><div class="field-hint">Получите токен у <span class="cell-mono">@BotFather</span> в Telegram</div></div>
+      <div class="field-group"><label class="field-label">Отображаемое имя (опционально)</label><input class="input" placeholder="Мой крутой бот"></div>
+      <div class="field-group" style="margin-bottom:0"><label class="field-label">Режим работы</label><div class="flex gap-12"><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="radio" name="botmode" checked> Webhook (рекомендуется)</label><label class="flex items-center gap-8 text-sm" style="cursor:pointer"><input type="radio" name="botmode"> Polling</label></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('addBotModal')">Отмена</button><button class="btn btn-primary" onclick="closeModal('addBotModal');showToast('success','Бот подключён','Бот успешно подключён и проверен');setTimeout(()=>switchScreen('botDetails'),500)">Подключить</button></div>
+  </div>
+</div>
+
+<!-- Пригласить участника -->
+<div class="modal-overlay" id="inviteModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Пригласить участника</div><div class="modal-close" onclick="closeModal('inviteModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Email</label><input class="input" placeholder="member@example.com"></div>
+      <div class="field-group" style="margin-bottom:0"><label class="field-label">Роль</label><select class="select"><option>Админ</option><option>Редактор</option><option>Наблюдатель</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('inviteModal')">Отмена</button><button class="btn btn-primary" onclick="closeModal('inviteModal');showToast('success','Приглашение отправлено','Приглашение отправлено на email')">Отправить</button></div>
+  </div>
+</div>
+
+<!-- Подтверждение отключения -->
+<div class="modal-overlay" id="confirmDelete">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header"><div class="modal-title">Отключить бота</div><div class="modal-close" onclick="closeModal('confirmDelete')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <div class="modal-body">
+      <div class="flex gap-12" style="padding:14px;background:var(--danger-bg);border-radius:var(--r-md);border:1px solid rgba(239,68,68,0.25);margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div><div class="text-sm font-600" style="color:var(--danger)">Вы собираетесь отключить DealBot63</div><div class="text-xs text-muted mt-8">Бот перестанет отслеживать цены и отправлять уведомления. Polling будет остановлен. Это действие можно отменить.</div></div></div>
+      <div class="text-xs text-muted">Введите название бота для подтверждения:</div>
+      <input class="input mt-8" placeholder="DealBot63" style="margin-top:8px">
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('confirmDelete')">Отмена</button><button class="btn btn-danger" onclick="closeModal('confirmDelete');showToast('warning','Бот отключён','DealBot63 отключён, polling остановлен')">Отключить бота</button></div>
+  </div>
+</div>
+
+<!-- ОНБОРДИНГ -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-card">
+    <div class="onboarding-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg></div>
+    <div class="onboarding-title">Добро пожаловать в BotForge</div>
+    <div class="onboarding-desc">Платформа для управления Telegram-ботами. Подключите первого бота по токену, настройте команды и начните автоматизацию.</div>
+    <div class="onboarding-steps"><div class="onboarding-step active"></div><div class="onboarding-step"></div><div class="onboarding-step"></div></div>
+    <div class="flex gap-12"><button class="btn btn-secondary" style="flex:1" onclick="closeOnboarding()">Пропустить</button><button class="btn btn-primary" style="flex:1" onclick="closeOnboarding();openModal('addBotModal')">Начать</button></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ──
+function switchScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const screen = document.getElementById('screen-' + screenId);
+  if (screen) screen.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector(`.nav-item[data-screen="${screenId}"]`);
+  if (navItem) navItem.classList.add('active');
+  document.querySelector('.main').scrollTop = 0;
+}
+document.querySelectorAll('.nav-item[data-screen]').forEach(item => {
+  item.addEventListener('click', () => switchScreen(item.dataset.screen));
+});
+
+// ── МОДАЛЬНЫЕ ОКНА ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+// ── ТОСТЫ ──
+function showToast(type, title, message) {
+  const icons = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+  };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<div class="toast-icon">${icons[type]}</div><div class="toast-text"><div class="toast-title">${title}</div><div class="toast-msg">${message}</div></div>`;
+  document.getElementById('toastContainer').appendChild(toast);
+  setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 200); }, 3500);
+}
+
+function closeOnboarding() { document.getElementById('onboardingOverlay').classList.remove('open'); }
+
+// ── ВКЛАДКИ ──
+document.querySelectorAll('#botTabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#botTabs .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('[data-tab-content]').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelector(`[data-tab-content="${tab.dataset.tab}"]`).classList.add('active');
+  });
+});
+document.querySelectorAll('#settingsTabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#settingsTabs .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('[data-stab-content]').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelector(`[data-stab-content="${tab.dataset.stab}"]`).classList.add('active');
+  });
+});
+
+// ── ДАННЫЕ БОТОВ ──
+const botsData = [
+  { name: 'DealBot63', username: '@DealBot63_bot', avatar: 'DB', color: 'cyan', status: 'online', mode: 'polling', users: 847, commands: 7, error: '—', updated: '2 мин назад' },
+  { name: 'GlamBot', username: '@Nailselegantstudio_bot', avatar: 'GB', color: 'blue', status: 'online', mode: 'webhook', users: 234, commands: 12, error: '—', updated: '5 мин назад' },
+  { name: 'DebiHackBot', username: '@DebiHackBot_bot', avatar: 'DH', color: 'teal', status: 'online', mode: 'webhook', users: 1847, commands: 9, error: '—', updated: '18 мин назад' },
+  { name: 'HermesStudy', username: '@HermesStudy_bot', avatar: 'HS', color: 'emerald', status: 'online', mode: 'webhook', users: 521, commands: 8, error: '—', updated: '1 час назад' },
+];
+
+function renderBotsTable() {
+  const tbody = document.getElementById('botsTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = botsData.map(bot => `
+    <tr style="cursor:pointer" onclick="switchScreen('botDetails')">
+      <td><div class="bot-cell"><div class="bot-avatar ${bot.color}">${bot.avatar}</div><div><div class="bot-name">${bot.name}</div><div class="bot-username">${bot.username}</div></div></div></td>
+      <td><span class="badge badge-${bot.status}"><span class="badge-dot"></span>${bot.status === 'online' ? 'Онлайн' : bot.status === 'error' ? 'Ошибка' : 'Офлайн'}</span></td>
+      <td><span class="badge badge-neutral">${bot.mode}</span></td>
+      <td><span class="token-masked">${bot.username.split('_')[0].replace('@','').slice(0,6)}•••••••</span></td>
+      <td><span class="cell-primary">${bot.users.toLocaleString()}</span></td>
+      <td><span class="cell-primary">${bot.commands}</span></td>
+      <td>${bot.error === '—' ? '<span class="cell-muted">Нет ошибок</span>' : `<span class="text-xs" style="color:var(--danger)">${bot.error}</span>`}</td>
+      <td class="row-actions">
+        <div class="row-action" data-tooltip="Тест" onclick="event.stopPropagation();showToast('success','Тест','Сообщение отправлено')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+        <div class="row-action" data-tooltip="Переподключить" onclick="event.stopPropagation();showToast('info','Переподключение','Webhook обновлён')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+        <div class="row-action" data-tooltip="Настройки" onclick="event.stopPropagation();switchScreen('botDetails')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2"/></svg></div>
+        <div class="row-action danger" data-tooltip="Удалить" onclick="event.stopPropagation();openModal('confirmDelete')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── ЛОГИ ──
+const logsData = [
+  { time: '14:32:15', level: 'ИНФО', bot: 'DealBot63', event: 'Polling обновление', detail: 'update_id=982341' },
+  { time: '14:28:03', level: 'ИНФО', bot: 'DealBot63', event: 'Снижение цены', detail: 'iPhone 15: 89990→84990₽' },
+  { time: '14:15:22', level: 'ИНФО', bot: 'DealBot63', event: 'Команда выполнена', detail: '/добавить от user=293847' },
+  { time: '14:10:01', level: 'ПРЕДУПР', bot: 'DealBot63', event: 'Медленный парсинг', detail: 'Camoufox: 340 товаров за 18с' },
+  { time: '13:45:33', level: 'ИНФО', bot: 'DealBot63', event: 'Проверка polling', detail: 'OK (200)' },
+  { time: '13:30:00', level: 'ИНФО', bot: 'DealBot63', event: 'Рассылка отправлена', detail: '«Сводка цен» → 847 пользователям' },
+  { time: '13:12:44', level: 'ОШИБКА', bot: 'DealBot63', event: 'Ошибка парсинга Ozon', detail: 'Camoufox timeout (30с) — повтор' },
+  { time: '12:58:12', level: 'ИНФО', bot: 'GlamBot', event: 'Напоминание отправлено', detail: '24ч напоминание 3 клиентам' },
+  { time: '12:45:00', level: 'ИНФО', bot: 'GlamBot', event: 'Запись подтверждена', detail: 'client=Ольга В. услуга=Маникюр' },
+  { time: '12:30:15', level: 'ИНФО', bot: 'DebiHackBot', event: 'AI ответ', detail: 'model=glm-5.2, токены=340' },
+  { time: '11:45:33', level: 'ИНФО', bot: 'HermesStudy', event: 'Новый студент', detail: 'курс=Основы Python, user_id=847291' },
+  { time: '11:30:00', level: 'ИНФО', bot: 'HermesStudy', event: 'Тест пройден', detail: 'студент=847291, результат=85%' },
+];
+
+function renderLogsTable() {
+  const tbody = document.getElementById('logsTableBody');
+  if (!tbody) return;
+  const levelColors = { 'ИНФО': 'badge-info', 'ПРЕДУПР': 'badge-warning', 'ОШИБКА': 'badge-error' };
+  tbody.innerHTML = logsData.map(log => `
+    <tr>
+      <td><span class="cell-mono">${log.time}</span></td>
+      <td><span class="badge ${levelColors[log.level]}"><span class="badge-dot"></span>${log.level}</span></td>
+      <td class="cell-primary">${log.bot}</td>
+      <td class="cell-primary">${log.event}</td>
+      <td class="cell-muted">${log.detail}</td>
+    </tr>
+  `).join('');
+}
+
+// ── ЖУРНАЛ АУДИТА ──
+const auditData = [
+  { time: '14:32 · 11 июля', user: 'Андрей', action: 'Подключён бот', resource: 'DealBot63 (@DealBot63_bot)', ip: '185.23.44.12' },
+  { time: '14:15 · 11 июля', user: 'Андрей', action: 'Команда обновлена', resource: '/добавить — DealBot63', ip: '185.23.44.12' },
+  { time: '13:30 · 11 июля', user: 'Андрей', action: 'Рассылка отправлена', resource: '«Снижение цен» — DealBot63 (847 получателей)', ip: '185.23.44.12' },
+  { time: '12:45 · 11 июля', user: 'Андрей', action: 'Настройки бота обновлены', resource: 'DebiHackBot — AI автоответы включены', ip: '185.23.44.12' },
+  { time: '10:00 · 11 июля', user: 'Андрей', action: 'API ключ сменён', resource: 'Продакшен ключ (bf_prod_••••)', ip: '185.23.44.12' },
+  { time: '18:30 · 10 июля', user: 'Андрей', action: 'Расписание обновлено', resource: 'GlamBot — часы работы 10:00-19:00', ip: '185.23.44.12' },
+  { time: '14:00 · 10 июля', user: 'Андрей', action: 'Тариф обновлён', resource: 'Старт → Бизнес ($49/мес)', ip: '185.23.44.12' },
+  { time: '09:15 · 10 июля', user: 'Андрей', action: 'Логи просмотрены', resource: 'DealBot63 — ошибки парсинга', ip: '185.23.44.12' },
+  { time: '16:45 · 9 июля', user: 'Андрей', action: 'Курс добавлен', resource: 'HermesStudy — Основы Python', ip: '185.23.44.12' },
+];
+
+function renderAuditTable() {
+  const tbody = document.getElementById('auditTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = auditData.map(entry => `
+    <tr>
+      <td><span class="cell-muted">${entry.time}</span></td>
+      <td class="cell-primary">${entry.user}</td>
+      <td class="cell-primary">${entry.action}</td>
+      <td class="cell-muted">${entry.resource}</td>
+      <td><span class="cell-mono">${entry.ip}</span></td>
+    </tr>
+  `).join('');
+}
+
+// ── ГРАФИКИ ──
+function renderChart(containerId, labelsId) {
+  const container = document.getElementById(containerId);
+  const labelsEl = document.getElementById(labelsId);
+  if (!container) return;
+  const data = Array.from({length: 14}, () => Math.floor(Math.random() * 80 + 20));
+  const max = Math.max(...data);
+  container.innerHTML = data.map(v => `<div class="chart-bar" style="height:${(v / max) * 100}%"><div class="bar-fill" style="height:100%"></div></div>`).join('');
+  const dayLabels = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс','Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  labelsEl.innerHTML = dayLabels.map(d => `<div class="chart-label">${d}</div>`).join('');
+}
+
+// ── ИНИЦИАЛИЗАЦИЯ ──
+renderBotsTable();
+renderLogsTable();
+renderAuditTable();
+renderChart('activityChart', 'activityLabels');
+renderChart('analyticsChart', 'analyticsLabels');
+
+// ── ГОРЯЧИЕ КЛАВИШИ ──
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('globalSearch').focus(); }
+  if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); }
+});
+</script>
+</body>
+</html>

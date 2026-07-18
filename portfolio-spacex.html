@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>АНДРЕЙ · РАЗРАБОТЧИК БОТОВ И AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ====================================
+   RESET & BASE
+   ==================================== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: #000000;
+  color: #f0f0fa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ====================================
+   PARTICLES CANVAS
+   ==================================== */
+#particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ====================================
+   CURSOR GLOW
+   ==================================== */
+#cursor-glow {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240, 240, 250, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  transition: left 0.25s ease-out, top 0.25s ease-out;
+}
+
+/* ====================================
+   NAVIGATION
+   ==================================== */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+  animation: navSlideIn 0.8s ease-out;
+}
+
+@keyframes navSlideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.nav-logo {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+  text-decoration: none;
+}
+
+.nav-logo span {
+  opacity: 0.5;
+  font-weight: 300;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 32px;
+}
+
+.nav-links a {
+  color: #f0f0fa;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1.17px;
+  text-transform: uppercase;
+  position: relative;
+  transition: opacity 0.3s ease;
+  opacity: 0.7;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #f0f0fa;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { opacity: 1; }
+.nav-links a:hover::after { width: 100%; }
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+  z-index: 101;
+  background: none;
+  border: none;
+  padding: 8px;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: #f0f0fa;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -5px); }
+
+/* ====================================
+   SCROLL REVEAL
+   ==================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: all 0.8s ease-out;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: all 0.8s ease-out;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ====================================
+   SECTION BASE
+   ==================================== */
+.section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.section-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.section-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.section-content {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  padding: 40px;
+  text-align: left;
+  width: 100%;
+}
+
+/* ====================================
+   HERO
+   ==================================== */
+#hero .section-bg {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(240,240,250,0.03) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(240,240,250,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(240,240,250,0.02) 0%, transparent 50%),
+    linear-gradient(180deg, #000000 0%, #0a0a0f 50%, #000000 100%);
+}
+
+.hero-micro {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+  opacity: 0.5;
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 0.96px;
+  text-transform: uppercase;
+  line-height: 1.0;
+  color: #f0f0fa;
+  margin-bottom: 24px;
+}
+
+.hero-title .highlight {
+  opacity: 0.7;
+}
+
+.hero-desc {
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.96px;
+  line-height: 1.6;
+  color: #f0f0fa;
+  opacity: 0.7;
+  margin-bottom: 40px;
+  max-width: 600px;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Ghost Button */
+.btn-ghost {
+  display: inline-block;
+  background: rgba(240, 240, 250, 0.1);
+  color: #f0f0fa;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.17px;
+  text-transform: uppercase;
+  padding: 18px 36px;
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 32px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ghost:hover {
+  background: rgba(240, 240, 250, 0.2);
+  border-color: rgba(240, 240, 250, 0.6);
+}
+
+.btn-ghost::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  transition: left 0.5s;
+}
+
+.btn-ghost:hover::after {
+  left: 100%;
+}
+
+/* ====================================
+   ABOUT SECTION
+   ==================================== */
+#about .section-bg {
+  background:
+    radial-gradient(ellipse at 80% 30%, rgba(240,240,250,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 70%, rgba(240,240,250,0.02) 0%, transparent 50%),
+    linear-gradient(180deg, #000000 0%, #050508 50%, #000000 100%);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  width: 100%;
+}
+
+.about-label {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+  opacity: 0.4;
+  margin-bottom: 12px;
+}
+
+.about-text {
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.96px;
+  line-height: 1.7;
+  color: #f0f0fa;
+  opacity: 0.7;
+}
+
+.about-text strong {
+  font-weight: 700;
+  opacity: 1;
+}
+
+/* Stack tags */
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.tech-tag {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+  border: 1px solid rgba(240, 240, 250, 0.2);
+  padding: 6px 14px;
+  border-radius: 32px;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, border-color 0.3s ease;
+}
+
+.tech-tag:hover {
+  opacity: 1;
+  border-color: rgba(240, 240, 250, 0.5);
+}
+
+/* ====================================
+   BOTS SECTION
+   ==================================== */
+#bots .section-bg {
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(240,240,250,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 40%, rgba(240,240,250,0.04) 0%, transparent 50%),
+    linear-gradient(180deg, #000000 0%, #07070c 50%, #000000 100%);
+}
+
+.bots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+.bot-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(240, 240, 250, 0.06);
+  gap: 20px;
+}
+
+.bot-item:last-child {
+  border-bottom: none;
+}
+
+.bot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bot-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.17px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+}
+
+.bot-desc {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+  opacity: 0.5;
+}
+
+.bot-link {
+  display: inline-block;
+  background: rgba(240, 240, 250, 0.1);
+  color: #f0f0fa;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 32px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bot-link:hover {
+  background: rgba(240, 240, 250, 0.2);
+  border-color: rgba(240, 240, 250, 0.6);
+}
+
+/* ====================================
+   CONTACT SECTION
+   ==================================== */
+#contact .section-bg {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(240,240,250,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(240,240,250,0.02) 0%, transparent 50%),
+    linear-gradient(180deg, #000000 0%, #08080e 50%, #000000 100%);
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #f0f0fa;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.17px;
+  text-transform: uppercase;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(240, 240, 250, 0.06);
+  transition: opacity 0.3s ease;
+  opacity: 0.7;
+}
+
+.contact-link:hover {
+  opacity: 1;
+}
+
+.contact-link .label {
+  font-weight: 400;
+  opacity: 0.4;
+  min-width: 60px;
+}
+
+/* ====================================
+   FOOTER
+   ==================================== */
+.section-footer {
+  position: relative;
+  width: 100%;
+  padding: 60px 40px;
+  z-index: 2;
+  text-align: center;
+  background: #000000;
+}
+
+.footer-text {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+  opacity: 0.3;
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+@media (max-width: 960px) {
+  nav { padding: 16px 24px; }
+  .hero-title { font-size: 36px; }
+  .about-grid { grid-template-columns: 1fr; gap: 32px; }
+  .section-content { padding: 24px; }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,0.95);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    transition: right 0.4s ease;
+    z-index: 100;
+  }
+
+  .nav-links.open {
+    right: 0;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .hero-title {
+    font-size: 28px;
+    letter-spacing: 0.7px;
+  }
+
+  .hero-desc {
+    font-size: 13px;
+    letter-spacing: 0.7px;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+  }
+
+  .btn-ghost {
+    width: 100%;
+    text-align: center;
+    padding: 16px 24px;
+  }
+
+  .bot-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bot-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  .section {
+    height: auto;
+    min-height: 100vh;
+    padding: 80px 0;
+  }
+
+  .contact-links { gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  nav { padding: 12px 16px; }
+  .hero-title { font-size: 24px; }
+  .hero-desc { font-size: 11px; }
+  .section-content { padding: 16px; }
+  .section-footer { padding: 40px 16px; }
+}
+
+/* ====================================
+   REDUCED MOTION
+   ==================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  .reveal, .reveal-left, .reveal-right {
+    opacity: 1;
+    transform: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES CANVAS -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- CURSOR GLOW -->
+<div id="cursor-glow"></div>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="#" class="nav-logo">АНДРЕЙ <span>·</span> DEV</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#hero" onclick="closeNav()">Главная</a></li>
+    <li><a href="#about" onclick="closeNav()">Обо мне</a></li>
+    <li><a href="#bots" onclick="closeNav()">Проекты</a></li>
+    <li><a href="#contact" onclick="closeNav()">Контакты</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Меню">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="section" id="hero">
+  <div class="section-bg"></div>
+  <div class="section-overlay"></div>
+  <div class="section-content">
+    <p class="hero-micro reveal">Сызрань · Россия</p>
+    <h1 class="hero-title reveal" style="transition-delay: 0.1s">
+      РАЗРАБОТЧИК<br>
+      <span class="highlight">БОТОВ И AI</span>
+    </h1>
+    <p class="hero-desc reveal" style="transition-delay: 0.2s">
+      СОЗДАЮ ЦИФРОВЫЕ РЕШЕНИЯ — ОТ ТЕЛЕГРАМ-БОТОВ<br>
+      ДО AI-АССИСТЕНТОВ. АВТОМАТИЗАЦИЯ,<br>
+      АНАЛИТИКА И ИНТЕЛЛЕКТУАЛЬНЫЕ СИСТЕМЫ.
+    </p>
+    <div class="hero-cta reveal" style="transition-delay: 0.3s">
+      <a href="#bots" class="btn-ghost">Проекты</a>
+      <a href="#contact" class="btn-ghost">Связаться</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="section-bg"></div>
+  <div class="section-overlay"></div>
+  <div class="section-content">
+    <div class="about-grid">
+      <div class="reveal-left">
+        <p class="about-label">01 / ОБО МНЕ</p>
+        <p class="about-text">
+          <strong>АНДРЕЙ</strong> — РАЗРАБОТЧИК ИЗ СЫЗРАНИ.<br><br>
+          СПЕЦИАЛИЗИРУЮСЬ НА СОЗДАНИИ<br>
+          ТЕЛЕГРАМ-БОТОВ И AI-РЕШЕНИЙ.<br>
+          КАЖДЫЙ ПРОЕКТ — ЭТО ИНСТРУМЕНТ,<br>
+          КОТОРЫЙ РЕШАЕТ РЕАЛЬНЫЕ ЗАДАЧИ.
+        </p>
+      </div>
+      <div class="reveal-right" style="transition-delay: 0.1s">
+        <p class="about-label">02 / ТЕХНОЛОГИИ</p>
+        <p class="about-text" style="margin-bottom: 20px;">
+          <strong>СТЕК:</strong> PYTHON · AIOGRAM · FLASK ·<br>
+          DOCKER · OMNIROUTE · HERMES ·<br>
+          HTML/CSS · DASHSCOPE
+        </p>
+        <div class="tech-tags">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Aiogram</span>
+          <span class="tech-tag">Flask</span>
+          <span class="tech-tag">Docker</span>
+          <span class="tech-tag">OmniRoute</span>
+          <span class="tech-tag">Hermes</span>
+          <span class="tech-tag">HTML/CSS</span>
+          <span class="tech-tag">DashScope</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTS -->
+<section class="section" id="bots">
+  <div class="section-bg"></div>
+  <div class="section-overlay"></div>
+  <div class="section-content">
+    <p class="hero-micro reveal">03 / ПРОЕКТЫ</p>
+    <h2 class="hero-title reveal" style="transition-delay: 0.1s; font-size: 36px; margin-bottom: 40px;">
+      TELEGRAM-БОТЫ
+    </h2>
+    <div class="bots-list">
+      <div class="bot-item reveal" style="transition-delay: 0.05s">
+        <div class="bot-info">
+          <span class="bot-name">DealBot63</span>
+          <span class="bot-desc">@DealBot63_bot · OZON PRICE TRACKER</span>
+        </div>
+        <a href="tg://resolve?domain=DealBot63_bot" class="bot-link">Запустить</a>
+      </div>
+      <div class="bot-item reveal" style="transition-delay: 0.1s">
+        <div class="bot-info">
+          <span class="bot-name">GlamBot</span>
+          <span class="bot-desc">@nail163_bot · ЗАПИСЬ НА НОГТИ</span>
+        </div>
+        <a href="tg://resolve?domain=nail163_bot" class="bot-link">Запустить</a>
+      </div>
+      <div class="bot-item reveal" style="transition-delay: 0.15s">
+        <div class="bot-info">
+          <span class="bot-name">BeautyBot</span>
+          <span class="bot-desc">@Nailselegantstudio_bot · БЬЮТИ-УСЛУГИ</span>
+        </div>
+        <a href="tg://resolve?domain=Nailselegantstudio_bot" class="bot-link">Запустить</a>
+      </div>
+      <div class="bot-item reveal" style="transition-delay: 0.2s">
+        <div class="bot-info">
+          <span class="bot-name">FinBot</span>
+          <span class="bot-desc">@finpro63_bot · ФИНАНСЫ</span>
+        </div>
+        <a href="tg://resolve?domain=finpro63_bot" class="bot-link">Запустить</a>
+      </div>
+      <div class="bot-item reveal" style="transition-delay: 0.25s">
+        <div class="bot-info">
+          <span class="bot-name">DebiHackBot</span>
+          <span class="bot-desc">AI-АССИСТЕНТ (HERMES)</span>
+        </div>
+        <a href="tg://resolve?domain=Vandrey63" class="bot-link">Запустить</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="section-bg"></div>
+  <div class="section-overlay"></div>
+  <div class="section-content">
+    <p class="hero-micro reveal">04 / КОНТАКТЫ</p>
+    <h2 class="hero-title reveal" style="transition-delay: 0.1s; font-size: 36px; margin-bottom: 8px;">
+      СВЯЗАТЬСЯ СО МНОЙ
+    </h2>
+    <p class="hero-desc reveal" style="transition-delay: 0.15s; margin-bottom: 0;">
+      ГОТОВ К НОВЫМ ПРОЕКТАМ И СОТРУДНИЧЕСТВУ
+    </p>
+    <div class="contact-links">
+      <a href="tg://resolve?domain=Vandrey63" class="contact-link reveal" style="transition-delay: 0.2s">
+        <span class="label">TG</span>
+        @Vandrey63
+      </a>
+      <a href="https://github.com/kelf2009-801" class="contact-link reveal" style="transition-delay: 0.25s">
+        <span class="label">GH</span>
+        kelf2009-801
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="section-footer">
+  <p class="footer-text">© 2026 АНДРЕЙ · ВСЕ ПРАВА ЗАЩИЩЕНЫ</p>
+</div>
+
+<script>
+/* ====================================
+   PARTICLES CANVAS
+   ==================================== */
+(() => {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let mouseX = -1000, mouseY = -1000;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 2 + 0.5;
+      this.speedX = (Math.random() - 0.5) * 0.3;
+      this.speedY = (Math.random() - 0.5) * 0.3;
+      this.opacity = Math.random() * 0.4 + 0.1;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      const dx = mouseX - this.x;
+      const dy = mouseY - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 150) {
+        const force = (150 - dist) / 150 * 0.5;
+        this.x -= dx / dist * force;
+        this.y -= dy / dist * force;
+      }
+      if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+      }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(240, 240, 250, ${this.opacity})`;
+      ctx.fill();
+    }
+  }
+
+  const count = Math.min(Math.floor(canvas.width * canvas.height / 12000), 120);
+  for (let i = 0; i < count; i++) particles.push(new Particle());
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 180) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(240, 240, 250, ${(1 - dist / 180) * 0.15})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+})();
+
+/* ====================================
+   CURSOR GLOW
+   ==================================== */
+(() => {
+  const glow = document.getElementById('cursor-glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+})();
+
+/* ====================================
+   SCROLL REVEAL
+   ==================================== */
+(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
+    .forEach(el => observer.observe(el));
+})();
+
+/* ====================================
+   HAMBURGER MENU
+   ==================================== */
+(() => {
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+  }
+})();
+
+function closeNav() {
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  if (hamburger && navLinks) {
+    hamburger.classList.remove('active');
+    navLinks.classList.remove('open');
+  }
+}
+</script>
+
+</body>
+</html>

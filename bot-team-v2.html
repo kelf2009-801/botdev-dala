@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Команда ботов Андрея — Telegram-боты из Сызрани</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roobert:wght@400;500;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --bg:#0d0e12; --surface:rgba(255,255,255,0.03); --surface-hover:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.08); --border-hover:rgba(255,255,255,0.15);
+    --text:#e8e8ea; --text-dim:#8b8b94; --accent:#6b8cff;
+    --green:#4ade80; --orange:#fbbf24; --red:#f87171; --purple:#a78bfa; --cyan:#22d3ee; --pink:#f472b6;
+    --mono:'SF Mono','Cascadia Code','JetBrains Mono','Fira Code',monospace;
+    --grad-deal:linear-gradient(135deg,#6b8cff 0%,#22d3ee 100%);
+    --grad-glam:linear-gradient(135deg,#f472b6 0%,#a78bfa 100%);
+    --grad-forge:linear-gradient(135deg,#fbbf24 0%,#f87171 100%);
+    --grad-debi:linear-gradient(135deg,#4ade80 0%,#22d3ee 100%);
+  }
+
+  body {
+    font-family:'Roobert','Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.6;
+    min-height:100vh; overflow-x:hidden;
+  }
+
+  /* ===== ФОН: живой, яркий, с движением ===== */
+  body::before {
+    content:''; position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 10%, rgba(107,140,255,0.25) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 85% 20%, rgba(167,139,250,0.20) 0%, transparent 55%),
+      radial-gradient(ellipse 55% 45% at 50% 85%, rgba(34,211,238,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(244,114,182,0.12) 0%, transparent 55%),
+      linear-gradient(180deg, #0a0b10 0%, #0d0e16 50%, #0a0b10 100%);
+    animation:bgShift 20s ease-in-out infinite;
+  }
+  @keyframes bgShift {
+    0%,100% { filter:hue-rotate(0deg); transform:scale(1); }
+    33% { filter:hue-rotate(15deg); transform:scale(1.05); }
+    66% { filter:hue-rotate(-10deg); transform:scale(1.02); }
+  }
+
+  /* Сетка — заметная */
+  body::after {
+    content:''; position:fixed; inset:0; z-index:-1; opacity:0.5;
+    background-image:
+      linear-gradient(rgba(107,140,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(107,140,255,0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 100% 80% at 50% 50%, black 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 50%, black 20%, transparent 75%);
+    animation:gridMove 40s linear infinite;
+  }
+  @keyframes gridMove {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 56px 56px, 56px 56px; }
+  }
+
+  /* Светящиеся blob'ы */
+  .blob {
+    position:fixed; border-radius:50%; z-index:-1; pointer-events:none;
+    filter:blur(60px); opacity:0.4;
+    animation:blobFloat 15s ease-in-out infinite;
+  }
+  .blob-1 { width:400px; height:400px; top:-100px; left:-100px;
+    background:radial-gradient(circle, #6b8cff 0%, transparent 70%);
+    animation-delay:0s; }
+  .blob-2 { width:350px; height:350px; top:40%; right:-120px;
+    background:radial-gradient(circle, #a78bfa 0%, transparent 70%);
+    animation-delay:-5s; }
+  .blob-3 { width:300px; height:300px; bottom:-50px; left:30%;
+    background:radial-gradient(circle, #22d3ee 0%, transparent 70%);
+    animation-delay:-10s; }
+  @keyframes blobFloat {
+    0%,100% { transform:translate(0,0) scale(1); }
+    33% { transform:translate(40px,-30px) scale(1.15); }
+    66% { transform:translate(-30px,40px) scale(0.9); }
+  }
+
+  .container { max-width:1280px; margin:0 auto; padding:0 24px 48px; }
+
+  /* ===== ХЕДЕР ===== */
+  .hero { text-align:center; padding:72px 20px 44px; position:relative; }
+  .hero::before {
+    content:''; position:absolute; top:-30%; left:50%; transform:translateX(-50%);
+    width:700px; height:500px;
+    background:radial-gradient(circle, rgba(107,140,255,0.10) 0%, transparent 65%);
+    pointer-events:none; animation:pulse 6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.7; transform:translateX(-50%) scale(1);} 50%{opacity:1; transform:translateX(-50%) scale(1.1);} }
+
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:0.78rem; color:var(--accent);
+    background:rgba(107,140,255,0.08); border:1px solid rgba(107,140,255,0.2);
+    padding:8px 16px; border-radius:24px; margin-bottom:24px; font-weight:500;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    animation:fadeDown 0.8s ease;
+  }
+  @keyframes fadeDown { from{opacity:0; transform:translateY(-12px);} to{opacity:1; transform:translateY(0);} }
+
+  .hero h1 {
+    font-size:2.8rem; font-weight:700; letter-spacing:-0.03em; margin-bottom:16px;
+    background:linear-gradient(135deg, #fff 0%, #6b8cff 50%, #a78bfa 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    animation:fadeUp 0.8s ease 0.1s both;
+  }
+  @keyframes fadeUp { from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+
+  .hero p { color:var(--text-dim); font-size:1.05rem; max-width:640px; margin:0 auto;
+    animation:fadeUp 0.8s ease 0.2s both; }
+
+  .hero-tags { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:26px;
+    animation:fadeUp 0.8s ease 0.3s both; }
+  .hero-tag {
+    font-size:0.8rem; color:var(--text-dim);
+    background:var(--surface); border:1px solid var(--border);
+    padding:6px 14px; border-radius:8px; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  }
+  .hero-tag strong { color:var(--text); font-weight:600; }
+
+  /* ===== СТАТИСТИКА ===== */
+  .stats { display:flex; gap:14px; margin-bottom:48px; flex-wrap:wrap; justify-content:center;
+    animation:fadeUp 0.8s ease 0.4s both; }
+  .stat {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:18px 32px; text-align:center; min-width:140px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    transition:all 0.25s; position:relative; overflow:hidden;
+  }
+  .stat::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(107,140,255,0.05) 0%, transparent 50%);
+    opacity:0; transition:opacity 0.3s;
+  }
+  .stat:hover { border-color:var(--border-hover); transform:translateY(-3px);
+    box-shadow:0 8px 24px rgba(107,140,255,0.08); }
+  .stat:hover::before { opacity:1; }
+  .stat-num { font-size:1.8rem; font-weight:700;
+    background:linear-gradient(135deg,#6b8cff,#a78bfa);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .stat-label { font-size:0.72rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em; margin-top:4px; }
+
+  /* ===== СЕКЦИЯ ===== */
+  .section-title {
+    font-size:0.85rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim);
+    margin-bottom:28px; display:flex; align-items:center; gap:12px;
+  }
+  .section-title::after { content:''; flex:1; height:1px;
+    background:linear-gradient(90deg, var(--border) 0%, transparent 100%); }
+
+  /* ===== КАРТОЧКИ — 4 В РЯД ===== */
+  .bot-grid {
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:20px;
+  }
+
+  .bot-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:18px; padding:26px 24px;
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    transition:transform 0.15s ease-out, box-shadow 0.3s, border-color 0.3s;
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    transform-style:preserve-3d; perspective:1000px;
+    animation:cardIn 0.6s ease both;
+    will-change:transform;
+  }
+  .bot-card:nth-child(1) { animation-delay:0.5s; }
+  .bot-card:nth-child(2) { animation-delay:0.6s; }
+  .bot-card:nth-child(3) { animation-delay:0.7s; }
+  .bot-card:nth-child(4) { animation-delay:0.8s; }
+  @keyframes cardIn { from{opacity:0; transform:translateY(24px);} to{opacity:1; transform:translateY(0);} }
+
+  /* Градиент-линия сверху */
+  .bot-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px; opacity:0.9;
+    transition:opacity 0.3s, height 0.3s;
+  }
+  .bot-card.deal::before { background:var(--grad-deal); }
+  .bot-card.glam::before { background:var(--grad-glam); }
+  .bot-card.forge::before { background:var(--grad-forge); }
+  .bot-card.debi::before { background:var(--grad-debi); }
+
+  /* Прожектор — световое пятно за курсором */
+  .bot-card .spotlight {
+    position:absolute; inset:0; border-radius:18px; pointer-events:none;
+    opacity:0; transition:opacity 0.4s;
+    background:radial-gradient(circle 200px at var(--mx,50%) var(--my,50%),
+      rgba(255,255,255,0.07) 0%, transparent 60%);
+    z-index:1;
+  }
+  .bot-card:hover .spotlight { opacity:1; }
+
+  /* Блик-вспышка — свет проходит по карточке */
+  .bot-card .shine {
+    position:absolute; top:0; left:-100%; width:60%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    transform:skewX(-20deg); pointer-events:none; z-index:2;
+    transition:none;
+  }
+  .bot-card:hover .shine {
+    animation:shineSweep 0.9s ease;
+  }
+  @keyframes shineSweep {
+    from { left:-100%; }
+    to { left:200%; }
+  }
+
+  /* Светящаяся рамка при hover */
+  .bot-card .glow-border {
+    position:absolute; inset:0; border-radius:18px; padding:1px;
+    background:linear-gradient(135deg, rgba(255,255,255,0.15), transparent 50%, rgba(255,255,255,0.08));
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:0; transition:opacity 0.4s; pointer-events:none; z-index:3;
+  }
+  .bot-card:hover .glow-border { opacity:1; }
+  .bot-card:hover::before { height:4px; opacity:1; }
+
+  .bot-card:hover {
+    background:var(--surface-hover); border-color:var(--border-hover);
+    box-shadow:0 16px 48px rgba(0,0,0,0.35);
+  }
+  .bot-card.deal:hover { box-shadow:0 16px 48px rgba(107,140,255,0.15); }
+  .bot-card.glam:hover { box-shadow:0 16px 48px rgba(244,114,182,0.15); }
+  .bot-card.forge:hover { box-shadow:0 16px 48px rgba(251,191,36,0.15); }
+  .bot-card.debi:hover { box-shadow:0 16px 48px rgba(74,222,128,0.15); }
+
+  /* Контент карточки — над эффектами */
+  .bot-head, .bot-desc, .bot-features-title, .bot-features,
+  .commands, .tariffs, .bot-btn, .bot-stack {
+    position:relative; z-index:10;
+  }
+
+  .bot-head { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .bot-icon {
+    width:48px; height:48px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem; flex-shrink:0; transition:transform 0.3s;
+  }
+  .bot-card:hover .bot-icon { transform:scale(1.1) rotate(-5deg); }
+  .bot-icon.deal { background:rgba(107,140,255,0.12); box-shadow:0 0 20px rgba(107,140,255,0.08); }
+  .bot-icon.glam { background:rgba(244,114,182,0.12); box-shadow:0 0 20px rgba(244,114,182,0.08); }
+  .bot-icon.forge { background:rgba(251,191,36,0.12); box-shadow:0 0 20px rgba(251,191,36,0.08); }
+  .bot-icon.debi { background:rgba(74,222,128,0.12); box-shadow:0 0 20px rgba(74,222,128,0.08); }
+
+  .bot-name { font-size:1.2rem; font-weight:700; letter-spacing:-0.01em; }
+  .bot-handle { font-family:var(--mono); font-size:0.76rem; color:var(--text-dim); margin-top:2px; }
+
+  .bot-desc { color:var(--text-dim); font-size:0.86rem; line-height:1.55; margin-bottom:18px; }
+
+  .bot-features-title {
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--text-dim); margin-bottom:10px; font-weight:500;
+  }
+  .bot-features { list-style:none; margin-bottom:20px; flex:1; }
+  .bot-features li {
+    font-size:0.82rem; padding:5px 0; color:var(--text);
+    display:flex; align-items:flex-start; gap:8px; transition:color 0.2s;
+  }
+  .bot-features li::before { content:'▸'; color:var(--accent); flex-shrink:0; margin-top:1px; transition:transform 0.2s; }
+  .bot-features li:hover { color:var(--accent); }
+  .bot-features li:hover::before { transform:translateX(3px); }
+
+  /* Тарифы */
+  .tariffs { display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap; }
+  .tariff {
+    background:rgba(255,255,255,0.02); border:1px solid var(--border);
+    border-radius:8px; padding:8px 10px; flex:1; min-width:78px;
+    transition:all 0.2s;
+  }
+  .tariff:hover { border-color:var(--border-hover); background:rgba(255,255,255,0.04); }
+  .tariff-name { font-size:0.76rem; font-weight:600; }
+  .tariff-name.free { color:var(--text-dim); }
+  .tariff-name.premium { color:var(--accent); }
+  .tariff-name.vip { color:var(--orange); }
+  .tariff-spec { font-size:0.68rem; color:var(--text-dim); margin-top:2px; }
+
+  /* Команды */
+  .commands { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:20px; }
+  .cmd-pill {
+    font-family:var(--mono); font-size:0.7rem;
+    background:rgba(107,140,255,0.08); color:var(--accent);
+    padding:3px 8px; border-radius:6px; font-weight:500;
+    border:1px solid rgba(107,140,255,0.1); transition:all 0.2s;
+  }
+  .cmd-pill:hover { background:rgba(107,140,255,0.15); transform:scale(1.05); }
+
+  /* Кнопка */
+  .bot-btn {
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:11px 18px; border-radius:11px; font-family:inherit;
+    font-size:0.88rem; font-weight:600; text-decoration:none;
+    transition:all 0.25s; cursor:pointer; border:none; color:#fff;
+    margin-top:auto; position:relative; overflow:hidden;
+  }
+  .bot-btn::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+    opacity:0; transition:opacity 0.25s;
+  }
+  .bot-btn.deal { background:var(--grad-deal); }
+  .bot-btn.glam { background:var(--grad-glam); }
+  .bot-btn.forge { background:var(--grad-forge); }
+  .bot-btn.debi { background:var(--grad-debi); }
+  .bot-btn:hover { transform:translateY(-2px); filter:brightness(1.15);
+    box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+  .bot-btn:hover::before { opacity:1; }
+  .bot-btn:active { transform:translateY(0); }
+
+  .bot-stack {
+    display:flex; gap:5px; flex-wrap:wrap; margin-top:14px;
+    padding-top:14px; border-top:1px solid var(--border);
+  }
+  .stack-tag {
+    font-size:0.66rem; color:var(--text-dim);
+    background:rgba(255,255,255,0.03); padding:3px 7px; border-radius:6px;
+    border:1px solid var(--border); transition:all 0.2s;
+  }
+  .stack-tag:hover { color:var(--text); border-color:var(--border-hover); }
+
+  /* ===== ФУТЕР ===== */
+  .footer {
+    margin-top:64px; padding:36px 20px; border-top:1px solid var(--border);
+    text-align:center; position:relative;
+  }
+  .footer::before {
+    content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:300px; height:1px;
+    background:linear-gradient(90deg, transparent 0%, var(--border-hover) 50%, transparent 100%);
+  }
+  .footer-title { font-size:1.05rem; font-weight:600; margin-bottom:8px;
+    background:linear-gradient(135deg, #fff 0%, #6b8cff 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .footer-text { color:var(--text-dim); font-size:0.86rem; margin-bottom:22px; max-width:480px; margin-left:auto; margin-right:auto; }
+  .footer-contacts { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .footer-contact {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border);
+    padding:10px 18px; border-radius:11px; font-size:0.84rem;
+    color:var(--text); text-decoration:none; transition:all 0.25s;
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  }
+  .footer-contact:hover { border-color:var(--border-hover); color:var(--accent);
+    transform:translateY(-2px); box-shadow:0 6px 16px rgba(107,140,255,0.08); }
+  .footer-bottom { margin-top:24px; font-size:0.76rem; color:var(--text-dim); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:8px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--border-hover); }
+
+  /* АДАПТИВ */
+  @media (max-width:1100px) {
+    .bot-grid { grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (max-width:680px) {
+    .container { padding:0 16px 32px; }
+    .hero { padding:48px 16px 32px; }
+    .hero h1 { font-size:2rem; }
+    .hero p { font-size:0.92rem; }
+    .stats { gap:8px; }
+    .stat { padding:14px 20px; min-width:110px; }
+    .stat-num { font-size:1.4rem; }
+    .bot-grid { grid-template-columns:1fr; gap:16px; }
+    .bot-card { padding:22px 20px; }
+    .tariffs { flex-direction:column; }
+    .tariff { min-width:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Светящиеся blob'ы -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="container">
+
+<!-- ===== ХЕДЕР ===== -->
+<section class="hero">
+  <div class="hero-badge">🚀 Telegram-боты · Сызрань</div>
+  <h1>Команда ботов Андрея</h1>
+  <p>Четыре Telegram-бота для разных задач: отслеживание цен на Ozon, запись в салон красоты, управление ботами и персональный AI-ассистент. Создано водителем автобуса, который идёт в AI.</p>
+  <div class="hero-tags">
+    <span class="hero-tag"><strong>4</strong> бота</span>
+    <span class="hero-tag"><strong>Telegram</strong> платформа</span>
+    <span class="hero-tag"><strong>Python</strong> стек</span>
+    <span class="hero-tag"><strong>Docker</strong> деплой</span>
+  </div>
+</section>
+
+<!-- ===== СТАТИСТИКА ===== -->
+<div class="stats">
+  <div class="stat"><div class="stat-num">4</div><div class="stat-label">Бота</div></div>
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Тарифа</div></div>
+  <div class="stat"><div class="stat-num">6</div><div class="stat-label">Команд</div></div>
+  <div class="stat"><div class="stat-num">1</div><div class="stat-label">Дашборд</div></div>
+</div>
+
+<!-- ===== БОТЫ ===== -->
+<div class="section-title">Наши боты</div>
+<div class="bot-grid">
+
+  <!-- ===== DealBot63 ===== -->
+  <div class="bot-card deal">
+    <div class="spotlight"></div>
+    <div class="shine"></div>
+    <div class="glow-border"></div>
+    <div class="bot-head">
+      <div class="bot-icon deal">🛒</div>
+      <div>
+        <div class="bot-name">DealBot63</div>
+        <div class="bot-handle">Отслеживание цен · Ozon</div>
+      </div>
+    </div>
+    <p class="bot-desc">Кидаешь ссылку на товар с Ozon — бот следит за ценой и оповещает о падении. Не нужно проверять вручную, бот сам пришлёт уведомление когда цена станет выгодной.</p>
+
+    <div class="bot-features-title">Возможности</div>
+    <ul class="bot-features">
+      <li>Парсинг цены по ссылке на товар</li>
+      <li>Уведомления о падении цены в Telegram</li>
+      <li>Статистика и экспорт данных</li>
+      <li>Админ-панель с защитой паролем</li>
+      <li>Развёртывание через Docker</li>
+    </ul>
+
+    <div class="bot-features-title">Команды</div>
+    <div class="commands">
+      <span class="cmd-pill">/parse</span>
+      <span class="cmd-pill">/prices</span>
+      <span class="cmd-pill">/stats</span>
+      <span class="cmd-pill">/export</span>
+      <span class="cmd-pill">/tariff</span>
+      <span class="cmd-pill">/admin</span>
+    </div>
+
+    <div class="bot-features-title">Тарифы</div>
+    <div class="tariffs">
+      <div class="tariff">
+        <div class="tariff-name free">Free</div>
+        <div class="tariff-spec">3 товара · 3 ч</div>
+      </div>
+      <div class="tariff">
+        <div class="tariff-name premium">Premium</div>
+        <div class="tariff-spec">20 товаров · 30 мин</div>
+      </div>
+      <div class="tariff">
+        <div class="tariff-name vip">VIP</div>
+        <div class="tariff-spec">100 товаров · 10 мин</div>
+      </div>
+    </div>
+
+    <a class="bot-btn deal" href="https://t.me/DealBot63_bot" target="_blank" rel="noopener">🛒 Открыть бот</a>
+
+    <div class="bot-stack">
+      <span class="stack-tag">Python</span>
+      <span class="stack-tag">Docker</span>
+      <span class="stack-tag">Ozon API</span>
+      <span class="stack-tag">SQLite</span>
+    </div>
+  </div>
+
+  <!-- ===== GlamBot ===== -->
+  <div class="bot-card glam">
+    <div class="spotlight"></div>
+    <div class="shine"></div>
+    <div class="glow-border"></div>
+    <div class="bot-head">
+      <div class="bot-icon glam">💅</div>
+      <div>
+        <div class="bot-name">GlamBot</div>
+        <div class="bot-handle">@nail163_bot</div>
+      </div>
+    </div>
+    <p class="bot-desc">Бот для салона красоты и ногтей. Клиенты записываются на услуги через Telegram, AI-консультант помогает выбрать процедуру, а генератор изображений показывает варианты дизайна.</p>
+
+    <div class="bot-features-title">Возможности</div>
+    <ul class="bot-features">
+      <li>Онлайн-запись на услуги салона</li>
+      <li>AI-консультант по выбору процедуры</li>
+      <li>Генерация изображений дизайна ногтей</li>
+      <li>Админ-панель управления записями</li>
+      <li>Модульная архитектура кода</li>
+    </ul>
+
+    <div class="bot-features-title">Структура</div>
+    <div class="bot-stack" style="border:none;padding-top:0;margin-top:0;">
+      <span class="stack-tag">handlers/client.py</span>
+      <span class="stack-tag">admin.py</span>
+      <span class="stack-tag">ai_consultant.py</span>
+      <span class="stack-tag">ai_image.py</span>
+    </div>
+
+    <a class="bot-btn glam" href="https://t.me/nail163_bot" target="_blank" rel="noopener">💅 Открыть бот</a>
+
+    <div class="bot-stack">
+      <span class="stack-tag">Python</span>
+      <span class="stack-tag">AI</span>
+      <span class="stack-tag">Image Gen</span>
+      <span class="stack-tag">Telegram API</span>
+    </div>
+  </div>
+
+  <!-- ===== BotForge ===== -->
+  <div class="bot-card forge">
+    <div class="spotlight"></div>
+    <div class="shine"></div>
+    <div class="glow-border"></div>
+    <div class="bot-head">
+      <div class="bot-icon forge">⚡</div>
+      <div>
+        <div class="bot-name">BotForge</div>
+        <div class="bot-handle">localhost:8080</div>
+      </div>
+    </div>
+    <p class="bot-desc">Сервис управления всеми ботами с одного места. Дашборд, мониторинг, контроль — никаких внешних зависимостей, чистый Python. Telegram API используется напрямую.</p>
+
+    <div class="bot-features-title">Возможности</div>
+    <ul class="bot-features">
+      <li>Единый дашборд для всех ботов</li>
+      <li>Управление ботами с одного места</li>
+      <li>Хранилище данных на SQLite</li>
+      <li>Zero dependencies — чистый Python</li>
+      <li>Прямая работа с Telegram API</li>
+    </ul>
+
+    <div class="bot-features-title">Технологии</div>
+    <div class="bot-stack" style="border:none;padding-top:0;margin-top:0;">
+      <span class="stack-tag">Чистый Python</span>
+      <span class="stack-tag">SQLite</span>
+      <span class="stack-tag">Telegram API</span>
+      <span class="stack-tag">Web-дашборд</span>
+    </div>
+
+    <a class="bot-btn forge" href="http://localhost:8080" target="_blank" rel="noopener">⚡ Открыть дашборд</a>
+
+    <div class="bot-stack">
+      <span class="stack-tag">Python</span>
+      <span class="stack-tag">SQLite</span>
+      <span class="stack-tag">Web UI</span>
+      <span class="stack-tag">0 deps</span>
+    </div>
+  </div>
+
+  <!-- ===== DebiHackBot ===== -->
+  <div class="bot-card debi">
+    <div class="spotlight"></div>
+    <div class="shine"></div>
+    <div class="glow-border"></div>
+    <div class="bot-head">
+      <div class="bot-icon debi">🤖</div>
+      <div>
+        <div class="bot-name">DebiHackBot</div>
+        <div class="bot-handle">AI-ассистент · хакерский стиль</div>
+      </div>
+    </div>
+    <p class="bot-desc">Персональный AI-ассистент с хакерским стилем. Озвучивание через MiniMax TTS, собственный аватар, работает как личный помощник в Telegram.</p>
+
+    <div class="bot-features-title">Возможности</div>
+    <ul class="bot-features">
+      <li>Персональный AI-ассистент в Telegram</li>
+      <li>Озвучивание текста через MiniMax TTS</li>
+      <li>Собственный аватар персонажа</li>
+      <li>Хакерский стиль оформления</li>
+      <li>Ответы на вопросы и помощь в задачах</li>
+    </ul>
+
+    <div class="bot-features-title">Технологии</div>
+    <div class="bot-stack" style="border:none;padding-top:0;margin-top:0;">
+      <span class="stack-tag">MiniMax TTS</span>
+      <span class="stack-tag">AI Model</span>
+      <span class="stack-tag">Avatar</span>
+      <span class="stack-tag">Telegram API</span>
+    </div>
+
+    <a class="bot-btn debi" href="https://t.me/DebiHackBot" target="_blank" rel="noopener">🤖 Открыть бот</a>
+
+    <div class="bot-stack">
+      <span class="stack-tag">Python</span>
+      <span class="stack-tag">AI</span>
+      <span class="stack-tag">TTS</span>
+      <span class="stack-tag">MiniMax</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== ФУТЕР ===== -->
+<footer class="footer">
+  <div class="footer-title">Андрей · Сызрань</div>
+  <p class="footer-text">Водитель автобуса, который осваивает AI и создаёт Telegram-ботов. Открыт к сотрудничеству и идеям.</p>
+  <div class="footer-contacts">
+    <a class="footer-contact" href="https://t.me/DealBot63_bot" target="_blank" rel="noopener">💬 DealBot63</a>
+    <a class="footer-contact" href="https://t.me/nail163_bot" target="_blank" rel="noopener">💅 GlamBot</a>
+    <a class="footer-contact" href="http://localhost:8080" target="_blank" rel="noopener">⚡ BotForge</a>
+    <a class="footer-contact" href="https://t.me/DebiHackBot" target="_blank" rel="noopener">🤖 DebiHackBot</a>
+  </div>
+  <div class="footer-bottom">
+    Сделано с ❤ в Сызрани · 2026
+  </div>
+</footer>
+
+</div>
+
+<script>
+// 3D наклон карточек за курсором + прожектор
+document.querySelectorAll('.bot-card').forEach(function(card) {
+  card.addEventListener('mousemove', function(e) {
+    var rect = card.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var cx = rect.width / 2;
+    var cy = rect.height / 2;
+    var rotY = ((x - cx) / cx) * 8;
+    var rotX = ((cy - y) / cy) * 8;
+    card.style.transform = 'perspective(1000px) rotateY(' + rotY + 'deg) rotateX(' + rotX + 'deg) translateY(-6px) scale(1.02)';
+    card.style.setProperty('--mx', x + 'px');
+    card.style.setProperty('--my', y + 'px');
+  });
+  card.addEventListener('mouseleave', function() {
+    card.style.transform = '';
+  });
+});
+</script>
+
+</body>
+</html>

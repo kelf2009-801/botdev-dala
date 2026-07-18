@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent — Команды</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roobert:wght@400;500;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#0a0a0b; --surface:#141416; --surface-hover:#1a1a1e; --border:#26262a;
+    --text:#e8e8ea; --text-dim:#9a9aa0; --accent:#6b8cff; --accent-soft:rgba(107,140,255,0.12);
+    --green:#4ade80; --orange:#fbbf24; --red:#f87171; --radius:12px;
+    --mono:'SF Mono','Cascadia Code','JetBrains Mono','Fira Code',monospace;
+  }
+  body {
+    font-family:'Roobert','Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.6;
+    padding:40px 20px; max-width:1100px; margin:0 auto;
+  }
+  h1 { font-size:2rem; font-weight:700; margin-bottom:8px; letter-spacing:-0.02em; }
+  .subtitle { color:var(--text-dim); font-size:0.95rem; margin-bottom:32px; }
+  .stats { display:flex; gap:12px; margin-bottom:32px; flex-wrap:wrap; }
+  .stat {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:12px 20px; text-align:center;
+  }
+  .stat-num { font-size:1.6rem; font-weight:700; color:var(--accent); }
+  .stat-label { font-size:0.8rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; }
+  .search {
+    width:100%; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:14px 20px; color:var(--text);
+    font-family:inherit; font-size:0.95rem; margin-bottom:28px; transition:border-color 0.2s;
+  }
+  .search:focus { outline:none; border-color:var(--accent); }
+  .search::placeholder { color:var(--text-dim); }
+  .category { margin-bottom:32px; }
+  .cat-title {
+    font-size:1.1rem; font-weight:600; margin-bottom:12px; padding-bottom:8px;
+    border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px;
+  }
+  .cat-icon { font-size:1.2rem; }
+  .cat-count { color:var(--text-dim); font-size:0.8rem; font-weight:400; }
+  .cmd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:10px; }
+  .cmd {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:14px 16px; transition:all 0.15s ease; cursor:default;
+  }
+  .cmd:hover { background:var(--surface-hover); border-color:var(--accent); transform:translateY(-1px); }
+  .cmd-name {
+    font-family:var(--mono); font-size:0.9rem; font-weight:600;
+    color:var(--accent); margin-bottom:4px;
+  }
+  .cmd-desc { font-size:0.82rem; color:var(--text-dim); line-height:1.4; }
+  .cmd-ru { font-size:0.82rem; color:var(--text); line-height:1.4; margin-top:4px; }
+  .cmd-tag {
+    display:inline-block; font-size:0.7rem; padding:2px 8px; border-radius:6px;
+    margin-left:6px; font-weight:500;
+  }
+  .tag-core { background:rgba(74,222,128,0.15); color:var(--green); }
+  .tag-config { background:rgba(251,191,36,0.15); color:var(--orange); }
+  .tag-danger { background:rgba(248,113,113,0.15); color:var(--red); }
+  .tag-alias { background:rgba(154,154,160,0.15); color:var(--text-dim); }
+  .tag-dep { background:rgba(248,113,113,0.15); color:var(--red); }
+  .opts {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px 24px; margin-top:20px;
+  }
+  .opts h3 { font-size:0.95rem; margin-bottom:12px; }
+  .opt-list { display:flex; flex-wrap:wrap; gap:8px; }
+  .opt {
+    font-family:var(--mono); font-size:0.82rem; background:var(--accent-soft);
+    color:var(--accent); padding:4px 10px; border-radius:6px;
+  }
+  .footer {
+    margin-top:40px; padding-top:20px; border-top:1px solid var(--border);
+    text-align:center; color:var(--text-dim); font-size:0.82rem;
+  }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+
+<h1>Hermes Agent — Полный список команд</h1>
+<p class="subtitle">Точные данные из <code style="color:var(--accent);font-family:var(--mono);">hermes --help</code>. 62 команды, 20 опций. Каждая команда — дословная цитата.</p>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">62</div><div class="stat-label">Команд</div></div>
+  <div class="stat"><div class="stat-num">20</div><div class="stat-label">Опций</div></div>
+  <div class="stat"><div class="stat-num">10</div><div class="stat-label">Категорий</div></div>
+</div>
+
+<input class="search" type="text" placeholder="🔍 Поиск команды..." oninput="filterCmds(this.value)">
+
+<!-- ========== ОСНОВНЫЕ (4) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">💬</span> Основные <span class="cat-count">— 4 команды</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="chat interactive chat with the agent чат">
+      <div class="cmd-name">hermes chat<span class="cmd-tag tag-core">основная</span></div>
+      <div class="cmd-desc">Interactive chat with the agent</div>
+      <div class="cmd-ru">Интерактивный чат с агентом</div>
+    </div>
+    <div class="cmd" data-search="model select default model provider модель">
+      <div class="cmd-name">hermes model</div>
+      <div class="cmd-desc">Select default model and provider</div>
+      <div class="cmd-ru">Выбор модели и провайдера по умолчанию</div>
+    </div>
+    <div class="cmd" data-search="moa mixture of agents council совет">
+      <div class="cmd-name">hermes moa</div>
+      <div class="cmd-desc">Configure Mixture of Agents provider/model slots</div>
+      <div class="cmd-ru">Настройка Mixture of Agents — несколько моделей как совет</div>
+    </div>
+    <div class="cmd" data-search="fallback manage fallback providers резерв">
+      <div class="cmd-name">hermes fallback</div>
+      <div class="cmd-desc">Manage fallback providers (tried when the primary model fails)</div>
+      <div class="cmd-ru">Резервные провайдеры — срабатывают при отказе основной модели</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== НАСТРОЙКА (8) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">⚙️</span> Настройка и конфигурация <span class="cat-count">— 8 команд</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="setup interactive setup wizard установка мастер">
+      <div class="cmd-name">hermes setup<span class="cmd-tag tag-config">настройка</span></div>
+      <div class="cmd-desc">Interactive setup wizard</div>
+      <div class="cmd-ru">Интерактивный мастер первоначальной настройки</div>
+    </div>
+    <div class="cmd" data-search="postinstall bootstrap node browser ripgrep ffmpeg зависимости">
+      <div class="cmd-name">hermes postinstall</div>
+      <div class="cmd-desc">Bootstrap non-Python deps for pip installs (node, browser, ripgrep, ffmpeg)</div>
+      <div class="cmd-ru">Установка не-Python зависимостей: node, browser, ripgrep, ffmpeg</div>
+    </div>
+    <div class="cmd" data-search="config view edit configuration конфиг настройки">
+      <div class="cmd-name">hermes config</div>
+      <div class="cmd-desc">View and edit configuration</div>
+      <div class="cmd-ru">Просмотр и редактирование конфигурации</div>
+    </div>
+    <div class="cmd" data-search="profile manage profiles isolated instances профиль">
+      <div class="cmd-name">hermes profile</div>
+      <div class="cmd-desc">Manage profiles — multiple isolated Hermes instances</div>
+      <div class="cmd-ru">Управление профилями — изолированные экземпляры Hermes</div>
+    </div>
+    <div class="cmd" data-search="migrate configuration retired models deprecated миграция">
+      <div class="cmd-name">hermes migrate</div>
+      <div class="cmd-desc">Migrate configuration for retired models or deprecated settings</div>
+      <div class="cmd-ru">Миграция конфигов для устаревших моделей и настроек</div>
+    </div>
+    <div class="cmd" data-search="version show version information версия">
+      <div class="cmd-name">hermes version</div>
+      <div class="cmd-desc">Show version information</div>
+      <div class="cmd-ru">Показать версию Hermes</div>
+    </div>
+    <div class="cmd" data-search="update latest version обновление">
+      <div class="cmd-name">hermes update<span class="cmd-tag tag-danger">осторожно</span></div>
+      <div class="cmd-desc">Update Hermes Agent to the latest version</div>
+      <div class="cmd-ru">Обновить Hermes до последней версии</div>
+    </div>
+    <div class="cmd" data-search="uninstall удалить снос">
+      <div class="cmd-name">hermes uninstall<span class="cmd-tag tag-danger">осторожно</span></div>
+      <div class="cmd-desc">Uninstall Hermes Agent</div>
+      <div class="cmd-ru">Удалить Hermes Agent с системы</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== АВТОРИЗАЦИЯ (5) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">🔐</span> Авторизация и безопасность <span class="cat-count">— 5 команд</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="login deprecated auth model setup авторизация">
+      <div class="cmd-name">hermes login<span class="cmd-tag tag-dep">deprecated</span></div>
+      <div class="cmd-desc">Deprecated. Use `hermes auth` to manage credentials, `hermes model` to select a provider, or `hermes setup` for full setup.</div>
+      <div class="cmd-ru">Устарела. Используйте `hermes auth`, `hermes model` или `hermes setup`</div>
+    </div>
+    <div class="cmd" data-search="logout clear authentication provider выход">
+      <div class="cmd-name">hermes logout</div>
+      <div class="cmd-desc">Clear authentication for an inference provider</div>
+      <div class="cmd-ru">Очистка авторизации для провайдера вывода</div>
+    </div>
+    <div class="cmd" data-search="auth manage pooled provider credentials ключи токены">
+      <div class="cmd-name">hermes auth</div>
+      <div class="cmd-desc">Manage pooled provider credentials</div>
+      <div class="cmd-ru">Управление общими ключами провайдеров</div>
+    </div>
+    <div class="cmd" data-search="security supply chain audit osv vulnerability безопасность аудит">
+      <div class="cmd-name">hermes security</div>
+      <div class="cmd-desc">Supply-chain audit (OSV.dev) for venv, plugins, and MCP servers</div>
+      <div class="cmd-ru">Аудит цепочки поставок через OSV.dev — проверка уязвимостей в venv, плагинах и MCP</div>
+    </div>
+    <div class="cmd" data-search="secrets external bitwarden 1password пароли ключи">
+      <div class="cmd-name">hermes secrets</div>
+      <div class="cmd-desc">Manage external secret sources (Bitwarden, 1Password)</div>
+      <div class="cmd-ru">Управление внешними хранилищами секретов: Bitwarden, 1Password</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ИНТЕГРАЦИИ (10) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">📡</span> Интеграции и платформы <span class="cat-count">— 10 команд</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="whatsapp setup integration">
+      <div class="cmd-name">hermes whatsapp</div>
+      <div class="cmd-desc">Set up WhatsApp integration</div>
+      <div class="cmd-ru">Настройка интеграции с WhatsApp</div>
+    </div>
+    <div class="cmd" data-search="whatsapp cloud business api">
+      <div class="cmd-name">hermes whatsapp-cloud</div>
+      <div class="cmd-desc">Set up WhatsApp Business Cloud API integration</div>
+      <div class="cmd-ru">Настройка WhatsApp Business Cloud API</div>
+    </div>
+    <div class="cmd" data-search="slack integration manifest">
+      <div class="cmd-name">hermes slack</div>
+      <div class="cmd-desc">Slack integration helpers (manifest generation, etc.)</div>
+      <div class="cmd-ru">Хелперы интеграции со Slack — генерация манифеста и др.</div>
+    </div>
+    <div class="cmd" data-search="send message platform scripts cron отправить сообщение">
+      <div class="cmd-name">hermes send</div>
+      <div class="cmd-desc">Send a message to a configured platform (scripts, cron jobs, CI).</div>
+      <div class="cmd-ru">Отправить сообщение на настроенную платформу (скрипты, cron, CI)</div>
+    </div>
+    <div class="cmd" data-search="webhook dynamic subscriptions вебхук">
+      <div class="cmd-name">hermes webhook</div>
+      <div class="cmd-desc">Manage dynamic webhook subscriptions</div>
+      <div class="cmd-ru">Управление динамическими подписками на вебхуки</div>
+    </div>
+    <div class="cmd" data-search="portal nous portal login model tool gateway">
+      <div class="cmd-name">hermes portal</div>
+      <div class="cmd-desc">Set up Nous Portal (login, model pick, Tool Gateway); see also `portal info`</div>
+      <div class="cmd-ru">Настройка Nous Portal — вход, выбор модели, Tool Gateway</div>
+    </div>
+    <div class="cmd" data-search="gateway messaging управление шлюз">
+      <div class="cmd-name">hermes gateway</div>
+      <div class="cmd-desc">Messaging gateway management</div>
+      <div class="cmd-ru">Управление шлюзом сообщений</div>
+    </div>
+    <div class="cmd" data-search="proxy local openai compatible oauth прокси">
+      <div class="cmd-name">hermes proxy</div>
+      <div class="cmd-desc">Local OpenAI-compatible proxy to OAuth providers</div>
+      <div class="cmd-ru">Локальный OpenAI-совместимый прокси к OAuth-провайдерам</div>
+    </div>
+    <div class="cmd" data-search="lsp language server protocol">
+      <div class="cmd-name">hermes lsp</div>
+      <div class="cmd-desc">Language Server Protocol management</div>
+      <div class="cmd-ru">Управление Language Server Protocol — анализ кода в реальном времени</div>
+    </div>
+    <div class="cmd" data-search="pairing dm pairing codes authorization коды привязка">
+      <div class="cmd-name">hermes pairing</div>
+      <div class="cmd-desc">Manage DM pairing codes for user authorization</div>
+      <div class="cmd-ru">Управление кодами привязки DM для авторизации пользователей</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ПРОЕКТЫ (6) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">📁</span> Проекты и работа <span class="cat-count">— 6 команд</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="project manage projects workspaces проект">
+      <div class="cmd-name">hermes project</div>
+      <div class="cmd-desc">Manage projects (named, multi-folder workspaces)</div>
+      <div class="cmd-ru">Управление проектами — именованные много-папочные рабочие пространства</div>
+    </div>
+    <div class="cmd" data-search="kanban multi profile collaboration board канбан доска">
+      <div class="cmd-name">hermes kanban</div>
+      <div class="cmd-desc">Multi-profile collaboration board (tasks, links, comments)</div>
+      <div class="cmd-ru">Мультипрофильная доска совместной работы — задачи, ссылки, комментарии</div>
+    </div>
+    <div class="cmd" data-search="hooks inspect manage shell script хуки">
+      <div class="cmd-name">hermes hooks</div>
+      <div class="cmd-desc">Inspect and manage shell-script hooks</div>
+      <div class="cmd-ru">Просмотр и управление shell-скрипт хуками</div>
+    </div>
+    <div class="cmd" data-search="backup home directory zip резервная копия">
+      <div class="cmd-name">hermes backup</div>
+      <div class="cmd-desc">Back up Hermes home directory to a zip file</div>
+      <div class="cmd-ru">Резервное копирование домашней директории Hermes в zip</div>
+    </div>
+    <div class="cmd" data-search="import restore backup zip восстановить">
+      <div class="cmd-name">hermes import</div>
+      <div class="cmd-desc">Restore a Hermes backup from a zip file</div>
+      <div class="cmd-ru">Восстановление Hermes из zip-архива резервной копии</div>
+    </div>
+    <div class="cmd" data-search="checkpoints inspect prune clear checkpoints чекпоинты">
+      <div class="cmd-name">hermes checkpoints</div>
+      <div class="cmd-desc">Inspect / prune / clear ~/.hermes/checkpoints/</div>
+      <div class="cmd-ru">Просмотр, очистка и удаление чекпоинтов в ~/.hermes/checkpoints/</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== СКИЛЛЫ (11) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">🧠</span> Скиллы и интеллект <span class="cat-count">— 11 команд (3 алиаса)</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="skills search install configure manage скиллы навыки">
+      <div class="cmd-name">hermes skills</div>
+      <div class="cmd-desc">Search, install, configure, and manage skills</div>
+      <div class="cmd-ru">Поиск, установка, настройка и управление скиллами</div>
+    </div>
+    <div class="cmd" data-search="bundles create list manage skill bundles aliases бандлы">
+      <div class="cmd-name">hermes bundles</div>
+      <div class="cmd-desc">Create, list, and manage skill bundles (aliases for multiple skills)</div>
+      <div class="cmd-ru">Создание, просмотр и управление бандлами скиллов</div>
+    </div>
+    <div class="cmd" data-search="plugins install update remove list плагины">
+      <div class="cmd-name">hermes plugins</div>
+      <div class="cmd-desc">Manage plugins — install, update, remove, list</div>
+      <div class="cmd-ru">Управление плагинами — установка, обновление, удаление, список</div>
+    </div>
+    <div class="cmd" data-search="curator background skill maintenance куратор обслуживание">
+      <div class="cmd-name">hermes curator</div>
+      <div class="cmd-desc">Background skill maintenance (curator) — status, run, pause, pin</div>
+      <div class="cmd-ru">Фоновое обслуживание скиллов — статус, запуск, пауза, закрепление</div>
+    </div>
+    <div class="cmd" data-search="pets browse install select petdex mascots питомцы маскоты">
+      <div class="cmd-name">hermes pets</div>
+      <div class="cmd-desc">Browse, install, and select petdex animated pets</div>
+      <div class="cmd-ru">Просмотр, установка и выбор анимированных маскотов из petdex</div>
+    </div>
+    <div class="cmd" data-search="journey timeline learned skills memories путь обучение">
+      <div class="cmd-name">hermes journey</div>
+      <div class="cmd-desc">Timeline of learned skills + memories over time</div>
+      <div class="cmd-ru">Таймлайн выученных скиллов и воспоминаний во времени</div>
+    </div>
+    <div class="cmd" data-search="learning alias journey обучение">
+      <div class="cmd-name">hermes learning<span class="cmd-tag tag-alias">alias</span></div>
+      <div class="cmd-desc">Alias for journey</div>
+      <div class="cmd-ru">Алиас для `hermes journey`</div>
+    </div>
+    <div class="cmd" data-search="memory-graph alias journey граф памяти">
+      <div class="cmd-name">hermes memory-graph<span class="cmd-tag tag-alias">alias</span></div>
+      <div class="cmd-desc">Alias for journey</div>
+      <div class="cmd-ru">Алиас для `hermes journey`</div>
+    </div>
+    <div class="cmd" data-search="memory configure external memory provider память провайдер">
+      <div class="cmd-name">hermes memory</div>
+      <div class="cmd-desc">Configure external memory provider</div>
+      <div class="cmd-ru">Настройка внешнего провайдера памяти</div>
+    </div>
+    <div class="cmd" data-search="tools configure enabled per platform инструменты платформа">
+      <div class="cmd-name">hermes tools</div>
+      <div class="cmd-desc">Configure which tools are enabled per platform</div>
+      <div class="cmd-ru">Настройка инструментов, включённых для каждой платформы</div>
+    </div>
+    <div class="cmd" data-search="computer-use manage cua driver backend компьютер управление">
+      <div class="cmd-name">hermes computer-use</div>
+      <div class="cmd-desc">Manage the Computer Use (cua-driver) backend (macOS/Windows/Linux)</div>
+      <div class="cmd-ru">Управление бэкендом Computer Use (cua-driver) — macOS/Windows/Linux</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MCP И СЕРВЕРЫ (5) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">🔌</span> MCP и серверы <span class="cat-count">— 5 команд (1 алиас)</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="mcp manage servers run mcp сервер">
+      <div class="cmd-name">hermes mcp</div>
+      <div class="cmd-desc">Manage MCP servers and run Hermes as an MCP server</div>
+      <div class="cmd-ru">Управление MCP-серверами и запуск Hermes как MCP-сервер</div>
+    </div>
+    <div class="cmd" data-search="serve backend server headless desktop remote сервер">
+      <div class="cmd-name">hermes serve</div>
+      <div class="cmd-desc">Start the Hermes backend server (headless; powers the desktop app and remote backends)</div>
+      <div class="cmd-ru">Запуск бэкенд-сервера Hermes (headless; питает desktop-приложение и удалённые бэкенды)</div>
+    </div>
+    <div class="cmd" data-search="desktop gui build launch native app десктоп приложение">
+      <div class="cmd-name">hermes desktop</div>
+      <div class="cmd-desc">Build and launch the native desktop app (alias: gui)</div>
+      <div class="cmd-ru">Сборка и запуск нативного desktop-приложения (алиас: gui)</div>
+    </div>
+    <div class="cmd" data-search="gui alias desktop десктоп графический">
+      <div class="cmd-name">hermes gui<span class="cmd-tag tag-alias">alias</span></div>
+      <div class="cmd-desc">Alias for desktop</div>
+      <div class="cmd-ru">Алиас для `hermes desktop`</div>
+    </div>
+    <div class="cmd" data-search="dashboard web ui дашборд панель">
+      <div class="cmd-name">hermes dashboard</div>
+      <div class="cmd-desc">Start the web UI dashboard</div>
+      <div class="cmd-ru">Запуск веб-панели управления (dashboard)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== СЕССИИ (5) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">📊</span> Сессии и аналитика <span class="cat-count">— 5 команд</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="sessions manage history list rename export prune delete сессии история">
+      <div class="cmd-name">hermes sessions</div>
+      <div class="cmd-desc">Manage session history (list, rename, export, prune, delete)</div>
+      <div class="cmd-ru">Управление историей сессий — список, переименование, экспорт, очистка, удаление</div>
+    </div>
+    <div class="cmd" data-search="insights usage analytics статистика аналитика">
+      <div class="cmd-name">hermes insights</div>
+      <div class="cmd-desc">Show usage insights and analytics</div>
+      <div class="cmd-ru">Показать статистику использования и аналитику</div>
+    </div>
+    <div class="cmd" data-search="status show status all components состояние статус">
+      <div class="cmd-name">hermes status</div>
+      <div class="cmd-desc">Show status of all components</div>
+      <div class="cmd-ru">Показать статус всех компонентов системы</div>
+    </div>
+    <div class="cmd" data-search="cron job management cron задачи расписание">
+      <div class="cmd-name">hermes cron</div>
+      <div class="cmd-desc">Cron job management</div>
+      <div class="cmd-ru">Управление cron-задачами — планировщик</div>
+    </div>
+    <div class="cmd" data-search="prompt-size byte breakdown system prompt tool schemas размер промпта">
+      <div class="cmd-name">hermes prompt-size</div>
+      <div class="cmd-desc">Show a byte breakdown of the system prompt + tool schemas</div>
+      <div class="cmd-ru">Показать разбивку по байтам системного промпта и схем инструментов</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ДИАГНОСТИКА (6) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">🔧</span> Диагностика и отладка <span class="cat-count">— 6 команд</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="doctor check configuration dependencies доктор проверка">
+      <div class="cmd-name">hermes doctor</div>
+      <div class="cmd-desc">Check configuration and dependencies</div>
+      <div class="cmd-ru">Проверка конфигурации и зависимостей — диагностика проблем</div>
+    </div>
+    <div class="cmd" data-search="debug tools upload logs system info support дебаг отладка">
+      <div class="cmd-name">hermes debug</div>
+      <div class="cmd-desc">Debug tools — upload logs and system info for support</div>
+      <div class="cmd-ru">Инструменты отладки — загрузка логов и системной информации для поддержки</div>
+    </div>
+    <div class="cmd" data-search="console safe hermes command console консоль">
+      <div class="cmd-name">hermes console</div>
+      <div class="cmd-desc">Open the safe Hermes command console</div>
+      <div class="cmd-ru">Открыть безопасную командную консоль Hermes</div>
+    </div>
+    <div class="cmd" data-search="logs view filter log files логи">
+      <div class="cmd-name">hermes logs</div>
+      <div class="cmd-desc">View and filter Hermes log files</div>
+      <div class="cmd-ru">Просмотр и фильтрация лог-файлов Hermes</div>
+    </div>
+    <div class="cmd" data-search="dump setup summary support debugging дамп">
+      <div class="cmd-name">hermes dump</div>
+      <div class="cmd-desc">Dump setup summary for support/debugging</div>
+      <div class="cmd-ru">Дамп сводки настроек для поддержки и отладки</div>
+    </div>
+    <div class="cmd" data-search="acp agent client protocol server протокол">
+      <div class="cmd-name">hermes acp</div>
+      <div class="cmd-desc">Run Hermes Agent as an ACP (Agent Client Protocol) server</div>
+      <div class="cmd-ru">Запуск Hermes как ACP-сервера (Agent Client Protocol)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ПРОЧЕЕ (2) ========== -->
+<div class="category">
+  <div class="cat-title"><span class="cat-icon">📦</span> Прочее <span class="cat-count">— 2 команды</span></div>
+  <div class="cmd-grid">
+    <div class="cmd" data-search="claw openclaw migration tools миграция">
+      <div class="cmd-name">hermes claw</div>
+      <div class="cmd-desc">OpenClaw migration tools</div>
+      <div class="cmd-ru">Инструменты миграции OpenClaw</div>
+    </div>
+    <div class="cmd" data-search="completion print shell bash zsh fish автодополнение">
+      <div class="cmd-name">hermes completion</div>
+      <div class="cmd-desc">Print shell completion script (bash, zsh, or fish)</div>
+      <div class="cmd-ru">Печать скрипта автодополнения для shell (bash, zsh или fish)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ГЛОБАЛЬНЫЕ ОПЦИИ (20) ========== -->
+<div class="opts">
+  <h3>⚙️ Глобальные опции (флаги к любой команде) — 20 штук</h3>
+  <div class="opt-list">
+    <span class="opt">-h, --help</span>
+    <span class="opt">--version, -V</span>
+    <span class="opt">-z, --oneshot PROMPT</span>
+    <span class="opt">--usage-file PATH</span>
+    <span class="opt">-m, --model MODEL</span>
+    <span class="opt">--provider PROVIDER</span>
+    <span class="opt">-t, --toolsets TOOLSETS</span>
+    <span class="opt">--resume, -r SESSION</span>
+    <span class="opt">--continue, -c [SESSION_NAME]</span>
+    <span class="opt">--worktree, -w</span>
+    <span class="opt">--accept-hooks</span>
+    <span class="opt">--skills, -s SKILLS</span>
+    <span class="opt">--yolo</span>
+    <span class="opt">--pass-session-id</span>
+    <span class="opt">--ignore-user-config</span>
+    <span class="opt">--ignore-rules</span>
+    <span class="opt">--safe-mode</span>
+    <span class="opt">--tui</span>
+    <span class="opt">--cli</span>
+    <span class="opt">--dev</span>
+  </div>
+  <p style="margin-top:12px;font-size:0.82rem;color:var(--text-dim);line-height:1.5;">
+    <strong style="color:var(--text);">-z PROMPT</strong> — Режим одного запроса: отправить промпт и вывести ТОЛЬКО финальный ответ в stdout. Без баннера, спиннера, превью инструментов и session_id.<br>
+    <strong style="color:var(--text);">--usage-file PATH</strong> — Только для one-shot: записать JSON-отчёт (стоимость, токены, модель, api_calls) в PATH. Пишется даже при ошибке.<br>
+    <strong style="color:var(--text);">-m MODEL</strong> — Переопределить модель для вызова (напр. anthropic/claude-sonnet-4.6). Также через переменную HERMES_INFERENCE_MODEL.<br>
+    <strong style="color:var(--text);">--provider PROVIDER</strong> — Переопределить провайдера для вызова (напр. openrouter, anthropic).<br>
+    <strong style="color:var(--text);">-t TOOLSETS</strong> — Список наборов инструментов через запятую для этого вызова.<br>
+    <strong style="color:var(--text);">--resume, -r SESSION</strong> — Возобновить сессию по ID или названию.<br>
+    <strong style="color:var(--text);">--continue, -c [SESSION_NAME]</strong> — Возобновить сессию по имени, или последнюю, если имя не указано.<br>
+    <strong style="color:var(--text);">--worktree, -w</strong> — Запуск в изолированном git worktree (для параллельных агентов).<br>
+    <strong style="color:var(--text);">--accept-hooks</strong> — Авто-одобрение неизвестных shell хуков без TTY. Для CI / headless.<br>
+    <strong style="color:var(--text);">--skills, -s SKILLS</strong> — Предзагрузить один или несколько скиллов для сессии.<br>
+    <strong style="color:var(--text);">--yolo</strong> — Обойти все подтверждения опасных команд.<br>
+    <strong style="color:var(--text);">--pass-session-id</strong> — Включить ID сессии в системный промпт агента.<br>
+    <strong style="color:var(--text);">--ignore-user-config</strong> — Игнорировать ~/.hermes/config.yaml, использовать встроенные дефолты.<br>
+    <strong style="color:var(--text);">--ignore-rules</strong> — Пропустить авто-инъекцию AGENTS.md, SOUL.md, .cursorrules, памяти и скиллов.<br>
+    <strong style="color:var(--text);">--safe-mode</strong> — Режим диагностики: отключить ВСЕ кастомизации (включает --ignore-user-config и --ignore-rules).<br>
+    <strong style="color:var(--text);">--tui</strong> — Запустить современный TUI вместо классического REPL.<br>
+    <strong style="color:var(--text);">--cli</strong> — Принудительно классический REPL (prompt_toolkit).<br>
+    <strong style="color:var(--text);">--dev</strong> — С --tui: запускать TypeScript через tsx (без сборки dist).
+  </p>
+</div>
+
+<div class="footer">
+  Hermes Agent — все данные получены из <code style="font-family:var(--mono);color:var(--accent);">hermes --help</code><br>
+  62 команды · 20 опций · 0 выдумок
+</div>
+
+<script>
+function filterCmds(query) {
+  query = query.toLowerCase().trim();
+  document.querySelectorAll('.cmd').forEach(function(cmd) {
+    var text = cmd.getAttribute('data-search') || '';
+    var name = cmd.querySelector('.cmd-name').textContent.toLowerCase();
+    var desc = cmd.querySelector('.cmd-desc').textContent.toLowerCase();
+    var match = !query || text.toLowerCase().includes(query) || name.includes(query) || desc.includes(query);
+    cmd.classList.toggle('hidden', !match);
+  });
+  document.querySelectorAll('.category').forEach(function(cat) {
+    var visible = cat.querySelectorAll('.cmd:not(.hidden)').length;
+    cat.style.display = visible > 0 ? '' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>
