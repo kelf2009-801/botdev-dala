@@ -65,7 +65,7 @@ section{padding-block:var(--section-gap);position:relative}
 
 /* ═══════ HERO ═══════ */
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding-top:80px}
-.hero__bg{position:absolute;inset:0;z-index:0}
+.hero__bg{position:absolute;inset:0;z-index:0;opacity:1!important}
 .hero__bg img{width:100%;height:100%;object-fit:cover;filter:brightness(0.45) saturate(0.8)}
 .hero__overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,29,35,0.6) 0%,rgba(26,29,35,0.95) 100%);z-index:1}
 .hero__content{position:relative;z-index:2;max-width:640px}
@@ -102,10 +102,10 @@ section{padding-block:var(--section-gap);position:relative}
 /* ═══════ SERVICES ═══════ */
 .services{background:var(--steel)}
 .services__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:48px}
-.card{background:var(--steel-light);border:1px solid var(--graphite);border-radius:var(--radius-lg);overflow:hidden;transition:all .3s}
+.card{background:var(--steel-light);border:1px solid var(--graphite);border-radius:var(--radius-lg);overflow:hidden;transition:all .3s;will-change:transform}
 .card:hover{border-color:var(--neon);transform:translateY(-4px);box-shadow:var(--shadow-lg)}
 .card__img{position:relative;height:200px;overflow:hidden}
-.card__img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.card__img img{width:100%;height:100%;object-fit:cover;transition:transform .5s;opacity:1!important}
 .card:hover .card__img img{transform:scale(1.05)}
 .card__body{padding:24px}
 .card__title{font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px}
@@ -153,11 +153,24 @@ summary:hover{color:var(--neon)}
 .footer{padding:24px 0;text-align:center;background:var(--steel);border-top:1px solid var(--graphite)}
 .footer p{font-size:13px;color:var(--text-light)}
 
-/* ═══════ REVEAL ═══════ */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
-/* КАРТИНКИ ВСЕГДА ВИДНЫ — reveal не трогает */
-.card{will-change:transform}
+/* ═══════ REVEAL — IntersectionObserver + CSS ═══════ */
+/* Текст-элементы: скрыты пока не в зоне видимости */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+[data-animate].in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Задержки для каскадного появления */
+[data-animate].d1 { transition-delay: 0.1s; }
+[data-animate].d2 { transition-delay: 0.2s; }
+[data-animate].d3 { transition-delay: 0.3s; }
+[data-animate].d4 { transition-delay: 0.4s; }
+/* Исключения: всё что содержит картинки — не трогаем */
+.card, .card__img, .card img, .hero__bg, .hero__bg img { opacity: 1!important; }
 
 /* ═══════ CTA-PULSE ═══════ */
 .cta-pulse{animation:ctaPulse 3s ease-in-out infinite}
@@ -191,7 +204,7 @@ summary:hover{color:var(--neon)}
 
 <!-- HERO -->
 <section class="hero" id="hero">
-  <div class="hero__bg"><img src="images/hero.webp" alt="" class="img-cover"></div>
+  <div class="hero__bg"><img src="images/hero.webp" alt=""></div>
   <div class="hero__overlay"></div>
   <div class="container hero__content">
     <div class="hero__badge">Сейчас работаем</div>
@@ -213,29 +226,29 @@ summary:hover{color:var(--neon)}
 <!-- FEATURES -->
 <section class="features" id="features">
   <div class="container">
-    <span class="eyebrow reveal">Почему мы</span>
-    <h2 class="h-sm reveal">Три причины выбрать нас</h2>
+    <span class="eyebrow" data-animate>Почему мы</span>
+    <h2 class="h-sm" data-animate>Три причины выбрать нас</h2>
     <div class="features__grid">
-      <div class="feature reveal">
+      <div class="feature d1" data-animate>
         <div class="feature__icon">
           <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
         <div class="feature__title">Скорость</div>
-        <p class="feature__text">Замена колеса — от 15 минут. Балансировка — от 10 минут. Мы не держим вас в очереди. Записались — приехали — уехали.</p>
+        <p class="feature__text">Замена колеса — от 15 минут. Балансировка — от 10 минут. Не держим вас в очереди.</p>
       </div>
-      <div class="feature reveal">
+      <div class="feature d2" data-animate>
         <div class="feature__icon">
           <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <div class="feature__title">Надёжность</div>
-        <p class="feature__text">Оборудование премиум-класса. Каждое колесо проверяется по 7 параметрам. Гарантия на все виды работ — без мелкого шрифта.</p>
+        <p class="feature__text">Оборудование премиум-класса. Гарантия на все виды работ — без мелкого шрифта.</p>
       </div>
-      <div class="feature reveal">
+      <div class="feature d3" data-animate>
         <div class="feature__icon">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         </div>
         <div class="feature__title">Профессионализм</div>
-        <p class="feature__text">Сертифицированные мастера с опытом от 5 лет. Знаем каждую модель дисков и шин. Делаем правильно, с первого раза.</p>
+        <p class="feature__text">Сертифицированные мастера с опытом от 5 лет. Делаем правильно, с первого раза.</p>
       </div>
     </div>
   </div>
@@ -246,7 +259,7 @@ summary:hover{color:var(--neon)}
 <!-- OFFER -->
 <section class="offer" id="offer">
   <div class="container">
-    <div class="offer__box reveal">
+    <div class="offer__box" data-animate>
       <span class="eyebrow">Главное предложение</span>
       <h2 class="h-sm">Замена шин за 15 минут</h2>
       <div class="offer__price">от 900 ₽</div>
@@ -263,14 +276,15 @@ summary:hover{color:var(--neon)}
 <!-- SERVICES -->
 <section class="services" id="services">
   <div class="container">
-    <span class="eyebrow reveal">Услуги и цены</span>
-    <h2 class="h-sm reveal">Что мы делаем</h2>
+    <span class="eyebrow" data-animate>Услуги и цены</span>
+    <h2 class="h-sm" data-animate>Что мы делаем</h2>
     <div class="services__grid">
+      <!-- Карточки без data-animate — картинки всегда видны! -->
       <article class="card">
-        <div class="card__img"><img src="images/service1.webp" alt="Замена шин" class="img-cover"></div>
+        <div class="card__img"><img src="images/service1.webp" alt="Замена шин"></div>
         <div class="card__body">
           <h3 class="card__title">Замена шин</h3>
-          <p class="card__desc">Демонтаж старых шин, установка новых. Проверка вентилей, момент затяжки — всё по стандарту. Работаем с любым типом дисков.</p>
+          <p class="card__desc">Демонтаж старых шин, установка новых. Работаем с любым типом дисков.</p>
           <div class="card__footer">
             <span class="card__price">от 900 ₽ <small>/ комплект</small></span>
             <a href="#cta" class="card__link">Записаться <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
@@ -278,10 +292,10 @@ summary:hover{color:var(--neon)}
         </div>
       </article>
       <article class="card">
-        <div class="card__img"><img src="images/service2.webp" alt="Балансировка колёс" class="img-cover"></div>
+        <div class="card__img"><img src="images/service2.webp" alt="Балансировка колёс"></div>
         <div class="card__body">
           <h3 class="card__title">Балансировка</h3>
-          <p class="card__desc">Компьютерная балансировка на оборудовании Hunter. Устраняем биение и вибрацию на скорости. Ровный ход и равномерный износ.</p>
+          <p class="card__desc">Компьютерная балансировка на оборудовании Hunter. Устраняем биение и вибрацию.</p>
           <div class="card__footer">
             <span class="card__price">от 600 ₽ <small>/ колесо</small></span>
             <a href="#cta" class="card__link">Записаться <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
@@ -289,10 +303,10 @@ summary:hover{color:var(--neon)}
         </div>
       </article>
       <article class="card">
-        <div class="card__img"><img src="images/service3.webp" alt="Ремонт проколов" class="img-cover"></div>
+        <div class="card__img"><img src="images/service3.webp" alt="Ремонт проколов"></div>
         <div class="card__body">
           <h3 class="card__title">Ремонт проколов</h3>
-          <p class="card__desc">Восстановление шины без замены. Жгут + вулканизация. Прокол до 6 мм — ремонтируем на месте за 20 минут.</p>
+          <p class="card__desc">Восстановление шины без замены. Прокол до 6 мм — ремонтируем на месте за 20 минут.</p>
           <div class="card__footer">
             <span class="card__price">от 500 ₽ <small>/ штука</small></span>
             <a href="#cta" class="card__link">Записаться <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
@@ -300,10 +314,10 @@ summary:hover{color:var(--neon)}
         </div>
       </article>
       <article class="card">
-        <div class="card__img"><img src="images/service4.webp" alt="Сезонное хранение шин" class="img-cover"></div>
+        <div class="card__img"><img src="images/service4.webp" alt="Сезонное хранение шин"></div>
         <div class="card__body">
           <h3 class="card__title">Сезонное хранение</h3>
-          <p class="card__desc">Хранение шин в сухом, вентилируемом помещении на стеллажах. Каждый комплект маркируется. Заберёте ровно те же шины.</p>
+          <p class="card__desc">Сухое вентилируемое помещение на стеллажах. Каждый комплект маркируется.</p>
           <div class="card__footer">
             <span class="card__price">от 3 500 ₽ <small>/ сезон</small></span>
             <a href="#cta" class="card__link">Записаться <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
@@ -317,13 +331,13 @@ summary:hover{color:var(--neon)}
 <!-- PROCESS -->
 <section class="process" id="process">
   <div class="container">
-    <span class="eyebrow reveal">Как мы работаем</span>
-    <h2 class="h-sm reveal">Четыре простых шага</h2>
+    <span class="eyebrow" data-animate>Как мы работаем</span>
+    <h2 class="h-sm" data-animate>Четыре простых шага</h2>
     <div class="process__grid">
-      <div class="step reveal"><div class="step__num">01</div><h3 class="step__title">Запись</h3><p class="step__text">Позвоните или оставьте заявку онлайн. Выберите удобное время.</p></div>
-      <div class="step reveal"><div class="step__num">02</div><h3 class="step__title">Приём</h3><p class="step__text">Диагностика шин и дисков. Согласование объёма работ и стоимости.</p></div>
-      <div class="step reveal"><div class="step__num">03</div><h3 class="step__title">Работа</h3><p class="step__text">Замена, балансировка, ремонт — от 15 минут. Контроль качества.</p></div>
-      <div class="step reveal"><div class="step__num">04</div><h3 class="step__title">Выдача</h3><p class="step__text">Проверка давления, протяжка колёс. Вы уезжаете на исправных шинах.</p></div>
+      <div class="step d1" data-animate><div class="step__num">01</div><h3 class="step__title">Запись</h3><p class="step__text">Позвоните или оставьте заявку онлайн.</p></div>
+      <div class="step d2" data-animate><div class="step__num">02</div><h3 class="step__title">Приём</h3><p class="step__text">Диагностика шин и дисков. Согласование стоимости.</p></div>
+      <div class="step d3" data-animate><div class="step__num">03</div><h3 class="step__title">Работа</h3><p class="step__text">Замена, балансировка — от 15 минут.</p></div>
+      <div class="step d4" data-animate><div class="step__num">04</div><h3 class="step__title">Выдача</h3><p class="step__text">Проверка давления. Вы уезжаете на исправных шинах.</p></div>
     </div>
   </div>
 </section>
@@ -333,28 +347,28 @@ summary:hover{color:var(--neon)}
 <!-- FAQ -->
 <section class="faq" id="faq">
   <div class="container">
-    <span class="eyebrow reveal">Вопросы</span>
-    <h2 class="h-sm reveal">Часто спрашивают</h2>
+    <span class="eyebrow" data-animate>Вопросы</span>
+    <h2 class="h-sm" data-animate>Часто спрашивают</h2>
     <div class="faq__list">
-      <details class="reveal" open>
+      <details>
         <summary>Сколько времени занимает замена шин?</summary>
-        <p class="faq__answer">Комплект из 4 колёс — от 15 до 30 минут в зависимости от типа дисков и состояния шин. Запись по времени — вы приезжаете, и вас принимают сразу.</p>
+        <p class="faq__answer">Комплект из 4 колёс — от 15 до 30 минут. Запись по времени — вас принимают сразу.</p>
       </details>
-      <details class="reveal">
+      <details>
         <summary>Нужна ли предварительная запись?</summary>
-        <p class="faq__answer">Запись рекомендуется, особенно в сезон смены шин (весна/осень). Без записи — примем, но возможно ожидание. Записаться можно по телефону или через сайт.</p>
+        <p class="faq__answer">Рекомендуется в сезон смены шин. Без записи — возможно ожидание.</p>
       </details>
-      <details class="reveal">
+      <details>
         <summary>Работаете с зимними шинами с шипами?</summary>
-        <p class="faq__answer">Да. Работаем со всеми типами шин: шипованные, фрикционные, всесезонные, низкопрофильные, Run-Flat. Используем профессиональное оборудование для каждого типа.</p>
+        <p class="faq__answer">Да. Шипованные, фрикционные, низкопрофильные, Run-Flat — всё оборудование есть.</p>
       </details>
-      <details class="reveal">
+      <details>
         <summary>Как работает сезонное хранение?</summary>
-        <p class="faq__answer">Оставляете комплект шин после сезона. Мы маркируем, упаковываем и размещаем на стеллаже в сухом помещении. Перед началом сезона — проверяем и сообщаем о состоянии. Стоимость — от 3 500 ₽ за сезон.</p>
+        <p class="faq__answer">Маркируем, упаковываем, размещаем на стеллаже. От 3 500 ₽ за сезон.</p>
       </details>
-      <details class="reveal">
+      <details>
         <summary>Есть ли гарантия на работы?</summary>
-        <p class="faq__answer">Да. Гарантия на все виды работ. Если проблема возникла из-за нашей ошибки — исправим бесплатно. На балансировку и ремонт проколов — письменная гарантия.</p>
+        <p class="faq__answer">Да. Если проблема из-за нашей ошибки — исправим бесплатно.</p>
       </details>
     </div>
   </div>
@@ -362,7 +376,7 @@ summary:hover{color:var(--neon)}
 
 <!-- CTA -->
 <section class="cta" id="cta">
-  <div class="container reveal">
+  <div class="container" data-animate>
     <span class="eyebrow">Свяжитесь с нами</span>
     <h2 class="h-sm">Запишитесь прямо сейчас</h2>
     <p class="body-text" style="margin:0 auto 24px">Ответим за 5 минут. Работаем без выходных, 8:00 — 20:00</p>
@@ -383,29 +397,29 @@ summary:hover{color:var(--neon)}
   <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
 </button>
 
-<!-- GSAP (только parallax hero) -->
+<!-- GSAP (только parallax hero-фона) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* === CSS-only reveal через IntersectionObserver === */
-  const revealEls = document.querySelectorAll('.reveal');
+  /* === Reveal через IntersectionObserver === */
+  const els = document.querySelectorAll('[data-animate]');
   if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
+    const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          io.unobserve(e.target);
+          e.target.classList.add('in-view');
+          obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    revealEls.forEach(el => io.observe(el));
+    }, { threshold: 0.1 });
+    els.forEach(el => obs.observe(el));
   } else {
-    revealEls.forEach(el => el.classList.add('visible'));
+    els.forEach(el => el.classList.add('in-view'));
   }
 
-  /* === GSAP — только parallax hero-фона === */
+  /* === GSAP — parallax hero === */
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
     gsap.to('.hero__bg img', {
@@ -429,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  /* === Smooth scroll для якорей === */
+  /* === Smooth scroll === */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', function(e) {
       e.preventDefault();
@@ -440,6 +454,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-
 </body>
 </html>
