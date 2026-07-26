@@ -156,6 +156,8 @@ summary:hover{color:var(--neon)}
 /* ═══════ REVEAL ═══════ */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
+/* КАРТИНКИ ВСЕГДА ВИДНЫ — reveal не трогает */
+.card{will-change:transform}
 
 /* ═══════ CTA-PULSE ═══════ */
 .cta-pulse{animation:ctaPulse 3s ease-in-out infinite}
@@ -264,7 +266,7 @@ summary:hover{color:var(--neon)}
     <span class="eyebrow reveal">Услуги и цены</span>
     <h2 class="h-sm reveal">Что мы делаем</h2>
     <div class="services__grid">
-      <article class="card reveal">
+      <article class="card">
         <div class="card__img"><img src="images/service1.webp" alt="Замена шин" class="img-cover"></div>
         <div class="card__body">
           <h3 class="card__title">Замена шин</h3>
@@ -275,7 +277,7 @@ summary:hover{color:var(--neon)}
           </div>
         </div>
       </article>
-      <article class="card reveal">
+      <article class="card">
         <div class="card__img"><img src="images/service2.webp" alt="Балансировка колёс" class="img-cover"></div>
         <div class="card__body">
           <h3 class="card__title">Балансировка</h3>
@@ -286,7 +288,7 @@ summary:hover{color:var(--neon)}
           </div>
         </div>
       </article>
-      <article class="card reveal">
+      <article class="card">
         <div class="card__img"><img src="images/service3.webp" alt="Ремонт проколов" class="img-cover"></div>
         <div class="card__body">
           <h3 class="card__title">Ремонт проколов</h3>
@@ -297,7 +299,7 @@ summary:hover{color:var(--neon)}
           </div>
         </div>
       </article>
-      <article class="card reveal">
+      <article class="card">
         <div class="card__img"><img src="images/service4.webp" alt="Сезонное хранение шин" class="img-cover"></div>
         <div class="card__body">
           <h3 class="card__title">Сезонное хранение</h3>
