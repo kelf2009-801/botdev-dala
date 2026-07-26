@@ -154,7 +154,8 @@ summary:hover{color:var(--neon)}
 .footer p{font-size:13px;color:var(--text-light)}
 
 /* ═══════ REVEAL ═══════ */
-.reveal{will-change:opacity,transform}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
 /* ═══════ CTA-PULSE ═══════ */
 .cta-pulse{animation:ctaPulse 3s ease-in-out infinite}
@@ -380,34 +381,33 @@ summary:hover{color:var(--neon)}
   <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
 </button>
 
-<!-- GSAP -->
+<!-- GSAP (только parallax hero) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* === Reveal-анимации (GSAP + ScrollTrigger) === */
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger);
-
-    gsap.utils.toArray('.reveal').forEach((block) => {
-      gsap.from(block, {
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: block,
-          start: "top 85%",
-          toggleActions: "play none none none",
-          once: true
+  /* === CSS-only reveal через IntersectionObserver === */
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
         }
       });
-    });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('visible'));
+  }
 
-    /* Параллакс для hero-фона */
+  /* === GSAP — только parallax hero-фона === */
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
     gsap.to('.hero__bg img', {
-      yPercent: 20,
+      yPercent: 15,
       ease: "none",
       scrollTrigger: {
         trigger: '.hero',
@@ -415,23 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
         end: "bottom top",
         scrub: true
       }
-    });
-
-    /* Каскадное появление карточек */
-    gsap.utils.toArray('.features__grid .feature, .services__grid .card, .process__grid .step').forEach((el, i) => {
-      gsap.from(el, {
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        delay: i * 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 88%",
-          toggleActions: "play none none none",
-          once: true
-        }
-      });
     });
   }
 
