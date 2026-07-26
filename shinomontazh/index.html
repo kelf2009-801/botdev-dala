@@ -154,7 +154,7 @@ summary:hover{color:var(--neon)}
 .footer p{font-size:13px;color:var(--text-light)}
 
 /* ═══════ REVEAL ═══════ */
-.reveal{opacity:0;transform:translateY(40px)}
+.reveal{will-change:opacity,transform}
 
 /* ═══════ CTA-PULSE ═══════ */
 .cta-pulse{animation:ctaPulse 3s ease-in-out infinite}
@@ -391,15 +391,16 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.registerPlugin(ScrollTrigger);
 
     gsap.utils.toArray('.reveal').forEach((block) => {
-      gsap.to(block, {
-        opacity: 1,
-        y: 0,
+      gsap.from(block, {
+        opacity: 0,
+        y: 40,
         duration: 0.8,
         ease: "power2.out",
         scrollTrigger: {
           trigger: block,
           start: "top 85%",
-          toggleActions: "play none none none"
+          toggleActions: "play none none none",
+          once: true
         }
       });
     });
@@ -427,7 +428,8 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: {
           trigger: el,
           start: "top 88%",
-          toggleActions: "play none none none"
+          toggleActions: "play none none none",
+          once: true
         }
       });
     });
