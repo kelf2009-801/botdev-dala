@@ -149,6 +149,23 @@ summary:hover{color:var(--neon)}
 .to-top:hover{transform:translateY(-4px);box-shadow:0 8px 24px var(--accent-glow)}
 .to-top svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.5}
 
+/* ═══════ STATS ═══════ */
+.stats{background:var(--steel);padding:clamp(40px,8vw,80px) 0;border-bottom:1px solid var(--graphite)}
+.stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+.stats__item{padding:16px}
+.stats__number{font-size:clamp(36px,6vw,56px);font-weight:800;color:var(--neon);line-height:1}
+.stats__number span{font-size:0.5em;vertical-align:super;margin-left:2px}
+.stats__label{font-size:clamp(13px,1.5vw,15px);color:var(--text-light);margin-top:8px}
+@media(max-width:768px){
+  .stats__grid{grid-template-columns:repeat(2,1fr);gap:24px}
+}
+@media(max-width:480px){
+  .stats__grid{grid-template-columns:1fr 1fr;gap:16px}
+}
+/* Счётчики: скрыты пока не в зоне видимости */
+.stats__number{opacity:0;transform:scale(0.8);transition:all 0.6s ease-out}
+.stats__number.visible{opacity:1;transform:scale(1)}
+
 /* ═══════ FOOTER ═══════ */
 .footer{padding:24px 0;text-align:center;background:var(--steel);border-top:1px solid var(--graphite)}
 .footer p{font-size:13px;color:var(--text-light)}
@@ -219,6 +236,30 @@ summary:hover{color:var(--neon)}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
         +7 (999) 123-45-67
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats" id="stats">
+  <div class="container">
+    <div class="stats__grid">
+      <div class="stats__item">
+        <div class="stats__number" data-count="15">0</div>
+        <div class="stats__label">лет опыта</div>
+      </div>
+      <div class="stats__item">
+        <div class="stats__number" data-count="10000" data-suffix="+">0</div>
+        <div class="stats__label">довольных клиентов</div>
+      </div>
+      <div class="stats__item">
+        <div class="stats__number" data-count="24" data-suffix="/7">0</div>
+        <div class="stats__label">работаем без выходных</div>
+      </div>
+      <div class="stats__item">
+        <div class="stats__number" data-count="50" data-suffix="+">0</div>
+        <div class="stats__label">брендов шин в наличии</div>
+      </div>
     </div>
   </div>
 </section>
@@ -431,6 +472,41 @@ document.addEventListener('DOMContentLoaded', () => {
         end: "bottom top",
         scrub: true
       }
+    });
+  }
+
+  /* === Animated counters === */
+  const counters = document.querySelectorAll('.stats__number');
+  const animateCounter = (el) => {
+    const target = parseInt(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    const duration = 2000;
+    const start = performance.now();
+    const step = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(target * ease);
+      el.textContent = current.toLocaleString('ru-RU') + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  if ('IntersectionObserver' in window) {
+    const counterObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          animateCounter(e.target);
+          counterObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    counters.forEach(el => counterObs.observe(el));
+  } else {
+    counters.forEach(el => {
+      el.classList.add('visible');
+      animateCounter(el);
     });
   }
 
