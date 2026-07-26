@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Профессиональный шиномонтаж. Замена шин за 15 минут. Балансировка, ремонт проколов, сезонное хранение. Гарантия качества.">
+    <meta name="keywords" content="шиномонтаж, замена шин, балансировка колёс, ремонт проколов, сезонное хранение шин, шиномонтаж цена, шиномонтаж недорого">
+    <title>Шиномонтаж | Замена шин за 15 минут — Профессиональный сервис</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --steel: #3a3f47;
+            --graphite: #1e2229;
+            --carbon: #12141a;
+            --neon-blue: #1a6bff;
+            --neon-glow: #1a6bff33;
+            --cold-white: #c8cdd5;
+            --text-dim: #7a8290;
+            --surface: #1a1d24;
+            --surface-raised: #22262e;
+            --border: #2a2e37;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--carbon);
+            color: var(--cold-white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ═══════ NAVIGATION ═══════ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(18, 20, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            font-family: 'Oswald', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cold-white);
+        }
+
+        .logo span { color: var(--neon-blue); }
+
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--neon-blue);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.25s;
+        }
+
+        .nav-cta:hover {
+            background: #0d5ae6;
+            box-shadow: 0 0 24px var(--neon-glow);
+        }
+
+        /* ═══════ HERO ═══════ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('images/hero.webp') center/cover no-repeat;
+            filter: brightness(0.55) contrast(1.1);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(18, 20, 26, 0.92) 0%,
+                rgba(18, 20, 26, 0.7) 40%,
+                rgba(18, 20, 26, 0.5) 100%
+            );
+        }
+
+        .hero-fog {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: linear-gradient(to top, var(--carbon), transparent);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 140px 0 100px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(26, 107, 255, 0.12);
+            border: 1px solid rgba(26, 107, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 32px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(48px, 7vw, 96px);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.05;
+            letter-spacing: -1px;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            color: var(--neon-blue);
+            display: block;
+        }
+
+        .hero-sub {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-dim);
+            max-width: 520px;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--neon-blue);
+            color: #fff;
+            text-decoration: none;
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #0d5ae6;
+            box-shadow: 0 4px 32px var(--neon-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--cold-white);
+            text-decoration: none;
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+        }
+
+        /* ═══════ FEATURES ═══════ */
+        .features {
+            padding: 100px 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--neon-blue);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 64px;
+            line-height: 1.1;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px 32px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-blue), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-card:hover {
+            border-color: rgba(26, 107, 255, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(26, 107, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* ═══════ OFFER ═══════ */
+        .offer {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .offer-box {
+            background: linear-gradient(135deg, var(--surface-raised), var(--surface));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 64px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .offer-box::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: var(--neon-blue);
+            border-radius: 0 0 4px 4px;
+        }
+
+        .offer-box .section-title { margin-bottom: 24px; }
+
+        .offer-highlight {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 800;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            text-shadow: 0 0 40px var(--neon-glow);
+        }
+
+        .offer-bullets {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .offer-bullets li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .offer-bullets li::before {
+            content: '✓';
+            color: var(--neon-blue);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* ═══════ SERVICES ═══════ */
+        .services {
+            padding: 100px 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .service-card {
+            background: var(--carbon);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: rgba(26, 107, 255, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .service-img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.8) contrast(1.05);
+            transition: filter 0.3s;
+        }
+
+        .service-card:hover .service-img {
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        .service-body {
+            padding: 28px 32px 32px;
+        }
+
+        .service-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .service-desc {
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .service-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .service-price {
+            font-family: 'Oswald', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--neon-blue);
+        }
+
+        .service-price small {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .service-book {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(26, 107, 255, 0.1);
+            color: var(--neon-blue);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(26, 107, 255, 0.2);
+            transition: all 0.25s;
+        }
+
+        .service-book:hover {
+            background: var(--neon-blue);
+            color: #fff;
+        }
+
+        /* ═══════ FAQ ═══════ */
+        .faq {
+            padding: 100px 0;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0;
+            background: none;
+            border: none;
+            color: var(--cold-white);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            transition: color 0.2s;
+        }
+
+        .faq-question:hover { color: var(--neon-blue); }
+
+        .faq-question .arrow {
+            font-size: 20px;
+            transition: transform 0.3s;
+            color: var(--text-dim);
+        }
+
+        .faq-item.active .faq-question .arrow {
+            transform: rotate(180deg);
+            color: var(--neon-blue);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            padding-bottom: 24px;
+        }
+
+        .faq-answer p {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* ═══════ CTA SECTION ═══════ */
+        .cta-section {
+            padding: 80px 0;
+            text-align: center;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+
+        .cta-section h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            color: var(--text-dim);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+
+        .cta-phone {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 700;
+            color: var(--neon-blue);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        .cta-phone:hover {
+            text-shadow: 0 0 32px var(--neon-glow);
+        }
+
+        .cta-phone-label {
+            color: var(--text-dim);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ═══════ FOOTER ═══════ */
+        footer {
+            padding: 32px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        footer a {
+            color: var(--neon-blue);
+            text-decoration: none;
+        }
+
+        /* ═══════ RESPONSIVE ═══════ */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .offer-box {
+                padding: 40px 24px;
+            }
+
+            .offer-bullets {
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .hero-content {
+                padding: 120px 0 80px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .hero-actions a, .hero-actions button {
+                text-align: center;
+                justify-content: center;
+            }
+
+            .nav-cta span.nav-text { display: none; }
+
+            .service-footer {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+        }
+
+        /* ═══════ ANIMATIONS ═══════ */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════ NAVIGATION ═══════ -->
+<nav>
+    <div class="container">
+        <div class="logo">ШИНО<span>МОНТАЖ</span></div>
+        <a href="#cta" class="nav-cta">
+            📞 <span class="nav-text">Записаться</span>
+        </a>
+    </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-fog"></div>
+    <div class="hero-content container">
+        <div class="hero-badge">Сейчас работаем</div>
+        <h1>
+            Шины.<br>
+            <span>Без компромиссов.</span>
+        </h1>
+        <p class="hero-sub">
+            Профессиональный шиномонтаж для тех, кто ценит безопасность и время. Работаем чётко, без сюрпризов.
+        </p>
+        <div class="hero-actions">
+            <a href="#offer" class="btn-primary">
+                ⚡ Записаться онлайн
+            </a>
+            <a href="tel:+79991234567" class="btn-ghost">
+                📞 +7 (999) 123-45-67
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ FEATURES ═══════ -->
+<section class="features">
+    <div class="container">
+        <div class="section-label">Почему мы</div>
+        <div class="section-title">Три причины<br>выбрать нас</div>
+        <div class="features-grid">
+            <div class="feature-card fade-up">
+                <div class="feature-icon">⚡</div>
+                <h3>Скорость</h3>
+                <p>Замена колеса — от 15 минут. Балансировка — от 10 минут. Мы не держим вас в очереди. Записались — приехали — уехали.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon">🛡️</div>
+                <h3>Надёжность</h3>
+                <p>Оборудование премиум-класса. Каждое колесо проверяется по 7 параметрам. Гарантия на все виды работ — без мелкого шрифта.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon">⚙️</div>
+                <h3>Профессионализм</h3>
+                <p>Сертифицированные мастера с опытом от 5 лет. Знаем каждую модель дисков и шин. Делаем правильно, с первого раза.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ OFFER ═══════ -->
+<section class="offer" id="offer">
+    <div class="container">
+        <div class="offer-box fade-up">
+            <div class="section-label">Главное предложение</div>
+            <h2 class="section-title">Замена шин за 15 минут</h2>
+            <div class="offer-highlight">от 900 ₽</div>
+            <ul class="offer-bullets">
+                <li>Диагностика бесплатно</li>
+                <li>Дисконтная карта от 2-го визита</li>
+                <li>Хранение шин от 3 500 ₽/сезон</li>
+            </ul>
+            <a href="#cta" class="btn-primary">
+                ⚡ Записаться сейчас
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ SERVICES ═══════ -->
+<section class="services" id="services">
+    <div class="container">
+        <div class="section-label">Услуги и цены</div>
+        <div class="section-title">Что мы делаем</div>
+        <div class="services-grid">
+
+            <div class="service-card fade-up">
+                <img src="images/service1.webp" alt="Замена шин" class="service-img" loading="lazy">
+                <div class="service-body">
+                    <div class="service-name">Замена шин</div>
+                    <p class="service-desc">
+                        Демонтаж старых шин, установка новых. Проверка вентилей, момент затяжки — всё по стандарту. Работаем с любым типом дисков: стальные, легкосплавные, кованые.
+                    </p>
+                    <div class="service-footer">
+                        <div class="service-price">от 900 ₽ <small>/ комплект</small></div>
+                        <a href="#cta" class="service-book">Записаться →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card fade-up">
+                <img src="images/service2.webp" alt="Балансировка колёс" class="service-img" loading="lazy">
+                <div class="service-body">
+                    <div class="service-name">Балансировка</div>
+                    <p class="service-desc">
+                        Компьютерная балансировка на оборудовании Hunter. Устраняем биение и вибрацию на скорости. Результат — ровный ход и равномерный износ шин.
+                    </p>
+                    <div class="service-footer">
+                        <div class="service-price">от 600 ₽ <small>/ колесо</small></div>
+                        <a href="#cta" class="service-book">Записаться →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card fade-up">
+                <img src="images/service3.webp" alt="Ремонт проколов" class="service-img" loading="lazy">
+                <div class="service-body">
+                    <div class="service-name">Ремонт проколов</div>
+                    <p class="service-desc">
+                        Восстановление шины без замены. Проверенный метод: жгут + вулканизация. Прокол до 6 мм — ремонтируем на месте за 20 минут.
+                    </p>
+                    <div class="service-footer">
+                        <div class="service-price">от 500 ₽ <small>/ штука</small></div>
+                        <a href="#cta" class="service-book">Записаться →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card fade-up">
+                <img src="images/service4.webp" alt="Сезонное хранение шин" class="service-img" loading="lazy">
+                <div class="service-body">
+                    <div class="service-name">Сезонное хранение</div>
+                    <p class="service-desc">
+                        Хранение шин в сухом, вентилируемом помещении на стеллажах. Каждый комплект маркируется. Заберёте ровно те же шины, что оставили.
+                    </p>
+                    <div class="service-footer">
+                        <div class="service-price">от 3 500 ₽ <small>/ сезон</small></div>
+                        <a href="#cta" class="service-book">Записаться →</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ FAQ ═══════ -->
+<section class="faq" id="faq">
+    <div class="container">
+        <div class="section-label">Вопросы</div>
+        <div class="section-title">Часто спрашивают</div>
+        <div class="faq-list">
+
+            <div class="faq-item active">
+                <button class="faq-question">
+                    Сколько времени занимает замена шин?
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Комплект из 4 колёс — от 15 до 30 минут в зависимости от типа дисков и состояния шин. Запись по времени — вы приезжаете, и вас принимают сразу.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    Нужна ли предварительная запись?
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Запись рекомендуется, особенно в сезон смены шин (весна/осень). Без записи — примем, но возможно ожидание. Записаться можно по телефону или через сайт.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    Работаете с зимними шинами с шипами?
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Да. Работаем со всеми типами шин: шипованные, фрикционные, всесезонные, низкопрофильные, Run-Flat. Используем профессиональное оборудование для каждого типа.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    Как работает сезонное хранение?
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Оставляете комплект шин после сезона. Мы маркируем, упаковываем и размещаем на стеллаже в сухом помещении. Перед началом сезона — проверяем и сообщаем о состоянии. Стоимость — от 3 500 ₽ за сезон.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    Есть ли гарантия на работы?
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Да. Гарантия на все виды работ. Если проблема возникла из-за нашей ошибки — исправим бесплатно. На балансировку и ремонт проколов — письменная гарантия.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ CTA ═══════ -->
+<section class="cta-section" id="cta">
+    <div class="container">
+        <h2>Запишитесь прямо сейчас</h2>
+        <p>Ответим за 5 минут. Работаем без выходных, 8:00 — 20:00</p>
+        <a href="tel:+79991234567" class="cta-phone">+7 (999) 123-45-67</a>
+        <div class="cta-phone-label">Звоните — ответим сразу</div>
+    </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+    <div class="container">
+        <p>© 2026 Шиномонтаж — Профессиональный сервис. Все права защищены.</p>
+    </div>
+</footer>
+
+<!-- ═══════ SCRIPTS ═══════ -->
+<script>
+    // FAQ toggle
+    document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.parentElement;
+            const wasActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            if (!wasActive) item.classList.add('active');
+        });
+    });
+
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
