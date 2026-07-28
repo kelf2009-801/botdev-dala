@@ -41,6 +41,7 @@ class Database:
                 appointment_time TEXT NOT NULL,
                 status TEXT DEFAULT 'active',
                 created_at TEXT DEFAULT (datetime('now', '+3 hours')),
+                reminded INTEGER DEFAULT 0,
                 FOREIGN KEY (service_id) REFERENCES services(id),
                 FOREIGN KEY (master_id) REFERENCES masters(id)
             );
