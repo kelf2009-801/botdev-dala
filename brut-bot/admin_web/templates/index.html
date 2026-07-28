@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRUT — Админ-панель</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#0a0a0c;color:#e8e4df;padding:24px}
+h1{font-size:24px;font-weight:800;margin-bottom:8px}
+h1 span{color:#c8825e}
+.sub{color:#7a7a84;font-size:14px;margin-bottom:32px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:40px}
+.stat{padding:20px;border-radius:8px;background:#151518;border:1px solid rgba(255,255,255,.05);text-align:center}
+.stat-num{font-size:28px;font-weight:800;color:#c8825e}
+.stat-label{font-size:13px;color:#7a7a84;margin-top:4px}
+.nav{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.nav a{padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;transition:all .3s;border:1px solid rgba(255,255,255,.08)}
+.nav a:hover,.nav a.active{background:#c8825e;color:#0a0a0c;border-color:#c8825e}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:12px 16px;border-bottom:2px solid #c8825e;color:#c8825e;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05)}
+tr:hover td{background:rgba(200,130,94,.05)}
+.badge{padding:3px 10px;border-radius:4px;font-size:12px;font-weight:600}
+.badge-active{background:rgba(200,130,94,.15);color:#c8825e}
+.badge-done{background:rgba(34,197,94,.15);color:#22c55e}
+.badge-cancelled{background:rgba(239,68,68,.15);color:#ef4444}
+.btn{display:inline-flex;padding:6px 14px;border-radius:4px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .3s;text-decoration:none}
+.btn-primary{background:#c8825e;color:#0a0a0c}
+.btn-primary:hover{background:#d99872}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-danger{background:rgba(239,68,68,.15);color:#ef4444}
+.btn-danger:hover{background:#ef4444;color:#fff}
+.btn-success{background:rgba(34,197,94,.15);color:#22c55e}
+.btn-success:hover{background:#22c55e;color:#fff}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:100}
+.modal.open{display:flex}
+.modal-content{background:#151518;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:32px;width:90%;max-width:480px}
+.modal-content h2{font-size:20px;margin-bottom:16px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;color:#7a7a84;margin-bottom:4px}
+.form-group input,.form-group textarea{width:100%;padding:10px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:#1c1c22;color:#e8e4df;font-size:14px;font-family:Inter,sans-serif}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.empty{text-align:center;padding:60px 20px;color:#7a7a84;font-size:15px}
+@media(max-width:768px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .nav{flex-direction:column}
+  table{font-size:13px}
+  th,td{padding:8px 10px}
+}
+</style>
+</head>
+<body>
+<h1>BRUT <span>Barbershop</span></h1>
+<div class="sub">Админ-панель управления</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">{{ stats.users }}</div><div class="stat-label">Пользователи</div></div>
+  <div class="stat"><div class="stat-num">{{ stats.total }}</div><div class="stat-label">Всего записей</div></div>
+  <div class="stat"><div class="stat-num">{{ stats.active }}</div><div class="stat-label">Активные</div></div>
+  <div class="stat"><div class="stat-num">{{ stats.done }}</div><div class="stat-label">Выполнено</div></div>
+  <div class="stat"><div class="stat-num">{{ stats.cancelled }}</div><div class="stat-label">Отменено</div></div>
+</div>
+
+<div class="nav">
+  <a href="/" class="active">📊 Дашборд</a>
+  <a href="/services">✂️ Услуги</a>
+  <a href="/masters">👤 Мастера</a>
+  <a href="/appointments">📋 Записи</a>
+</div>
+
+<h2 style="font-size:18px;font-weight:600;margin-bottom:16px">Последние записи</h2>
+{% if appointments %}
+<table>
+  <thead><tr><th>Дата</th><th>Время</th><th>Клиент</th><th>Услуга</th><th>Мастер</th><th>Статус</th></tr></thead>
+  <tbody>
+  {% for a in appointments[:10] %}
+    <tr>
+      <td>{{ a.appointment_date }}</td>
+      <td>{{ a.appointment_time }}</td>
+      <td>{{ a.username or '—' }}</td>
+      <td>{{ a.service_name }}</td>
+      <td>{{ a.master_name }}</td>
+      <td><span class="badge badge-{{ a.status }}">{{ a.status }}</span></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">Пока нет записей</div>
+{% endif %}
+</body>
+</html>

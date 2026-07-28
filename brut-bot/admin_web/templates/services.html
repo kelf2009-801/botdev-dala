@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRUT — Услуги</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#0a0a0c;color:#e8e4df;padding:24px}
+h1{font-size:24px;font-weight:800;margin-bottom:24px}
+h1 span{color:#c8825e}
+.nav{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.nav a{padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;transition:all .3s;text-decoration:none;border:1px solid rgba(255,255,255,.08);color:#e8e4df}
+.nav a:hover,.nav a.active{background:#c8825e;color:#0a0a0c;border-color:#c8825e}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:12px 16px;border-bottom:2px solid #c8825e;color:#c8825e;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05)}
+tr:hover td{background:rgba(200,130,94,.05)}
+.btn{display:inline-flex;padding:6px 14px;border-radius:4px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .3s;text-decoration:none;color:#e8e4df}
+.btn-primary{background:#c8825e;color:#0a0a0c}
+.btn-primary:hover{background:#d99872}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-edit{background:rgba(200,130,94,.15);color:#c8825e;margin-right:4px}
+.btn-toggle{background:rgba(255,255,255,.08)}
+.actions{display:flex;gap:4px}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:100}
+.modal.open{display:flex}
+.modal-content{background:#151518;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:32px;width:90%;max-width:480px}
+.modal-content h2{font-size:20px;margin-bottom:16px;color:#e8e4df}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;color:#7a7a84;margin-bottom:4px}
+.form-group input,.form-group textarea{width:100%;padding:10px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:#1c1c22;color:#e8e4df;font-size:14px;font-family:Inter,sans-serif}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.form-actions .btn-close{background:rgba(255,255,255,.08);color:#e8e4df}
+.add-btn{margin-bottom:16px;padding:10px 20px;font-size:14px;cursor:pointer}
+@media(max-width:768px){table{font-size:13px}th,td{padding:8px 10px}}
+</style>
+</head>
+<body>
+<h1>BRUT <span>Услуги</span></h1>
+<div class="nav">
+  <a href="/">📊 Дашборд</a>
+  <a href="/services" class="active">✂️ Услуги</a>
+  <a href="/masters">👤 Мастера</a>
+  <a href="/appointments">📋 Записи</a>
+</div>
+
+<button class="btn btn-primary add-btn" onclick="openModal('add')">➕ Добавить услугу</button>
+
+<table>
+  <thead><tr><th>Название</th><th>Цена</th><th>Время</th><th>Описание</th><th>Статус</th><th>Действия</th></tr></thead>
+  <tbody>
+  {% for s in services %}
+    <tr>
+      <td>{{ s.name }}</td>
+      <td>{{ s.price }} ₽</td>
+      <td>{{ s.duration }} мин</td>
+      <td style="color:#7a7a84;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ s.description }}</td>
+      <td><span style="color:{{ '#22c55e' if s.is_active else '#ef4444' }}">{{ 'Активна' if s.is_active else 'Скрыта' }}</span></td>
+      <td class="actions">
+        <button class="btn btn-sm btn-edit" onclick="openModal('edit', {{ s.id }}, '{{ s.name }}', {{ s.price }}, {{ s.duration }}, '{{ s.description }}')">✏️</button>
+        <a href="/services/toggle/{{ s.id }}" class="btn btn-sm btn-toggle">{{ '🔄 Скрыть' if s.is_active else '🔄 Показать' }}</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<!-- Add Modal -->
+<div class="modal" id="modalAdd">
+  <div class="modal-content">
+    <h2>➕ Новая услуга</h2>
+    <form action="/services/add" method="POST">
+      <div class="form-group"><label>Название</label><input name="name" required></div>
+      <div class="form-group"><label>Цена (₽)</label><input name="price" type="number" required></div>
+      <div class="form-group"><label>Время (мин)</label><input name="duration" type="number" required></div>
+      <div class="form-group"><label>Описание</label><textarea name="description"></textarea></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-close" onclick="closeModal('add')">Отмена</button>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal" id="modalEdit">
+  <div class="modal-content">
+    <h2>✏️ Редактировать услугу</h2>
+    <form action="" method="POST" id="editForm">
+      <div class="form-group"><label>Название</label><input name="name" id="editName" required></div>
+      <div class="form-group"><label>Цена (₽)</label><input name="price" type="number" id="editPrice" required></div>
+      <div class="form-group"><label>Время (мин)</label><input name="duration" type="number" id="editDuration" required></div>
+      <div class="form-group"><label>Описание</label><textarea name="description" id="editDesc"></textarea></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-close" onclick="closeModal('edit')">Отмена</button>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openModal(type, id, name, price, duration, desc) {
+  if(type === 'add') {
+    document.getElementById('modalAdd').classList.add('open')
+  } else {
+    document.getElementById('modalEdit').classList.add('open')
+    document.getElementById('editForm').action = '/services/edit/' + id
+    document.getElementById('editName').value = name
+    document.getElementById('editPrice').value = price
+    document.getElementById('editDuration').value = duration
+    document.getElementById('editDesc').value = desc || ''
+  }
+}
+function closeModal(type) {
+  document.getElementById('modal' + (type === 'add' ? 'Add' : 'Edit')).classList.remove('open')
+}
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', function(e) {
+  if(e.target === this) this.classList.remove('open')
+}))
+</script>
+</body>
+</html>
