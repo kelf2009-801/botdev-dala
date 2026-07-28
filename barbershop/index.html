@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Барбершоп BRUT — Мужская стрижка и бритьё | Сызрань</title>
+<meta name="description" content="BRUT — барбершоп в Сызрани. Мужские стрижки, бритьё, оформление бороды. Запись через Telegram-бота.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:Inter,sans-serif;background:#0d0d0f;color:#e8e4df;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit;text-decoration:none}
+
+/* ===== UTILS ===== */
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+.section{padding:80px 0}
+.section-title{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-0.02em;margin-bottom:12px}
+.section-subtitle{font-size:18px;color:#9ca3af;margin-bottom:48px;max-width:600px}
+.accent{color:#c9a961}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 32px;border-radius:8px;font-size:16px;font-weight:600;border:none;cursor:pointer;transition:all .3s ease;text-align:center}
+.btn-primary{background:#c9a961;color:#0d0d0f}
+.btn-primary:hover{background:#dbb976;transform:translateY(-1px)}
+.btn-outline{border:2px solid #c9a961;color:#c9a961;background:transparent}
+.btn-outline:hover{background:#c9a961;color:#0d0d0f}
+.btn-lg{padding:18px 40px;font-size:18px;border-radius:10px}
+
+/* ===== NAV ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:background .3s ease}
+.nav.scrolled{background:rgba(13,13,15,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.nav .container{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:24px;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+.nav-logo span{color:#c9a961}
+.nav-links{display:flex;list-style:none;gap:32px;align-items:center}
+.nav-links a{font-size:14px;font-weight:500;color:#9ca3af;transition:color .3s}
+.nav-links a:hover{color:#e8e4df}
+.nav-cta{padding:10px 24px;font-size:14px}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.burger span{width:24px;height:2px;background:#e8e4df;border-radius:2px;transition:all .3s}
+.burger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.burger.active span:nth-child(2){opacity:0}
+.burger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:80px}
+.hero-bg{position:absolute;inset:0;background:#0d0d0f}
+.hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(201,169,97,.08) 0%,transparent 70%)}
+.hero-pattern{position:absolute;inset:0;opacity:.03;background-image:radial-gradient(circle at 1px 1px,#c9a961 1px,transparent 0);background-size:40px 40px}
+.hero-grid{position:absolute;inset:0;opacity:.04;background-image:linear-gradient(rgba(201,169,97,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,97,.1) 1px,transparent 1px);background-size:60px 60px}
+.hero .container{position:relative;z-index:2}
+.hero-tag{display:inline-block;font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#c9a961;margin-bottom:20px;border:1px solid rgba(201,169,97,.3);padding:6px 16px;border-radius:4px}
+.hero h1{font-size:clamp(40px,6vw,80px);font-weight:900;line-height:1.05;letter-spacing:-0.03em;margin-bottom:20px}
+.hero h1 .line{display:block}
+.hero p{font-size:clamp(16px,2vw,20px);color:#9ca3af;max-width:520px;margin-bottom:36px;line-height:1.7}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap}
+.hero-stats{margin-top:60px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding-top:40px;border-top:1px solid rgba(255,255,255,.06)}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:28px;font-weight:800;color:#c9a961}
+.hero-stat-label{font-size:13px;color:#6b7280;margin-top:4px}
+
+/* ===== ABOUT ===== */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.about-text p{color:#9ca3af;margin-bottom:20px;font-size:16px;line-height:1.8}
+.about-features{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.about-feat{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500}
+.about-feat-icon{width:20px;height:20px;border-radius:50%;background:rgba(201,169,97,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#c9a961;font-size:12px}
+
+/* ===== SERVICES ===== */
+.services{background:#111115}
+.services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.service-card{padding:24px;border-radius:10px;background:#1a1a1e;border:1px solid rgba(255,255,255,.04);transition:all .3s}
+.service-card:hover{border-color:rgba(201,169,97,.2);background:#1e1e22}
+.service-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.service-card h3{font-size:17px;font-weight:600}
+.service-card-price{font-size:17px;font-weight:700;color:#c9a961}
+.service-card p{font-size:14px;color:#6b7280;margin-bottom:0}
+.service-card-time{font-size:13px;color:#6b7280;margin-top:8px;display:flex;align-items:center;gap:6px}
+
+/* ===== HOW IT WORKS ===== */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.step{text-align:center;padding:32px 20px;border-radius:12px;background:#1a1a1e;border:1px solid rgba(255,255,255,.04);position:relative}
+.step-num{width:44px;height:44px;border-radius:50%;background:rgba(201,169,97,.12);color:#c9a961;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;margin:0 auto 16px}
+.step h3{font-size:16px;font-weight:600;margin-bottom:8px}
+.step p{font-size:14px;color:#6b7280;line-height:1.6}
+
+/* ===== MASTERS ===== */
+.masters{background:#111115}
+.masters-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.master-card{border-radius:12px;overflow:hidden;background:#1a1a1e;border:1px solid rgba(255,255,255,.04);transition:all .3s}
+.master-card:hover{border-color:rgba(201,169,97,.2)}
+.master-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#1e1e22}
+.master-info{padding:20px}
+.master-info h3{font-size:17px;font-weight:600}
+.master-info p{font-size:14px;color:#6b7280;margin-top:4px}
+.master-exp{font-size:13px;color:#c9a961;margin-top:8px;font-weight:500}
+
+/* ===== BOT SECTION ===== */
+.bot{text-align:center;background:linear-gradient(135deg,rgba(201,169,97,.06) 0%,transparent 100%);border:1px solid rgba(201,169,97,.1);border-radius:16px;padding:60px}
+.bot-icon{width:56px;height:56px;border-radius:50%;background:rgba(201,169,97,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
+.bot h2{font-size:32px;font-weight:800;margin-bottom:12px}
+.bot p{color:#9ca3af;max-width:500px;margin:0 auto 32px;font-size:16px;line-height:1.7}
+.bot-steps{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:32px}
+.bot-step{text-align:center;flex:1;min-width:140px}
+.bot-step-num{font-size:32px;font-weight:800;color:#c9a961;margin-bottom:4px}
+.bot-step p{font-size:13px;color:#6b7280;margin:0}
+
+/* ===== REVIEWS ===== */
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.review-card{padding:24px;border-radius:10px;background:#1a1a1e;border:1px solid rgba(255,255,255,.04)}
+.review-stars{color:#c9a961;font-size:14px;margin-bottom:12px;letter-spacing:2px}
+.review-text{font-size:14px;color:#9ca3af;line-height:1.7;margin-bottom:16px;font-style:italic}
+.review-author{font-size:14px;font-weight:600}
+.review-date{font-size:12px;color:#6b7280;margin-top:2px}
+
+/* ===== FOOTER ===== */
+.footer{background:#111115;border-top:1px solid rgba(255,255,255,.04);padding:48px 0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-brand .nav-logo{margin-bottom:12px;display:inline-block}
+.footer-brand p{font-size:14px;color:#6b7280;line-height:1.7;max-width:300px}
+.footer h4{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:16px}
+.footer ul{list-style:none}
+.footer li{margin-bottom:10px}
+.footer a{font-size:14px;color:#6b7280;transition:color .3s}
+.footer a:hover{color:#e8e4df}
+.footer-bottom{margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;color:#6b7280}
+
+/* ===== MOBILE MENU ===== */
+@media(max-width:768px){
+  .nav-links{position:fixed;top:0;right:-100%;width:280px;height:100vh;background:#111115;flex-direction:column;padding:80px 32px 32px;gap:20px;transition:right .3s ease;z-index:99;border-left:1px solid rgba(255,255,255,.06)}
+  .nav-links.open{right:0}
+  .burger{display:flex;z-index:101}
+  .hero h1{font-size:clamp(32px,10vw,48px)}
+  .hero-stats{grid-template-columns:repeat(2,1fr);margin-top:40px}
+  .hero-actions{flex-direction:column}
+  .hero-actions .btn{width:100%;justify-content:center}
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .about-features{grid-template-columns:1fr}
+  .services-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .masters-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+  .reviews-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .bot{padding:40px 24px}
+  .bot h2{font-size:26px}
+  .bot-steps{flex-direction:column;gap:16px}
+  .section{padding:60px 0}
+  .container{padding:0 16px}
+}
+@media(max-width:480px){
+  .steps{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .hero-stat-num{font-size:24px}
+}
+
+/* ===== ANIMATIONS ===== */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="container">
+    <a href="#" class="nav-logo">BRU<span>T</span></a>
+    <button class="burger" id="burger" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">О нас</a></li>
+      <li><a href="#services">Услуги</a></li>
+      <li><a href="#masters">Мастера</a></li>
+      <li><a href="#contacts">Контакты</a></li>
+      <li><a href="#bot" class="btn btn-primary nav-cta">Записаться</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-pattern"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="container">
+    <div class="hero-tag">BRUT BARBERSHOP • СЫЗРАНЬ</div>
+    <h1>
+      <span class="line">Мужская стрижка</span>
+      <span class="line">настоящего <span class="accent">качества</span></span>
+    </h1>
+    <p>Премиальный барбершоп в Сызрани. Стрижки, бритьё, оформление бороды — работаем чётко, без сюрпризов. Запись онлайн через Telegram за 30 секунд.</p>
+    <div class="hero-actions">
+      <a href="#bot" class="btn btn-primary btn-lg">Записаться онлайн</a>
+      <a href="#services" class="btn btn-outline btn-lg">Услуги и цены</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">лет опыта</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">5 000+</div><div class="hero-stat-label">довольных клиентов</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">4.9</div><div class="hero-stat-label">рейтинг</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">10</div><div class="hero-stat-label">мастеров</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <span class="hero-tag reveal">О НАС</span>
+        <h2 class="section-title reveal reveal-delay-1">Больше чем просто<br><span class="accent">стрижка</span></h2>
+        <div class="about-text reveal reveal-delay-2">
+          <p>BRUT — это не просто барбершоп. Это место, где мужская стрижка превращается в ритуал. Горячее полотенце, опасная бритва, правильный разговор и кофе — всё как положено.</p>
+          <p>Мы не гонимся за количеством —每 стрижка делается с вниманием к деталям. Каждый мастер проходит отбор и стажировку. Мы используем профессиональную косметику американских и японских брендов.</p>
+        </div>
+        <div class="about-features reveal reveal-delay-3">
+          <div class="about-feat"><span class="about-feat-icon">✓</span> Опыт от 5 лет</div>
+          <div class="about-feat"><span class="about-feat-icon">✓</span> Премиум косметика</div>
+          <div class="about-feat"><span class="about-feat-icon">✓</span> Без очередей</div>
+          <div class="about-feat"><span class="about-feat-icon">✓</span> Удобная запись</div>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px">
+        <div style="height:280px;border-radius:12px;background:#1a1a1e;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;overflow:hidden">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='280' viewBox='0 0 600 280'%3E%3Crect width='600' height='280' fill='%231a1a1e'/%3E%3Ctext x='300' y='140' text-anchor='middle' fill='%236b7280' font-family='Inter,sans-serif' font-size='16'%3EФото интерьера%3C/text%3E%3C/svg%3E" alt="Интерьер BRUT Barbershop" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="height:160px;border-radius:12px;background:#1a1a1e;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;overflow:hidden">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='290' height='160' viewBox='0 0 290 160'%3E%3Crect width='290' height='160' fill='%231a1a1e'/%3E%3Ctext x='145' y='85' text-anchor='middle' fill='%236b7280' font-family='Inter,sans-serif' font-size='14'%3EБритьё%3C/text%3E%3C/svg%3E" alt="Бритьё в BRUT" style="width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="height:160px;border-radius:12px;background:#1a1a1e;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;overflow:hidden">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='290' height='160' viewBox='0 0 290 160'%3E%3Crect width='290' height='160' fill='%231a1a1e'/%3E%3Ctext x='145' y='85' text-anchor='middle' fill='%236b7280' font-family='Inter,sans-serif' font-size='14'%3EАтмосфера%3C/text%3E%3C/svg%3E" alt="Атмосфера BRUT" style="width:100%;height:100%;object-fit:cover">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section services" id="services">
+  <div class="container">
+    <span class="hero-tag reveal">УСЛУГИ И ЦЕНЫ</span>
+    <h2 class="section-title reveal reveal-delay-1">Что мы <span class="accent">делаем</span></h2>
+    <p class="section-subtitle reveal reveal-delay-2">Все цены указаны без скрытых доплат. Работаем с любым типом волос.</p>
+    <div class="services-grid">
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-header">
+          <h3>Мужская стрижка</h3>
+          <span class="service-card-price">1 200 ₽</span>
+        </div>
+        <p>Мытьё головы, стрижка машинкой и ножницами, укладка. Любая сложность.</p>
+        <div class="service-card-time">⏱ 45 мин</div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-header">
+          <h3>Стрижка + борода</h3>
+          <span class="service-card-price">1 800 ₽</span>
+        </div>
+        <p>Комплекс: стрижка + оформление бороды ножницами и машинкой + горячее полотенце.</p>
+        <div class="service-card-time">⏱ 60 мин</div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-card-header">
+          <h3>Оформление бороды</h3>
+          <span class="service-card-price">900 ₽</span>
+        </div>
+        <p>Моделирование бороды, подбривание шеи и щёк, горячее полотенце, масло.</p>
+        <div class="service-card-time">⏱ 30 мин</div>
+      </div>
+      <div class="service-card reveal reveal-delay-4">
+        <div class="service-card-header">
+          <h3>Королевское бритьё</h3>
+          <span class="service-card-price">1 500 ₽</span>
+        </div>
+        <p>Бритьё опасной бритвой по горячему полотенцу. Компресс, пена, лосьон после.</p>
+        <div class="service-card-time">⏱ 40 мин</div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-header">
+          <h3>Стрижка машинкой</h3>
+          <span class="service-card-price">800 ₽</span>
+        </div>
+        <p>Быстрая стрижка машинкой под насадку. Идеально для спорта и армии.</p>
+        <div class="service-card-time">⏱ 20 мин</div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-header">
+          <h3>Детская стрижка</h3>
+          <span class="service-card-price">1 000 ₽</span>
+        </div>
+        <p>Для мальчиков до 14 лет. Терпеливый мастер, мультики, вкусняшка после.</p>
+        <div class="service-card-time">⏱ 30 мин</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="container">
+    <span class="hero-tag reveal">КАК МЫ РАБОТАЕМ</span>
+    <h2 class="section-title reveal reveal-delay-1">Четыре простых <span class="accent">шага</span></h2>
+    <p class="section-subtitle reveal reveal-delay-2">Всё просто — от записи до выхода с отличной стрижкой.</p>
+    <div class="steps">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <h3>Запись</h3>
+        <p>Записываешься через Telegram-бота за 30 секунд. Выбираешь мастера, услугу и время.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <h3>Приём</h3>
+        <p>Приходишь в назначенное время. Кофе или чай — бесплатно. Никаких очередей.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <h3>Стрижка</h3>
+        <p>Мастер делает свою работу. Чётко, аккуратно, с вниманием к каждой детали.</p>
+      </div>
+      <div class="step reveal reveal-delay-4">
+        <div class="step-num">4</div>
+        <h3>Результат</h3>
+        <p>Выходишь с отличной стрижкой и настроением. Напомним, когда пора подстричься снова.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MASTERS -->
+<section class="section masters" id="masters">
+  <div class="container">
+    <span class="hero-tag reveal">МАСТЕРА</span>
+    <h2 class="section-title reveal reveal-delay-1">Команда <span class="accent">BRUT</span></h2>
+    <p class="section-subtitle reveal reveal-delay-2">Каждый мастер — профессионал с опытом от 5 лет. Постоянное обучение и повышение квалификации.</p>
+    <div class="masters-grid">
+      <div class="master-card reveal reveal-delay-1">
+        <img class="master-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533' viewBox='0 0 400 533'%3E%3Crect width='400' height='533' fill='%231e1e22'/%3E%3Ctext x='200' y='270' text-anchor='middle' fill='%236b7280' font-family='Inter,sans-serif' font-size='16'%3EФото мастера%3C/text%3E%3C/svg%3E" alt="Артём — барбер BRUT">
+        <div class="master-info">
+          <h3>Артём</h3>
+          <p>Топ-мастер. Специалист по сложным переходам и фейдам.</p>
+          <div class="master-exp">★ Опыт 8 лет</div>
+        </div>
+      </div>
+      <div class="master-card reveal reveal-delay-2">
+        <img class="master-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533' viewBox='0 0 400 533'%3E%3Crect width='400' height='533' fill='%231e1e22'/%3E%3Ctext x='200' y='270' text-anchor='middle' fill='%236b7280' font-family='Inter,sans-serif' font-size='16'%3EФото мастера%3C/text%3E%3C/svg%3E" alt="Максим — барбер BRUT">
+        <div class="master-info">
+          <h3>Максим</h3>
+          <p>Мастер мужского брить. Королевское бритьё, оформление бороды.</p>
+          <div class="master-exp">★ Опыт 7 лет</div>
+        </div>
+      </div>
+      <div class="master-card reveal reveal-delay-3">
+        <img class="master-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533' viewBox='0 0 400 533'%3E%3Crect width='400' height='533' fill='%231e1e22'/%3E%3Ctext x='200' y='270' text-anchor='middle' fill='%236b7280' font-family='Inter,sans-serif' font-size='16'%3EФото мастера%3C/text%3E%3C/svg%3E" alt="Сергей — барбер BRUT">
+        <div class="master-info">
+          <h3>Сергей</h3>
+          <p>Классика и креатив. Детские стрижки, модные мужские образы.</p>
+          <div class="master-exp">★ Опыт 6 лет</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOT SECTION -->
+<section class="section" id="bot">
+  <div class="container">
+    <div class="bot reveal">
+      <div class="bot-icon">✂️</div>
+      <h2>Запись через <span class="accent">Telegram</span></h2>
+      <p>Записывайся за 30 секунд. Выбери мастера, услугу и свободное время — без звонков и ожидания.</p>
+      <div class="bot-steps">
+        <div class="bot-step">
+          <div class="bot-step-num">1</div>
+          <p>Открой бота</p>
+        </div>
+        <div class="bot-step">
+          <div class="bot-step-num">2</div>
+          <p>Выбери услугу</p>
+        </div>
+        <div class="bot-step">
+          <div class="bot-step-num">3</div>
+          <p>Выбери время</p>
+        </div>
+        <div class="bot-step">
+          <div class="bot-step-num">4</div>
+          <p>Подтверди</p>
+        </div>
+      </div>
+      <a href="#" class="btn btn-primary btn-lg">Записаться через бота</a>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section" id="reviews">
+  <div class="container">
+    <span class="hero-tag reveal">ОТЗЫВЫ</span>
+    <h2 class="section-title reveal reveal-delay-1">Нас <span class="accent">рекомендуют</span></h2>
+    <p class="section-subtitle reveal reveal-delay-2">Реальные отзывы наших клиентов.</p>
+    <div class="reviews-grid">
+      <div class="review-card reveal reveal-delay-1">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Хожу только сюда. Артём делает идеальный фейд — каждый раз как надо. Цены адекватные, атмосфера мужская.»</p>
+        <div class="review-author">Дмитрий</div>
+        <div class="review-date">2 недели назад</div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Сделали королевское бритьё в подарок мужу — он в восторге. Спасибо Максиму за профессионализм!»</p>
+        <div class="review-author">Екатерина</div>
+        <div class="review-date">1 месяц назад</div>
+      </div>
+      <div class="review-card reveal reveal-delay-3">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Лучший барбершоп в Сызрани. Стригусь здесь уже третий год, вожу сына. Сергей отлично ладит с детьми.»</p>
+        <div class="review-author">Алексей</div>
+        <div class="review-date">3 недели назад</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="contacts">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">BRU<span>T</span></a>
+        <p>Премиальный барбершоп в Сызрани. Мужские стрижки, бритьё, оформление бороды. Запись через Telegram.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="#about">О нас</a></li>
+          <li><a href="#services">Услуги и цены</a></li>
+          <li><a href="#masters">Мастера</a></li>
+          <li><a href="#reviews">Отзывы</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <ul>
+          <li><a href="#">+7 (999) 123-45-67</a></li>
+          <li><a href="#">ул. Ленина, 42</a></li>
+          <li><a href="#">Сызрань</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Часы работы</h4>
+        <ul>
+          <li><a href="#">Пн-Пт: 9:00 — 21:00</a></li>
+          <li><a href="#">Сб: 10:00 — 22:00</a></li>
+          <li><a href="#">Вс: 10:00 — 20:00</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BRUT Barbershop</span>
+      <span>Сызрань • Работаем с душой</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll
+const nav = document.getElementById('nav')
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50)
+})
+
+// Burger menu
+const burger = document.getElementById('burger')
+const navLinks = document.getElementById('navLinks')
+burger.addEventListener('click', () => {
+  burger.classList.toggle('active')
+  navLinks.classList.toggle('open')
+})
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    burger.classList.remove('active')
+    navLinks.classList.remove('open')
+  })
+})
+
+// IntersectionObserver reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible')
+      observer.unobserve(entry.target)
+    }
+  })
+}, {threshold: 0.15})
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'))
+    if(target){
+      e.preventDefault()
+      target.scrollIntoView({behavior:'smooth', block:'start'})
+    }
+  })
+})
+</script>
+</body>
+</html>
