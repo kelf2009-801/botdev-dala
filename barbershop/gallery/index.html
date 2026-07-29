@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRUT Barbershop — Галерея</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,sans-serif;background:#09090b;color:#e4e0db}
+
+/* ===== HEADER ===== */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(9,9,11,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  padding:16px 0
+}
+.header-inner{
+  max-width:1280px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between
+}
+.logo{
+  font-family:Oswald,sans-serif;font-size:22px;font-weight:700;
+  text-transform:uppercase;letter-spacing:2px;color:#e4e0db;
+  text-decoration:none
+}
+.logo span{color:#c8825e}
+.nav{display:flex;gap:8px;align-items:center}
+.nav a{
+  padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;
+  text-decoration:none;color:#a0a0aa;transition:all .3s;
+  border:1px solid transparent
+}
+.nav a:hover,.nav a.active{color:#e4e0db;border-color:rgba(200,130,94,.2);background:rgba(200,130,94,.08)}
+.nav a.active{color:#c8825e;border-color:rgba(200,130,94,.3)}
+
+/* ===== HERO ===== */
+.gallery-hero{
+  text-align:center;padding:80px 24px 60px;
+  background:linear-gradient(180deg,rgba(200,130,94,.04) 0%,transparent 100%)
+}
+.gallery-hero h1{
+  font-family:Oswald,sans-serif;font-size:52px;font-weight:700;
+  text-transform:uppercase;letter-spacing:3px;margin-bottom:12px
+}
+.gallery-hero h1 span{color:#c8825e}
+.gallery-hero p{
+  font-size:16px;color:#7a7a84;max-width:500px;margin:0 auto 24px;line-height:1.6
+}
+.gallery-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.gallery-stats div{text-align:center}
+.gallery-stats .num{font-size:28px;font-weight:800;color:#c8825e}
+.gallery-stats .label{font-size:13px;color:#7a7a84;margin-top:2px}
+
+/* ===== FILTER TABS ===== */
+.filters{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  padding:0 24px 40px;max-width:1280px;margin:0 auto
+}
+.filter-btn{
+  padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;
+  background:#151518;color:#7a7a84;border:1px solid rgba(255,255,255,.06);
+  cursor:pointer;transition:all .3s;font-family:Inter,sans-serif
+}
+.filter-btn:hover{background:rgba(200,130,94,.1);color:#e4e0db}
+.filter-btn.active{background:#c8825e;color:#09090b;border-color:#c8825e}
+
+/* ===== GALLERY GRID ===== */
+.gallery-wrap{max-width:1280px;margin:0 auto;padding:0 24px 80px}
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px
+}
+.gallery a{
+  display:block;overflow:hidden;border-radius:8px;
+  position:relative;cursor:pointer;
+  transition:transform .4s ease,box-shadow .4s ease
+}
+.gallery a:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(200,130,94,.15)}
+.gallery a img{
+  width:100%;height:100%;object-fit:cover;
+  display:block;transition:transform .6s ease
+}
+.gallery a:hover img{transform:scale(1.05)}
+.gallery .wide{grid-column:span 2}
+.gallery .tall{grid-row:span 2}
+
+/* overlay on hover */
+.gallery a .overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(9,9,11,.6) 0%,transparent 60%);
+  opacity:0;transition:opacity .4s;pointer-events:none
+}
+.gallery a:hover .overlay{opacity:1}
+.gallery a .label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:20px 16px 14px;
+  background:linear-gradient(0deg,rgba(9,9,11,.7) 0%,transparent);
+  opacity:0;transform:translateY(8px);
+  transition:all .4s;pointer-events:none
+}
+.gallery a:hover .label{opacity:1;transform:translateY(0)}
+.gallery a .label span{
+  font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1.5px;color:#c8825e
+}
+.gallery a .label p{font-size:13px;color:#d4d0cb;margin-top:2px}
+
+/* ===== FOOTER ===== */
+.footer{
+  text-align:center;padding:40px 24px;border-top:1px solid rgba(255,255,255,.04)
+}
+.footer p{font-size:13px;color:#7a7a84}
+.footer a{color:#c8825e;text-decoration:none}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){
+  .gallery{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:768px){
+  .gallery-hero h1{font-size:36px}
+  .gallery{grid-template-columns:repeat(2,1fr);gap:8px}
+  .gallery .wide,.gallery .tall{grid-column:span 1;grid-row:span 1}
+  .header-inner{padding:0 16px}
+  .nav{gap:4px}
+  .nav a{padding:6px 12px;font-size:12px}
+}
+@media(max-width:480px){
+  .gallery{grid-template-columns:1fr;gap:8px}
+  .gallery-hero{padding:60px 16px 40px}
+  .gallery-hero h1{font-size:28px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo">BRUT<span>.</span></a>
+    <nav class="nav">
+      <a href="../index.html">Главная</a>
+      <a href="index.html" class="active">Галерея</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="gallery-hero">
+  <h1>Наша <span>Галерея</span></h1>
+  <p>Атмосфера BRUT, наши работы, инструменты и мастера. Каждый кадр — про мужской стиль и премиальный сервис.</p>
+  <div class="gallery-stats">
+    <div><div class="num" id="photoCount">9</div><div class="label">Фотографий</div></div>
+    <div><div class="num">4</div><div class="label">Категории</div></div>
+  </div>
+</section>
+
+<!-- ===== FILTERS ===== -->
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">Все</button>
+  <button class="filter-btn" data-filter="interior">Интерьер</button>
+  <button class="filter-btn" data-filter="works">Работы</button>
+  <button class="filter-btn" data-filter="masters">Мастера</button>
+  <button class="filter-btn" data-filter="tools">Инструменты</button>
+</div>
+
+<!-- ===== GALLERY ===== -->
+<div class="gallery-wrap">
+  <div id="gallery" class="gallery">
+
+    <!-- INTERIOR -->
+    <a href="../images/hero-bg.webp" class="wide" data-sub-html="<h4>Интерьер BRUT</h4><p>Премиальный барбершоп в Сызрани</p>" data-category="interior">
+      <img src="../images/hero-bg.webp" alt="Интерьер BRUT Barbershop" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Интерьер</span><p>Основной зал</p></div>
+    </a>
+
+    <a href="interior-2.webp" data-sub-html="<h4>Атмосфера BRUT</h4><p>Тёмный стиль, кожаные кресла, медные акценты</p>" data-category="interior">
+      <img src="interior-2.webp" alt="Атмосфера BRUT" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Интерьер</span><p>Общий вид</p></div>
+    </a>
+
+    <!-- MASTERS -->
+    <a href="../images/barber-1.webp" data-sub-html="<h4>Артём за работой</h4><p>Топ-мастер, 8 лет опыта</p>" data-category="masters">
+      <img src="../images/barber-1.webp" alt="Мастер Артём" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Мастера</span><p>Артём</p></div>
+    </a>
+
+    <a href="work-1.webp" class="tall" data-sub-html="<h4>Процесс стрижки</h4><p>Работа ножницами, идеальный переход</p>" data-category="works masters">
+      <img src="work-1.webp" alt="Процесс стрижки" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Работы</span><p>Стрижка ножницами</p></div>
+    </a>
+
+    <a href="shave-1.webp" data-sub-html="<h4>Королевское бритьё</h4><p>Опасная бритва, горячее полотенце</p>" data-category="works">
+      <img src="shave-1.webp" alt="Королевское бритьё" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Работы</span><p>Бритьё опасной бритвой</p></div>
+    </a>
+
+    <a href="../images/barber-2.webp" data-sub-html="<h4>Максим</h4><p>Мастер бритвы, 7 лет опыта</p>" data-category="masters">
+      <img src="../images/barber-2.webp" alt="Мастер Максим" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Мастера</span><p>Максим</p></div>
+    </a>
+
+    <!-- TOOLS -->
+    <a href="../images/tools.webp" data-sub-html="<h4>Инструменты BRUT</h4><p>Профессиональные ножницы, машинки, расчёски</p>" data-category="tools">
+      <img src="../images/tools.webp" alt="Инструменты" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Инструменты</span><p>Арсенал мастера</p></div>
+    </a>
+
+    <a href="tools-2.webp" data-sub-html="<h4>Рабочее место</h4><p>Всё под рукой</p>" data-category="tools">
+      <img src="tools-2.webp" alt="Рабочее место" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Инструменты</span><p>Рабочее место</p></div>
+    </a>
+
+    <a href="../images/barber-3.webp" data-sub-html="<h4>Сергей</h4><p>Креативный стилист, 6 лет опыта</p>" data-category="masters">
+      <img src="../images/barber-3.webp" alt="Мастер Сергей" loading="lazy">
+      <div class="overlay"></div>
+      <div class="label"><span>Мастера</span><p>Сергей</p></div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <p>BRUT Barbershop — Сызрань, ул. Ленина, 42</p>
+  <p><a href="https://t.me/brut_barber_bot" target="_blank">Записаться через бота</a></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/lightgallery.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/plugins/zoom/lg-zoom.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/plugins/fullscreen/lg-fullscreen.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.umd.min.js"></script>
+
+<script>
+// ===== LIGHTGALLERY =====
+const gallery = document.getElementById('gallery');
+const lg = lightGallery(gallery, {
+  plugins: [lgZoom, lgFullscreen, lgThumbnail],
+  speed: 400,
+  download: false,
+  counter: true,
+  thumbnail: true,
+  showMaximizeIcon: true,
+  closable: true,
+  escKey: true,
+  mobileSettings: {
+    controls: true,
+    showCloseIcon: true,
+    download: false
+  }
+});
+
+// ===== FILTER =====
+const filterBtns = document.querySelectorAll('.filter-btn');
+const items = gallery.querySelectorAll('a');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const filter = btn.dataset.filter;
+    let visible = 0;
+
+    items.forEach(item => {
+      const cats = item.dataset.category || '';
+      if (filter === 'all' || cats.includes(filter)) {
+        item.style.display = '';
+        visible++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // update counter
+    document.getElementById('photoCount').textContent = visible;
+    lg.refresh();
+  });
+});
+</script>
+
+</body>
+</html>
